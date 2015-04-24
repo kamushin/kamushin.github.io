@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>Kamushin's blog</title>
+	<meta name="description" content="">
+	<meta name="author" content="Kamushin">
+
+	<!-- HTML5 shim, for IE6-8 support of HTML elements -->
+	<!--[if lt IE 9]>
+		<script src="/theme/html5.js"></script>
+	<![endif]-->
+
+	<!-- Styles -->
+	<link href="/theme/bootstrap.min.css" rel="stylesheet">
+	<link href="/theme/local.css" rel="stylesheet">
+	<link href="/theme/pygments.css" rel="stylesheet">
+
+	<!-- Feeds -->
+
+
+
+
+</head>
+<body>
+	<div class="topbar">
+	  <div class="topbar-inner">
+		<div class="container-fluid">
+		  <a class="brand" href="/">Kamushin's blog</a>
+			<ul class="nav">
+					<li ><a href="/foo/index.html">foo</a></li>
+					<li ><a href="/networkprogramming/index.html">networkProgramming</a></li>
+			</ul>
+			<p class="pull-right"><a href="/archives.html">[archives]</a> <a href="/tags.html">[tags]</a></p>
+		</div>
+	  </div>
+	</div>
+
+	<div class="container-fluid">
+	  <div class="sidebar">
+		<div class="well">
+			<h3>Blogroll</h3>
+			<ul>
+				<li><a href="http://getpelican.com/">Pelican</a></li>
+				<li><a href="http://python.org/">Python.org</a></li>
+				<li><a href="http://jinja.pocoo.org/">Jinja2</a></li>
+				<li><a href="#">You can modify those links in your config file</a></li>
+			</ul>
+			<div class="social">
+			<h3>Social</h3>
+			<ul>
+				<li><a href="#">You can add links in your config file</a></li>
+				<li><a href="#">Another social link</a></li>
+			</ul>
+			</div>
+		</div>
+	  </div>
+	  <div class="content">
+<div class="page-header"><h1>Kamushin's blog <small>Pelican</small></h1></div>
+<div class='article'>
+	<h2>Pelican上增加评论和自动删除文章的一些坑</h2>
+	<div class="well small">Permalink: <a class="more" href="/foo/Pelican.html">2015-04-24 12:58:21.901294+08:00</a>
+by <a class="url fn" href="/author/kamushin.html">Kamushin </a>
+ in <a href="/foo/index.html">foo</a>
+tags: <a href="/tag/pelican.html">Pelican</a> </div>
+	<div class="summary"><h3>增加评论功能</h3>
+<p>这个网上有很多描述，主要是去disqus注册下，然后设置下配置文件<a href="http://querbalken.net/howto-setup-comments-with-disqus-in-pelican-en.html">example</a>坑主要在于Pelican的默认主题是没有disqus的模板的，所以虽然看到了对disqus的请求，却看不到评论区。需要自己下个比较全的主题。</p>
+<h3>自动删除文件</h3>
+<p>在content里删除了md文件，重新<code>make html</code>后在output中依然会看到那个md文件生成的html文件。</p>
+<p>一个方法是加入配置<code>DELETE_OUTPUT_DIRECTORY = True</code>来每次清空output，但是这带来了两个问题:</p>
+<ul>
+<li>自动日期没了 目前无法解决</li>
+<li>版本控制没了，可以通过加入<code>OUTPUT_RETENTION = [".hg", ".git", ".bzr"]</code>来解决</li>
+</ul> <a class="btn primary xsmall" href="/foo/Pelican.html">more…</a>
+	</div>
+</div>	
+
+
+		<footer>
+		  <p>Powered by <a href="http://getpelican.com/">Pelican</a>. Theme based on <a href="http://twitter.github.com/bootstrap/">Twitter Bootstrap</a>.</p>
+		  <p>&copy; Kamushin</p>
+		</footer>
+	  </div>
+
+	</div>
+</body>
+</html>
