@@ -1,4 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Kamushin's blog</title><link href="/" rel="alternate"></link><link href="/feeds/kamushin.atom.xml" rel="self"></link><id>/</id><updated>2015-04-23T17:34:04+08:00</updated><entry><title>Mac上遇到了一个Chrome和Safari被劫持的问题</title><link href="/foo/Chrome_be_hijacked.html" rel="alternate"></link><updated>2015-04-23T17:34:04+08:00</updated><author><name>Kamushin</name></author><id>tag:,2015-04-23:foo/Chrome_be_hijacked.html</id><summary type="html">&lt;p&gt;大概是因为下载了恶意的软件, 导致Chrome和Safari打开各种网站都出现广告. 检查过DNS
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Kamushin's blog</title><link href="/" rel="alternate"></link><link href="/feeds/kamushin.atom.xml" rel="self"></link><id>/</id><updated>2015-04-24T12:58:21+08:00</updated><entry><title>Pelican上增加评论和自动删除文章的一些坑</title><link href="/foo/Pelican.html" rel="alternate"></link><updated>2015-04-24T12:58:21+08:00</updated><author><name>Kamushin</name></author><id>tag:,2015-04-24:foo/Pelican.html</id><summary type="html">&lt;h3&gt;增加评论功能&lt;/h3&gt;
+&lt;p&gt;这个网上有很多描述，主要是去disqus注册下，然后设置下配置文件&lt;a href="http://querbalken.net/howto-setup-comments-with-disqus-in-pelican-en.html"&gt;example&lt;/a&gt;坑主要在于Pelican的默认主题是没有disqus的模板的，所以虽然看到了对disqus的请求，却看不到评论区。需要自己下个比较全的主题。&lt;/p&gt;
+&lt;h3&gt;自动删除文件&lt;/h3&gt;
+&lt;p&gt;在content里删除了md文件，重新&lt;code&gt;make html&lt;/code&gt;后在output中依然会看到那个md文件生成的html文件。&lt;/p&gt;
+&lt;p&gt;一个方法是加入配置&lt;code&gt;DELETE_OUTPUT_DIRECTORY = True&lt;/code&gt;来每次清空output，但是这带来了两个问题:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;自动日期没了 目前无法解决&lt;/li&gt;
+&lt;li&gt;版本控制没了，可以通过加入&lt;code&gt;OUTPUT_RETENTION = [".hg", ".git", ".bzr"]&lt;/code&gt;来解决&lt;/li&gt;
+&lt;/ul&gt;</summary><category term="Pelican"></category></entry><entry><title>Mac上遇到了一个Chrome和Safari被劫持的问题</title><link href="/foo/Chrome_be_hijacked.html" rel="alternate"></link><updated>2015-04-23T17:34:04+08:00</updated><author><name>Kamushin</name></author><id>tag:,2015-04-23:foo/Chrome_be_hijacked.html</id><summary type="html">&lt;p&gt;大概是因为下载了恶意的软件, 导致Chrome和Safari打开各种网站都出现广告. 检查过DNS
 也更改过DNS, 无效. 目前没找到原因, 只能将就这用FireFox和Chromium, 这俩货没被劫持&lt;/p&gt;</summary><category term="杂事"></category></entry><entry><title>开始学习陈硕的网络编程课程</title><link href="/networkprogramming/test.html" rel="alternate"></link><updated>2015-04-23T17:28:54+08:00</updated><author><name>Kamushin</name></author><id>tag:,2015-04-23:networkprogramming/test.html</id><summary type="html">&lt;p&gt;很久前就关注了陈硕的这门课，等着他结课后一次性看完，截止到现在他已经更新了40多节了，
 就要结束了，所以开始刷这门课。&lt;/p&gt;</summary><category term="网络编程"></category></entry></feed>
