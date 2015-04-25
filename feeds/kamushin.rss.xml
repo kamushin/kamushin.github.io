@@ -1,5 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Kamushin's blog</title><link>/</link><description></description><atom:link href="/feeds/kamushin.rss.xml" rel="self"></atom:link><lastBuildDate>Fri, 24 Apr 2015 12:58:21 +0800</lastBuildDate><item><title>Pelican上增加评论和自动删除文章的一些坑</title><link>/foo/Pelican.html</link><description>&lt;h3&gt;增加评论功能&lt;/h3&gt;
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Kamushin's blog</title><link>/</link><description></description><atom:link href="/feeds/kamushin.rss.xml" rel="self"></atom:link><lastBuildDate>Sat, 25 Apr 2015 15:08:59 +0800</lastBuildDate><item><title>开始学习陈硕的网络编程课程</title><link>/networkprogramming/test.html</link><description>&lt;p&gt;很久前就关注了陈硕的这门课，等着他结课后一次性看完，截止到现在他已经更新了40多节了，
+就要结束了，所以开始刷这门课。&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Kamushin</dc:creator><pubDate>Sat, 25 Apr 2015 15:08:59 +0800</pubDate><guid>tag:,2015-04-25:networkprogramming/test.html</guid><category>网络编程</category></item><item><title>TCP自连接</title><link>/networkprogramming/tcp-self-connect.html</link><description>&lt;p&gt;陈硕的第8节视频介绍了TCP自连接这个特性。&lt;/p&gt;
+&lt;p&gt;程序代码类似于:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;for i in range(65536):
+    try:
+        sock = socket.create_connection((&amp;#39;localhost&amp;#39;, port))
+        time.sleep(60*60)
+    except:
+        ...
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;这里主要是这样的一个逻辑:  &lt;/p&gt;
+&lt;p&gt;首先在循环中每次尝试创建连接的时候，TCP会分配一个IP给客户端，这个IP不是每次都随机的而是会自增。在最多尝试了65536或更少次后，一定会恰好和我们输入的port参数重合(如果port没有被占用)，那么就产生了一个客户端连接到自己的现象。要避免这个现象，可以在网络库中进行判断。&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Kamushin</dc:creator><pubDate>Sat, 25 Apr 2015 15:08:50 +0800</pubDate><guid>tag:,2015-04-25:networkprogramming/tcp-self-connect.html</guid><category>网络编程</category></item><item><title>Pelican上增加评论和自动删除文章的一些坑</title><link>/foo/Pelican.html</link><description>&lt;h3&gt;增加评论功能&lt;/h3&gt;
 &lt;p&gt;这个网上有很多描述，主要是去disqus注册下，然后设置下配置文件&lt;a href="http://querbalken.net/howto-setup-comments-with-disqus-in-pelican-en.html"&gt;example&lt;/a&gt;坑主要在于Pelican的默认主题是没有disqus的模板的，所以虽然看到了对disqus的请求，却看不到评论区。需要自己下个比较全的主题。&lt;/p&gt;
 &lt;h3&gt;自动删除文件&lt;/h3&gt;
 &lt;p&gt;在content里删除了md文件，重新&lt;code&gt;make html&lt;/code&gt;后在output中依然会看到那个md文件生成的html文件。&lt;/p&gt;
@@ -8,5 +21,4 @@
 &lt;li&gt;自动日期没了 目前无法解决&lt;/li&gt;
 &lt;li&gt;版本控制没了，可以通过加入&lt;code&gt;OUTPUT_RETENTION = [".hg", ".git", ".bzr"]&lt;/code&gt;来解决&lt;/li&gt;
 &lt;/ul&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Kamushin</dc:creator><pubDate>Fri, 24 Apr 2015 12:58:21 +0800</pubDate><guid>tag:,2015-04-24:foo/Pelican.html</guid><category>Pelican</category></item><item><title>Mac上遇到了一个Chrome和Safari被劫持的问题</title><link>/foo/Chrome_be_hijacked.html</link><description>&lt;p&gt;大概是因为下载了恶意的软件, 导致Chrome和Safari打开各种网站都出现广告. 检查过DNS
-也更改过DNS, 无效. 目前没找到原因, 只能将就这用FireFox和Chromium, 这俩货没被劫持&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Kamushin</dc:creator><pubDate>Thu, 23 Apr 2015 17:34:04 +0800</pubDate><guid>tag:,2015-04-23:foo/Chrome_be_hijacked.html</guid><category>杂事</category></item><item><title>开始学习陈硕的网络编程课程</title><link>/networkprogramming/test.html</link><description>&lt;p&gt;很久前就关注了陈硕的这门课，等着他结课后一次性看完，截止到现在他已经更新了40多节了，
-就要结束了，所以开始刷这门课。&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Kamushin</dc:creator><pubDate>Thu, 23 Apr 2015 17:28:54 +0800</pubDate><guid>tag:,2015-04-23:networkprogramming/test.html</guid><category>网络编程</category></item></channel></rss>
+也更改过DNS, 无效. 目前没找到原因, 只能将就这用FireFox和Chromium, 这俩货没被劫持&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Kamushin</dc:creator><pubDate>Thu, 23 Apr 2015 17:34:04 +0800</pubDate><guid>tag:,2015-04-23:foo/Chrome_be_hijacked.html</guid><category>杂事</category></item></channel></rss>
