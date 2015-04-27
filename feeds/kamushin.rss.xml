@@ -1,5 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Kamushin's blog</title><link>/</link><description></description><atom:link href="/feeds/kamushin.rss.xml" rel="self"></atom:link><lastBuildDate>Sat, 25 Apr 2015 15:08:59 +0800</lastBuildDate><item><title>开始学习陈硕的网络编程课程</title><link>/networkprogramming/test.html</link><description>&lt;p&gt;很久前就关注了陈硕的这门课，等着他结课后一次性看完，截止到现在他已经更新了40多节了，
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Kamushin's blog</title><link>/</link><description></description><atom:link href="/feeds/kamushin.rss.xml" rel="self"></atom:link><lastBuildDate>Mon, 27 Apr 2015 12:59:07 +0800</lastBuildDate><item><title>把Capslock重定向为Ctrl</title><link>/foo/Change_caplocks.html</link><description>&lt;p&gt;Capslock这键平时没多大用，而Ctrl则用的非常多，所以把Capslock换成Ctrl也算是个比较常见的需求。&lt;/p&gt;
+&lt;p&gt;以前我是把xmodmap里swap脚本小改一下，也算在Arch上能用。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;remove Lock = Caps_Lock
+remove Control = Control_L
+keysym Control_L = Control_L
+keysym Caps_Lock = Control_L
+add Lock = Caps_Lock
+add Control = Control_L
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;最近换了deepin后，这脚本会让Capslock啥也不做。于是找了个更加合理的脚本&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;remove Lock = Caps_Lock
+remove Control = Control_L
+keysym Caps_Lock = Control_L
+add Lock = Caps_Lock
+add Control = Control_L
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;比较一下， 就是少了一行对Control的设置，我猜之前出错的原因是Control_L不能被绑到两个keysym上&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Kamushin</dc:creator><pubDate>Mon, 27 Apr 2015 12:59:07 +0800</pubDate><guid>tag:,2015-04-27:foo/Change_caplocks.html</guid><category>foo</category></item><item><title>开始学习陈硕的网络编程课程</title><link>/networkprogramming/test.html</link><description>&lt;p&gt;很久前就关注了陈硕的这门课，等着他结课后一次性看完，截止到现在他已经更新了40多节了，
 就要结束了，所以开始刷这门课。&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Kamushin</dc:creator><pubDate>Sat, 25 Apr 2015 15:08:59 +0800</pubDate><guid>tag:,2015-04-25:networkprogramming/test.html</guid><category>网络编程</category></item><item><title>TCP自连接</title><link>/networkprogramming/tcp-self-connect.html</link><description>&lt;p&gt;陈硕的第8节视频介绍了TCP自连接这个特性。&lt;/p&gt;
 &lt;p&gt;程序代码类似于:&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;for i in range(65536):
