@@ -1,5 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Kamushin's blog</title><link href="/" rel="alternate"></link><link href="/feeds/kamushin.atom.xml" rel="self"></link><id>/</id><updated>2015-04-27T12:59:07+08:00</updated><entry><title>把Capslock重定向为Ctrl</title><link href="/foo/Change_caplocks.html" rel="alternate"></link><updated>2015-04-27T12:59:07+08:00</updated><author><name>Kamushin</name></author><id>tag:,2015-04-27:foo/Change_caplocks.html</id><summary type="html">&lt;p&gt;Capslock这键平时没多大用，而Ctrl则用的非常多，所以把Capslock换成Ctrl也算是个比较常见的需求。&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Kamushin's blog</title><link href="/" rel="alternate"></link><link href="/feeds/kamushin.atom.xml" rel="self"></link><id>/</id><updated>2015-04-30T19:38:25+08:00</updated><entry><title>用正则来解决grep时行过长的问题</title><link href="/tech/fxg.html" rel="alternate"></link><updated>2015-04-30T19:38:25+08:00</updated><author><name>Kamushin</name></author><id>tag:,2015-04-30:tech/fxg.html</id><summary type="html">&lt;p&gt;之前自己写了个函数用来查找文件中匹配关键字的&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;fxg_old(){
+    find . -type f -name $1 | xargs grep $2 
+}
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;但是今天在用的时候，发现如果匹配到的行过长的话，输出很难看，而且也不知道哪里匹配到了。&lt;/p&gt;
+&lt;p&gt;所以就想能不能对行的长度做限制，但是grep里并没有这个参数选项。于是想到了用正则去控制匹配串。在so上找到了这样的代码&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt; fxg(){
+    find . -type f -name $1 | xargs grep -oE &amp;quot;.{0,20}$2.{0,20}&amp;quot;
+ }
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;-o 只输出匹配的部分。 如果只加这个选项，那么就输出N行的$2。&lt;/p&gt;
+&lt;p&gt;-E 使用扩展的正则(有人提到用-P，Perl正则，但是在我这里出现错误)&lt;/p&gt;
+&lt;p&gt;后面的正则表达式用来匹配前后20个字符。&lt;/p&gt;
+&lt;p&gt;这样就满足了我的需求&lt;/p&gt;</summary><category term="Linux"></category></entry><entry><title>把Capslock重定向为Ctrl</title><link href="/foo/Change_caplocks.html" rel="alternate"></link><updated>2015-04-27T12:59:07+08:00</updated><author><name>Kamushin</name></author><id>tag:,2015-04-27:foo/Change_caplocks.html</id><summary type="html">&lt;p&gt;Capslock这键平时没多大用，而Ctrl则用的非常多，所以把Capslock换成Ctrl也算是个比较常见的需求。&lt;/p&gt;
 &lt;p&gt;以前我是把xmodmap里swap脚本小改一下，也算在Arch上能用。&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;remove Lock = Caps_Lock
 remove Control = Control_L
