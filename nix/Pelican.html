@@ -51,40 +51,43 @@
     <div class="row">
 
         <div class="span9">
-        
-
-        
-
-
     <div class='article'>
         <div class="content-title">
-            <a href="/nix/Chrome_be_hijacked.html"><h1>Mac上遇到了一个Chrome和Safari被劫持的问题</h1></a>
+            <h1>Pelican上增加评论和自动删除文章的一些坑</h1>
 2015-10-19 21-37-24
 
 by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
  
 
 
- 
         </div>
-        
-        <div><p>大概是因为下载了恶意的软件, 导致Chrome和Safari打开各种网站都出现广告. 检查过DNS
-也更改过DNS, 无效. 目前没找到原因, 只能将就这用FireFox和Chromium, 这俩货没被劫持</p></div>
-        <hr />
-    </div>
-		
-<div class="pagination">
+	
+        <div><h3>增加评论功能</h3>
+<p>这个网上有很多描述，主要是去disqus注册下，然后设置下配置文件<a href="http://querbalken.net/howto-setup-comments-with-disqus-in-pelican-en.html">example</a>坑主要在于Pelican的默认主题是没有disqus的模板的，所以虽然看到了对disqus的请求，却看不到评论区。需要自己下个比较全的主题。</p>
+<h3>自动删除文件</h3>
+<p>在content里删除了md文件，重新<code>make html</code>后在output中依然会看到那个md文件生成的html文件。</p>
+<p>一个方法是加入配置<code>DELETE_OUTPUT_DIRECTORY = True</code>来每次清空output，但是这带来了两个问题:</p>
 <ul>
-    <li class="prev disabled"><a href="#">&larr; Previous</a></li>
+<li>自动日期没了 目前无法解决</li>
+<li>版本控制没了，可以通过加入<code>OUTPUT_RETENTION = [".hg", ".git", ".bzr"]</code>来解决</li>
+</ul></div>
+	
+        <hr>
 
-    <li class="active"><a href="/tag/za-shi.html">1</a></li>
+        <h2>Comments</h2>
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'kamushin'; 
+    var disqus_title = 'Pelican上增加评论和自动删除文章的一些坑';
 
-    <li class="next disabled"><a href="#">&rarr; Next</a></li>
-
-</ul>
-</div>
- 
-  
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    </div>
         </div>
         
         <div class="span3">

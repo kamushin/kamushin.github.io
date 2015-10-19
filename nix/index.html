@@ -58,8 +58,8 @@
 
     <div class='article'>
         <div class="content-title">
-            <a href="/nix/Chrome_be_hijacked.html"><h1>Mac上遇到了一个Chrome和Safari被劫持的问题</h1></a>
-2015-10-19 21-37-24
+            <a href="/nix/Change_caplocks.html"><h1>把Capslock重定向为Ctrl</h1></a>
+2015-10-19 23-16-22
 
 by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
  
@@ -68,16 +68,80 @@ by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
  
         </div>
         
-        <div><p>大概是因为下载了恶意的软件, 导致Chrome和Safari打开各种网站都出现广告. 检查过DNS
-也更改过DNS, 无效. 目前没找到原因, 只能将就这用FireFox和Chromium, 这俩货没被劫持</p></div>
+        <div><p>Capslock这键平时没多大用，而Ctrl则用的非常多，所以把Capslock换成Ctrl也算是个比较常见的需求。</p>
+<p>以前我是把xmodmap里swap脚本小改一下，也算在Arch上能用。</p>
+<div class="highlight"><pre>remove Lock = Caps_Lock
+remove Control = Control_L
+keysym Control_L = Control_L
+keysym Caps_Lock = Control_L
+add Lock = Caps_Lock
+add Control = Control_L
+</pre></div>
+
+
+<p>最近换了deepin后，这脚本会让Capslock啥也不做。于是找了个更加合理的脚本</p>
+<div class="highlight"><pre>remove Lock = Caps_Lock
+remove Control = Control_L
+keysym Caps_Lock = Control_L
+add Lock = Caps_Lock
+add Control = Control_L
+</pre></div>
+
+
+<p>比较一下， 就是少了一行对Control的设置，我猜之前出错的原因是Control_L不能被绑到两个keysym上</p></div>
         <hr />
     </div>
 		
+
+ 
+        
+
+ 
+
+    <div class='article'>
+        <a href="/nix/Chrome_be_hijacked.html"><h2>Mac上遇到了一个Chrome和Safari被劫持的问题</h2></a>
+        <div class= "well small"> 2015-10-19 21-37-24
+
+by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
+ 
+
+
+ </div>
+        <div class="summary"><p>大概是因为下载了恶意的软件, 导致Chrome和Safari打开各种网站都出现广告. 检查过DNS
+也更改过DNS, 无效. 目前没找到原因, 只能将就这用FireFox和Chromium, 这俩货没被劫持</p> <a class="btn btn-info xsmall" href="/nix/Chrome_be_hijacked.html">read more</a></div>
+    </div>	
+				
+
+ 
+        
+
+ 
+
+    <div class='article'>
+        <a href="/nix/Pelican.html"><h2>Pelican上增加评论和自动删除文章的一些坑</h2></a>
+        <div class= "well small"> 2015-10-19 21-37-24
+
+by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
+ 
+
+
+ </div>
+        <div class="summary"><h3>增加评论功能</h3>
+<p>这个网上有很多描述，主要是去disqus注册下，然后设置下配置文件<a href="http://querbalken.net/howto-setup-comments-with-disqus-in-pelican-en.html">example</a>坑主要在于Pelican的默认主题是没有disqus的模板的，所以虽然看到了对disqus的请求，却看不到评论区。需要自己下个比较全的主题。</p>
+<h3>自动删除文件</h3>
+<p>在content里删除了md文件，重新<code>make html</code>后在output中依然会看到那个md文件生成的html文件。</p>
+<p>一个方法是加入配置<code>DELETE_OUTPUT_DIRECTORY = True</code>来每次清空output，但是这带来了两个问题:</p>
+<ul>
+<li>自动日期没了 目前无法解决</li>
+<li>版本控制没了，可以通过加入<code>OUTPUT_RETENTION = [".hg", ".git", ".bzr"]</code>来解决</li>
+</ul> <a class="btn btn-info xsmall" href="/nix/Pelican.html">read more</a></div>
+    </div>	
+				
 <div class="pagination">
 <ul>
     <li class="prev disabled"><a href="#">&larr; Previous</a></li>
 
-    <li class="active"><a href="/tag/za-shi.html">1</a></li>
+    <li class="active"><a href="/nix/index.html">1</a></li>
 
     <li class="next disabled"><a href="#">&rarr; Next</a></li>
 

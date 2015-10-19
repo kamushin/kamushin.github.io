@@ -51,40 +51,47 @@
     <div class="row">
 
         <div class="span9">
-        
-
-        
-
-
     <div class='article'>
         <div class="content-title">
-            <a href="/nix/Chrome_be_hijacked.html"><h1>Mac上遇到了一个Chrome和Safari被劫持的问题</h1></a>
+            <h1>TCP自连接</h1>
 2015-10-19 21-37-24
 
 by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
  
 
 
- 
         </div>
-        
-        <div><p>大概是因为下载了恶意的软件, 导致Chrome和Safari打开各种网站都出现广告. 检查过DNS
-也更改过DNS, 无效. 目前没找到原因, 只能将就这用FireFox和Chromium, 这俩货没被劫持</p></div>
-        <hr />
+	
+        <div><p>陈硕的第8节视频介绍了TCP自连接这个特性。</p>
+<p>程序代码类似于:</p>
+<div class="highlight"><pre>for i in range(65536):
+    try:
+        sock = socket.create_connection((&#39;localhost&#39;, port))
+        time.sleep(60*60)
+    except:
+        ...
+</pre></div>
+
+
+<p>这里主要是这样的一个逻辑:  </p>
+<p>首先在循环中每次尝试创建连接的时候，TCP会分配一个IP给客户端，这个IP不是每次都随机的而是会自增。在最多尝试了65536或更少次后，一定会恰好和我们输入的port参数重合(如果port没有被占用)，那么就产生了一个客户端连接到自己的现象。要避免这个现象，可以在网络库中进行判断。</p></div>
+	
+        <hr>
+
+        <h2>Comments</h2>
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'kamushin'; 
+    var disqus_title = 'TCP自连接';
+
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
     </div>
-		
-<div class="pagination">
-<ul>
-    <li class="prev disabled"><a href="#">&larr; Previous</a></li>
-
-    <li class="active"><a href="/tag/za-shi.html">1</a></li>
-
-    <li class="next disabled"><a href="#">&rarr; Next</a></li>
-
-</ul>
-</div>
- 
-  
         </div>
         
         <div class="span3">
