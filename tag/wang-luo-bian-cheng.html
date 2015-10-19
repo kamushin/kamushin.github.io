@@ -1,90 +1,189 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-cn">
 <head>
-	<meta charset="utf-8">
-	<title>Kamushin's blog</title>
-	<meta name="description" content="">
-	<meta name="author" content="Kamushin">
+    <meta charset="utf-8">
+    <title>Kamushin's blog</title>
+    <meta name="description" content="">
+    <meta name="author" content="Kamushin">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-	<!-- HTML5 shim, for IE6-8 support of HTML elements -->
-	<!--[if lt IE 9]>
-		<script src="/theme/html5.js"></script>
-	<![endif]-->
+    <!-- Le HTML5 shim, for IE6-8 support of HTML elements -->
+    <!--[if lt IE 9]>
+    <script src="/theme/html5.js"></script>
+    <![endif]-->
 
-	<!-- Styles -->
-	<link href="/theme/bootstrap.min.css" rel="stylesheet">
-	<link href="/theme/local.css" rel="stylesheet">
-	<link href="/theme/pygments.css" rel="stylesheet">
+    <!-- Le styles -->
+    <link href="/theme/bootstrap.min.css" rel="stylesheet">
+    <link href="/theme/bootstrap.min.responsive.css" rel="stylesheet">
+    <link href="/theme/local.css" rel="stylesheet">
+    <link href="/theme/pygments.css" rel="stylesheet">
 
-	<!-- Feeds -->
-
-
-
+    <!-- So Firefox can bookmark->"abo this site" -->
 
 </head>
+
 <body>
-	<div class="topbar">
-	  <div class="topbar-inner">
-		<div class="container-fluid">
-		  <a class="brand" href="/">Kamushin's blog</a>
-			<ul class="nav">
-					<li ><a href="/foo/index.html">foo</a></li>
-					<li ><a href="/networkprogramming/index.html">networkProgramming</a></li>
-					<li ><a href="/tech/index.html">tech</a></li>
-			</ul>
-			<p class="pull-right"><a href="/archives.html">[archives]</a> <a href="/tags.html">[tags]</a></p>
-		</div>
-	  </div>
-	</div>
 
-	<div class="container-fluid">
-	  <div class="sidebar">
-		<div class="well">
-			<h3>Blogroll</h3>
-			<ul>
-				<li><a href="http://getpelican.com/">Pelican</a></li>
-				<li><a href="http://www.lulinux.com/">撸人</a></li>
-				<li><a href="http://jinja.pocoo.org/">Jinja2</a></li>
-				<li><a href="#">You can modify those links in your config file</a></li>
-			</ul>
-			<div class="social">
-			<h3>Social</h3>
-			<ul>
-				<li><a href="#">You can add links in your config file</a></li>
-				<li><a href="#">Another social link</a></li>
-			</ul>
-			</div>
-		</div>
-	  </div>
-	  <div class="content">
-<div class="page-header"><h1>Kamushin's blog <small>网络编程</small></h1></div>
-<div class='article'>
-	<h2>开始学习陈硕的网络编程课程</h2>
-	<div class="well small">Permalink: <a class="more" href="/networkprogramming/test.html">2015-04-25 15:08:59.744892+08:00</a>
-by <a class="url fn" href="/author/kamushin.html">Kamushin </a>
- in <a href="/networkprogramming/index.html">networkProgramming</a>
-tags: <a href="/tag/wang-luo-bian-cheng.html">网络编程</a> </div>
-	<div class="summary"><p>很久前就关注了陈硕的这门课，等着他结课后一次性看完，截止到现在他已经更新了40多节了，
-就要结束了，所以开始刷这门课。</p> <a class="btn primary xsmall" href="/networkprogramming/test.html">more…</a>
-	</div>
-</div>	
-<div class='article'>
-	<h2>TCP自连接</h2>
-	<div class="well small">Permalink: <a class="more" href="/networkprogramming/tcp-self-connect.html">2015-04-25 15:08:50.560892+08:00</a>
-by <a class="url fn" href="/author/kamushin.html">Kamushin </a>
- in <a href="/networkprogramming/index.html">networkProgramming</a>
-tags: <a href="/tag/wang-luo-bian-cheng.html">网络编程</a> </div>
-	<div class="summary"><p>TCP自连接特性</p> <a class="btn primary xsmall" href="/networkprogramming/tcp-self-connect.html">more…</a>
-	</div>
-</div>	
+<div class="navbar">
+    <div class="navbar-inner">
+    <div class="container">
+
+         <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+             <span class="icon-bar"></span>
+             <span class="icon-bar"></span>
+             <span class="icon-bar"></span>
+         </a>
+
+        <a class="brand" href="/">Kamushin's blog</a>
+
+        <div class="nav-collapse">
+        <ul class="nav">
+            
+        </ul>
+        </div>
+        
+    </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="content">
+    <div class="row">
+
+        <div class="span9">
+        
+
+        
 
 
-		<footer>
-		  <p>Powered by <a href="http://getpelican.com/">Pelican</a>. Theme based on <a href="http://twitter.github.com/bootstrap/">Twitter Bootstrap</a>.</p>
-		  <p>&copy; Kamushin</p>
-		</footer>
-	  </div>
+    <div class='article'>
+        <div class="content-title">
+            <a href="/networkprogramming/tcp-self-connect.html"><h1>TCP自连接</h1></a>
+2015-10-19 21-37-24
 
-	</div>
+by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
+ 
+
+
+ 
+        </div>
+        
+        <div><p>陈硕的第8节视频介绍了TCP自连接这个特性。</p>
+<p>程序代码类似于:</p>
+<div class="highlight"><pre>for i in range(65536):
+    try:
+        sock = socket.create_connection((&#39;localhost&#39;, port))
+        time.sleep(60*60)
+    except:
+        ...
+</pre></div>
+
+
+<p>这里主要是这样的一个逻辑:  </p>
+<p>首先在循环中每次尝试创建连接的时候，TCP会分配一个IP给客户端，这个IP不是每次都随机的而是会自增。在最多尝试了65536或更少次后，一定会恰好和我们输入的port参数重合(如果port没有被占用)，那么就产生了一个客户端连接到自己的现象。要避免这个现象，可以在网络库中进行判断。</p></div>
+        <hr />
+    </div>
+		
+
+ 
+        
+
+ 
+
+    <div class='article'>
+        <a href="/networkprogramming/test.html"><h2>开始学习陈硕的网络编程课程</h2></a>
+        <div class= "well small"> 2015-10-19 21-37-24
+
+by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
+ 
+
+
+ </div>
+        <div class="summary"><p>很久前就关注了陈硕的这门课，等着他结课后一次性看完，截止到现在他已经更新了40多节了，
+就要结束了，所以开始刷这门课。</p> <a class="btn btn-info xsmall" href="/networkprogramming/test.html">read more</a></div>
+    </div>	
+				
+<div class="pagination">
+<ul>
+    <li class="prev disabled"><a href="#">&larr; Previous</a></li>
+
+    <li class="active"><a href="/tag/wang-luo-bian-cheng.html">1</a></li>
+
+    <li class="next disabled"><a href="#">&rarr; Next</a></li>
+
+</ul>
+</div>
+ 
+  
+        </div>
+        
+        <div class="span3">
+
+            <div class="well" style="padding: 8px 0; background-color: #FBFBFB;">
+            <ul class="nav nav-list">
+                <li class="nav-header"> 
+                Site
+                </li>
+            
+                <li><a href="/archives.html">Archives</a>
+                <li><a href="/tag/index.html">Tags</a>
+
+
+
+
+            </ul>
+            </div>
+
+
+            <div class="well" style="padding: 8px 0; background-color: #FBFBFB;">
+            <ul class="nav nav-list">
+                <li class="nav-header"> 
+                Categories
+                </li>
+                
+                <li><a href="/foo/index.html">foo</a></li>
+                <li><a href="/networkprogramming/index.html">networkProgramming</a></li>
+                <li><a href="/tech/index.html">tech</a></li>
+                   
+            </ul>
+            </div>
+
+
+            <div class="well" style="padding: 8px 0; background-color: #FBFBFB;">
+            <ul class="nav nav-list">
+                <li class="nav-header"> 
+                Links
+                </li>
+            
+                <li><a href="http://getpelican.com/">Pelican</a></li>
+                <li><a href="http://www.lulinux.com/">撸人</a></li>
+                <li><a href="http://jinja.pocoo.org/">Jinja2</a></li>
+            </ul>
+            </div>
+
+
+            <div class="social">
+            <div class="well" style="padding: 8px 0; background-color: #FBFBFB;">
+            <ul class="nav nav-list">
+                <li class="nav-header"> 
+                Social
+                </li>
+           
+                <li><a href="https://github.com/kamushin">Kamushin</a></li>
+            </ul>
+            </div>
+            </div>
+
+        </div>  
+    </div>     </div> 
+<footer>
+<br />
+<p><a href="">Kamushin's blog</a> &copy; Kamushin 2015</p>
+</footer>
+
+</div> <!-- /container -->
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+<script src="/theme/bootstrap-collapse.js"></script>
+ 
 </body>
 </html>
