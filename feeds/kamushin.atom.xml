@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Kamushin's blog</title><link href="/" rel="alternate"></link><link href="/feeds/kamushin.atom.xml" rel="self"></link><id>/</id><updated>2015-10-19T23:19:34+08:00</updated><entry><title>MySQL 优化学习之路</title><link href="/learning/2015-10-19.html" rel="alternate"></link><updated>2015-10-19T23:19:34+08:00</updated><author><name>Kamushin</name></author><id>tag:,2015-10-19:learning/2015-10-19.html</id><summary type="html">&lt;h3&gt;Overview&lt;/h3&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Kamushin's blog</title><link href="/" rel="alternate"></link><link href="/feeds/kamushin.atom.xml" rel="self"></link><id>/</id><updated>2015-10-19T23:40:31+08:00</updated><entry><title>当我们在谈论异常时我们在谈论什么?</title><link href="/learning/2015-10-19-2.html" rel="alternate"></link><updated>2015-10-19T23:40:31+08:00</updated><author><name>Kamushin</name></author><id>tag:,2015-10-19:learning/2015-10-19-2.html</id><summary type="html">&lt;h3&gt;异常是什么&lt;/h3&gt;
+&lt;p&gt;异常是一种用来分离程序运行中那1%会走进的&lt;strong&gt;岔路&lt;/strong&gt;的分支控制手段.&lt;/p&gt;
+&lt;h3&gt;语言是如何实现它的&lt;/h3&gt;
+&lt;p&gt;曾经, 大概在我大三末大四初的时候, 有幸读了本 C 接口与实现, 书里用 &lt;code&gt;setjump &amp;amp; longjmp&lt;/code&gt; 和宏的方式向我展现了如何在 C 语言中实现它.&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Exception is a beautiful goto. &lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;当然, sjlj 只是实现异常的一种, 还有基于 table 的方式等等, 更加高效, 在不进入异常时不产生副作用.&lt;/p&gt;</summary><category term="exception"></category></entry><entry><title>MySQL 优化学习之路</title><link href="/learning/2015-10-19.html" rel="alternate"></link><updated>2015-10-19T23:19:34+08:00</updated><author><name>Kamushin</name></author><id>tag:,2015-10-19:learning/2015-10-19.html</id><summary type="html">&lt;h3&gt;Overview&lt;/h3&gt;
 &lt;h4&gt;DB Level&lt;/h4&gt;
 &lt;ul&gt;
 &lt;li&gt;table structure: column data type | table with few or many columns&lt;/li&gt;
