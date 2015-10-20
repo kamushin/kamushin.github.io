@@ -58,8 +58,8 @@
 
     <div class='article'>
         <div class="content-title">
-            <a href="/learning/2015-10-19-2.html"><h1>当我们在谈论异常时我们在谈论什么?</h1></a>
-2015-10-19 23-40-31
+            <a href="/tool/2015-10-20.html"><h1>Pip 无网络环境安装包</h1></a>
+2015-10-20 21-03-20
 
 by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
  
@@ -68,17 +68,34 @@ by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
  
         </div>
         
-        <div><h3>异常是什么</h3>
-<p>异常是一种用来分离程序运行中那1%会走进的<strong>岔路</strong>的分支控制手段.</p>
-<h3>语言是如何实现它的</h3>
-<p>曾经, 大概在我大三末大四初的时候, 有幸读了本 C 接口与实现, 书里用 <code>setjump &amp; longjmp</code> 和宏的方式向我展现了如何在 C 语言中实现它.</p>
-<blockquote>
-<p>Exception is a beautiful goto. </p>
-</blockquote>
-<p>当然, sjlj 只是实现异常的一种, 还有基于 table 的方式等等, 更加高效, 在不进入异常时不产生副作用.</p></div>
+        <div><p>在内网部署 Python 的时候, 因为不能用连接到 <code>pip</code> 源所以仅仅靠 requirement.txt 是不够的. 
+我们需要 wheel 这个工具帮我们把需要的依赖先打成本地包. 
+<code>pip wheel --wheel-dir=/tmp/wheelhouse tornado</code>
+这样 tornado 的依赖包就全在 wheelhouse 里了 
+我们面对一个更悲剧的情况, 线上连 <code>pip</code> 都没, 那么只能先在线下先给装好包.
+<code>pip install --use-wheel --no-index --find-links=/tmp/wheelhouse -t  /tmp/wheelhouse/code tornado</code>
+这样包就全在 code 里了, 可以直接复制到线上. <strong>要注意编译环境一致和 so 库</strong></p></div>
         <hr />
     </div>
 		
+
+ 
+        
+
+ 
+
+    <div class='article'>
+        <a href="/learning/2015-10-19-2.html"><h2>当我们在谈论异常时我们在谈论什么?</h2></a>
+        <div class= "well small"> 2015-10-19 23-40-31
+
+by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
+ 
+
+
+ </div>
+        <div class="summary"><p>异常是什么? 语言是如何实现它的?</p> <a class="btn btn-info xsmall" href="/learning/2015-10-19-2.html">read more</a></div>
+    </div>	
+				
 
  
         
