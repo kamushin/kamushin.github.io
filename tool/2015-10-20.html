@@ -54,7 +54,7 @@
     <div class='article'>
         <div class="content-title">
             <h1>Pip 无网络环境安装包</h1>
-2015-10-20 21-03-20
+2015-10-20 22-28-48
 
 by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
  
@@ -62,13 +62,13 @@ by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
 
         </div>
 	
-        <div><p>在内网部署 Python 的时候, 因为不能用连接到 <code>pip</code> 源所以仅仅靠 requirement.txt 是不够的. 
-我们需要 wheel 这个工具帮我们把需要的依赖先打成本地包. 
-<code>pip wheel --wheel-dir=/tmp/wheelhouse tornado</code>
-这样 tornado 的依赖包就全在 wheelhouse 里了 
-我们面对一个更悲剧的情况, 线上连 <code>pip</code> 都没, 那么只能先在线下先给装好包.
-<code>pip install --use-wheel --no-index --find-links=/tmp/wheelhouse -t  /tmp/wheelhouse/code tornado</code>
-这样包就全在 code 里了, 可以直接复制到线上. <strong>要注意编译环境一致和 so 库</strong></p></div>
+        <div><p>在内网部署 Python 的时候, 因为不能用连接到 <code>pip</code> 源所以仅仅靠 requirement.txt 是不够的.<br />
+我们需要 wheel 这个工具帮我们把需要的依赖先打成本地包.<br />
+<code>pip wheel --wheel-dir=/tmp/wheelhouse tornado</code><br />
+这样 tornado 的依赖包就全在 wheelhouse 里了 <br />
+我们面对一个更悲剧的情况, 线上连 <code>pip</code> 都没, 那么只能先在线下先给装好包.<br />
+<code>pip install --use-wheel --no-index --find-links=/tmp/wheelhouse -t  /tmp/wheelhouse/code tornado</code><br />
+这样包就全在 code 里了, 可以直接复制到线上. <strong>要注意编译环境一致和 so 库</strong>   </p></div>
 	
         <hr>
 
@@ -141,8 +141,8 @@ by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
                 Social
                 </li>
            
-                <li><a href="https://github.com/kamushin">Kamushin</a></li>
-                <li><a href="http://segmentfault.com/u/kamushin">Kamushin</a></li>
+                <li><a href="https://github.com/kamushin">Github</a></li>
+                <li><a href="http://segmentfault.com/u/kamushin">SegmentFault</a></li>
             </ul>
             </div>
             </div>

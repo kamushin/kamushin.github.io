@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Kamushin's blog</title><link>/</link><description></description><atom:link href="/feeds/kamushin.rss.xml" rel="self"></atom:link><lastBuildDate>Tue, 20 Oct 2015 21:03:20 +0800</lastBuildDate><item><title>Pip 无网络环境安装包</title><link>/tool/2015-10-20.html</link><description>&lt;p&gt;在内网部署 Python 的时候, 因为不能用连接到 &lt;code&gt;pip&lt;/code&gt; 源所以仅仅靠 requirement.txt 是不够的. 
-我们需要 wheel 这个工具帮我们把需要的依赖先打成本地包. 
-&lt;code&gt;pip wheel --wheel-dir=/tmp/wheelhouse tornado&lt;/code&gt;
-这样 tornado 的依赖包就全在 wheelhouse 里了 
-我们面对一个更悲剧的情况, 线上连 &lt;code&gt;pip&lt;/code&gt; 都没, 那么只能先在线下先给装好包.
-&lt;code&gt;pip install --use-wheel --no-index --find-links=/tmp/wheelhouse -t  /tmp/wheelhouse/code tornado&lt;/code&gt;
-这样包就全在 code 里了, 可以直接复制到线上. &lt;strong&gt;要注意编译环境一致和 so 库&lt;/strong&gt;&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Kamushin</dc:creator><pubDate>Tue, 20 Oct 2015 21:03:20 +0800</pubDate><guid>tag:,2015-10-20:tool/2015-10-20.html</guid><category>Python</category></item><item><title>当我们在谈论异常时我们在谈论什么?</title><link>/learning/2015-10-19-2.html</link><description>&lt;h3&gt;异常是什么&lt;/h3&gt;
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Kamushin's blog</title><link>/</link><description></description><atom:link href="/feeds/kamushin.rss.xml" rel="self"></atom:link><lastBuildDate>Tue, 20 Oct 2015 22:28:48 +0800</lastBuildDate><item><title>Pip 无网络环境安装包</title><link>/tool/2015-10-20.html</link><description>&lt;p&gt;在内网部署 Python 的时候, 因为不能用连接到 &lt;code&gt;pip&lt;/code&gt; 源所以仅仅靠 requirement.txt 是不够的.&lt;br /&gt;
+我们需要 wheel 这个工具帮我们把需要的依赖先打成本地包.&lt;br /&gt;
+&lt;code&gt;pip wheel --wheel-dir=/tmp/wheelhouse tornado&lt;/code&gt;&lt;br /&gt;
+这样 tornado 的依赖包就全在 wheelhouse 里了 &lt;br /&gt;
+我们面对一个更悲剧的情况, 线上连 &lt;code&gt;pip&lt;/code&gt; 都没, 那么只能先在线下先给装好包.&lt;br /&gt;
+&lt;code&gt;pip install --use-wheel --no-index --find-links=/tmp/wheelhouse -t  /tmp/wheelhouse/code tornado&lt;/code&gt;&lt;br /&gt;
+这样包就全在 code 里了, 可以直接复制到线上. &lt;strong&gt;要注意编译环境一致和 so 库&lt;/strong&gt;   &lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Kamushin</dc:creator><pubDate>Tue, 20 Oct 2015 22:28:48 +0800</pubDate><guid>tag:,2015-10-20:tool/2015-10-20.html</guid><category>Python</category></item><item><title>当我们在谈论异常时我们在谈论什么?</title><link>/learning/2015-10-19-2.html</link><description>&lt;h3&gt;异常是什么&lt;/h3&gt;
 &lt;p&gt;异常是一种用来分离程序运行中那1%会走进的&lt;strong&gt;岔路&lt;/strong&gt;的分支控制手段.&lt;/p&gt;
 &lt;h3&gt;语言是如何实现它的&lt;/h3&gt;
 &lt;p&gt;曾经, 大概在我大三末大四初的时候, 有幸读了本 C 接口与实现, 书里用 &lt;code&gt;setjump &amp;amp; longjmp&lt;/code&gt; 和宏的方式向我展现了如何在 C 语言中实现它.&lt;/p&gt;
