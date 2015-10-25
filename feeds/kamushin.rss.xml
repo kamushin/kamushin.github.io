@@ -1,18 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Kamushin's blog</title><link>/</link><description></description><atom:link href="/feeds/kamushin.rss.xml" rel="self"></atom:link><lastBuildDate>Tue, 20 Oct 2015 22:28:48 +0800</lastBuildDate><item><title>Pip 无网络环境安装包</title><link>/tool/2015-10-20.html</link><description>&lt;p&gt;在内网部署 Python 的时候, 因为不能用连接到 &lt;code&gt;pip&lt;/code&gt; 源所以仅仅靠 requirement.txt 是不够的.&lt;br /&gt;
-我们需要 wheel 这个工具帮我们把需要的依赖先打成本地包.&lt;br /&gt;
-&lt;code&gt;pip wheel --wheel-dir=/tmp/wheelhouse tornado&lt;/code&gt;&lt;br /&gt;
-这样 tornado 的依赖包就全在 wheelhouse 里了 &lt;br /&gt;
-我们面对一个更悲剧的情况, 线上连 &lt;code&gt;pip&lt;/code&gt; 都没, 那么只能先在线下先给装好包.&lt;br /&gt;
-&lt;code&gt;pip install --use-wheel --no-index --find-links=/tmp/wheelhouse -t  /tmp/wheelhouse/code tornado&lt;/code&gt;&lt;br /&gt;
-这样包就全在 code 里了, 可以直接复制到线上. &lt;strong&gt;要注意编译环境一致和 so 库&lt;/strong&gt;   &lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Kamushin</dc:creator><pubDate>Tue, 20 Oct 2015 22:28:48 +0800</pubDate><guid>tag:,2015-10-20:tool/2015-10-20.html</guid><category>Python</category></item><item><title>当我们在谈论异常时我们在谈论什么?</title><link>/learning/2015-10-19-2.html</link><description>&lt;h3&gt;异常是什么&lt;/h3&gt;
-&lt;p&gt;异常是一种用来分离程序运行中那1%会走进的&lt;strong&gt;岔路&lt;/strong&gt;的分支控制手段.&lt;/p&gt;
-&lt;h3&gt;语言是如何实现它的&lt;/h3&gt;
-&lt;p&gt;曾经, 大概在我大三末大四初的时候, 有幸读了本 C 接口与实现, 书里用 &lt;code&gt;setjump &amp;amp; longjmp&lt;/code&gt; 和宏的方式向我展现了如何在 C 语言中实现它.&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;Exception is a beautiful goto. &lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;p&gt;当然, sjlj 只是实现异常的一种, 还有基于 table 的方式等等, 更加高效, 在不进入异常时不产生副作用.&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Kamushin</dc:creator><pubDate>Mon, 19 Oct 2015 23:40:31 +0800</pubDate><guid>tag:,2015-10-19:learning/2015-10-19-2.html</guid><category>exception</category></item><item><title>MySQL 优化学习之路</title><link>/learning/2015-10-19.html</link><description>&lt;h3&gt;Overview&lt;/h3&gt;
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Kamushin's blog</title><link>/</link><description></description><atom:link href="/feeds/kamushin.rss.xml" rel="self"></atom:link><lastBuildDate>Mon, 26 Oct 2015 00:07:54 +0800</lastBuildDate><item><title>New fxg for me</title><link>/tool/fxg_new.html</link><description>&lt;p&gt;&lt;a href="http://kamushin.github.io/tool/fxg.html"&gt;previos article about fxg&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;fxg&lt;/code&gt; means &lt;code&gt;find&lt;/code&gt; and &lt;code&gt;xargs&lt;/code&gt; then &lt;code&gt;grep&lt;/code&gt;. It has a insufferable performace, so &lt;br /&gt;
+I use &lt;code&gt;ag&lt;/code&gt; to instead, after forking some tools made by &lt;a href="https://github.com/lilydjwg/search-and-view"&gt;lilydjwg&lt;/a&gt;
+The tool chain is used for finding pattern in files and opening file by vim.
+I rewrite a simple version of &lt;code&gt;vv&lt;/code&gt;.&lt;/p&gt;
+&lt;table class="highlighttable"&gt;&lt;tr&gt;&lt;td class="linenos"&gt;&lt;div class="linenodiv"&gt;&lt;pre&gt; 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12&lt;/pre&gt;&lt;/div&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="c"&gt;#!/usr/bin/env python&lt;/span&gt;
+&lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;sys&lt;/span&gt;
+&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;subprocess&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;call&lt;/span&gt;
+&lt;span class="n"&gt;line_number&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nb"&gt;int&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;sys&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;argv&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;])&lt;/span&gt;
+&lt;span class="k"&gt;with&lt;/span&gt; &lt;span class="nb"&gt;open&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;/tmp/fxg.log&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;as&lt;/span&gt; &lt;span class="n"&gt;f&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+    &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;index&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;line&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="nb"&gt;enumerate&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;f&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;readlines&lt;/span&gt;&lt;span class="p"&gt;()):&lt;/span&gt;
+        &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="n"&gt;index&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="n"&gt;line_number&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+            &lt;span class="n"&gt;args&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;line&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;split&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;:&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+            &lt;span class="n"&gt;filename&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;args&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;strip&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;split&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;&lt;/span&gt;&lt;span class="se"&gt;\t&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;)[&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+            &lt;span class="n"&gt;file_line&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;args&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+            &lt;span class="k"&gt;print&lt;/span&gt; &lt;span class="n"&gt;filename&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="s"&gt;&amp;quot;:&amp;quot;&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;file_line&lt;/span&gt;
+            &lt;span class="n"&gt;call&lt;/span&gt;&lt;span class="p"&gt;([&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;vim&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;filename&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;  &lt;span class="s"&gt;&amp;quot;+&amp;quot;&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;file_line&lt;/span&gt;&lt;span class="p"&gt;])&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+
+&lt;p&gt;Insert of writing regex pattern to match the complex colored output, I call ag the second time to gen a un-colored output to log file.
+And I also add a &lt;code&gt;-G&lt;/code&gt; for file pattern.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;fxg () {
+    ag -s -G $1 --column --nogroup --color $2 | nl &amp;amp;&amp;amp; ag -s -G $1 --column --nogroup $2 | nl &amp;gt; /tmp/fxg.log
+}
+&lt;/pre&gt;&lt;/div&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Kamushin</dc:creator><pubDate>Mon, 26 Oct 2015 00:07:54 +0800</pubDate><guid>tag:,2015-10-26:tool/fxg_new.html</guid><category>Ag</category><category>Linux</category></item><item><title>MySQL 优化学习之路</title><link>/learning/mysql_opti.html</link><description>&lt;h3&gt;Overview&lt;/h3&gt;
 &lt;h4&gt;DB Level&lt;/h4&gt;
 &lt;ul&gt;
 &lt;li&gt;table structure: column data type | table with few or many columns&lt;/li&gt;
@@ -49,7 +72,73 @@
 &lt;li&gt;index extensions: add pk after each secondary index  5.6.9&lt;/li&gt;
 &lt;li&gt;two kinds of filesort&lt;/li&gt;
 &lt;li&gt;group by: loose index scan vs tight index scan, depends on distribution of column(cardinality).&lt;/li&gt;
-&lt;/ul&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Kamushin</dc:creator><pubDate>Mon, 19 Oct 2015 23:19:34 +0800</pubDate><guid>tag:,2015-10-19:learning/2015-10-19.html</guid><category>MySQL</category></item><item><title>把Capslock重定向为Ctrl</title><link>/nix/Change_caplocks.html</link><description>&lt;p&gt;Capslock这键平时没多大用，而Ctrl则用的非常多，所以把Capslock换成Ctrl也算是个比较常见的需求。&lt;/p&gt;
+&lt;/ul&gt;
+&lt;h4&gt;INSERT&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;use INSERT statements with multiple VALUES lists to insert several rows at a time will be faster than using separate single-row INSERT statements.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;bulk_insert_buffer_size&lt;/code&gt; for large INSERT&lt;/li&gt;
+&lt;li&gt;insert values explicitly only when the value to be inserted differs from the default.&lt;/li&gt;
+&lt;li&gt;Bulk insert speed up (https://dev.mysql.com/doc/refman/5.6/en/optimizing-innodb-bulk-data-loading.html)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4&gt;Update&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;same with INSERT&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4&gt;DELETE&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;truncate&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4&gt;Optimizing INFORMATION_SCHEMA Queries&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;Try to use constant lookup values for database and table names in the WHERE clause&lt;/li&gt;
+&lt;li&gt;Write queries that minimize the number of table files that must be opened (???)&lt;/li&gt;
+&lt;li&gt;Use EXPLAIN to determine whether the server can use INFORMATION_SCHEMA optimizations for a query&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;Index&lt;/h3&gt;
+&lt;p&gt;Index can improve the speed of determining rows which match where statements. But useless indexs are waste of space and time for db to determinie whcih index to use and need more time to create indexs when insert.&lt;/p&gt;
+&lt;h4&gt;How MySQL use index&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;the most seletive indexs&lt;/li&gt;
+&lt;li&gt;leftmost prefix of the index&lt;/li&gt;
+&lt;li&gt;join: &lt;ul&gt;
+&lt;li&gt;use same data type will be faster // varchar and char are the same if their size equal.&lt;/li&gt;
+&lt;li&gt;must use the same character set when compare string columns&lt;/li&gt;
+&lt;li&gt;comparison of dissimilar column may prevent use of indexs&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;MIN() MAX() of column &lt;code&gt;key_col&lt;/code&gt; will be O(1) if all &lt;code&gt;key_part_N&lt;/code&gt; before &lt;code&gt;key_col&lt;/code&gt; in where statement is constant.&lt;/li&gt;
+&lt;li&gt;cover index // here not mention numeric&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4&gt;Primary Key&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;use numeric pk&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4&gt;Foreign Key&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;split low-frequently data into separate table&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4&gt;Column Key&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;prefix index &lt;/li&gt;
+&lt;li&gt;fulltext for char varchar and text&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4&gt;Statistic&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;expr1 = expr2 is not true when expr1 or expr2 (or both) are NULL&lt;/li&gt;
+&lt;/ul&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Kamushin</dc:creator><pubDate>Sun, 25 Oct 2015 22:56:42 +0800</pubDate><guid>tag:,2015-10-25:learning/mysql_opti.html</guid><category>MySQL</category></item><item><title>Pip 无网络环境安装包</title><link>/tool/2015-10-20.html</link><description>&lt;p&gt;在内网部署 Python 的时候, 因为不能用连接到 &lt;code&gt;pip&lt;/code&gt; 源所以仅仅靠 requirement.txt 是不够的.&lt;br /&gt;
+我们需要 wheel 这个工具帮我们把需要的依赖先打成本地包.&lt;br /&gt;
+&lt;code&gt;pip wheel --wheel-dir=/tmp/wheelhouse tornado&lt;/code&gt;&lt;br /&gt;
+这样 tornado 的依赖包就全在 wheelhouse 里了 &lt;br /&gt;
+我们面对一个更悲剧的情况, 线上连 &lt;code&gt;pip&lt;/code&gt; 都没, 那么只能先在线下先给装好包.&lt;br /&gt;
+&lt;code&gt;pip install --use-wheel --no-index --find-links=/tmp/wheelhouse -t  /tmp/wheelhouse/code tornado&lt;/code&gt;&lt;br /&gt;
+这样包就全在 code 里了, 可以直接复制到线上. &lt;strong&gt;要注意编译环境一致和 so 库&lt;/strong&gt;   &lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Kamushin</dc:creator><pubDate>Tue, 20 Oct 2015 22:28:48 +0800</pubDate><guid>tag:,2015-10-20:tool/2015-10-20.html</guid><category>Python</category></item><item><title>当我们在谈论异常时我们在谈论什么?</title><link>/learning/2015-10-19-2.html</link><description>&lt;h3&gt;异常是什么&lt;/h3&gt;
+&lt;p&gt;异常是一种用来分离程序运行中那1%会走进的&lt;strong&gt;岔路&lt;/strong&gt;的分支控制手段.&lt;/p&gt;
+&lt;h3&gt;语言是如何实现它的&lt;/h3&gt;
+&lt;p&gt;曾经, 大概在我大三末大四初的时候, 有幸读了本 C 接口与实现, 书里用 &lt;code&gt;setjump &amp;amp; longjmp&lt;/code&gt; 和宏的方式向我展现了如何在 C 语言中实现它.&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Exception is a beautiful goto. &lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;当然, sjlj 只是实现异常的一种, 还有基于 table 的方式等等, 更加高效, 在不进入异常时不产生副作用.&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Kamushin</dc:creator><pubDate>Mon, 19 Oct 2015 23:40:31 +0800</pubDate><guid>tag:,2015-10-19:learning/2015-10-19-2.html</guid><category>exception</category></item><item><title>把Capslock重定向为Ctrl</title><link>/nix/Change_caplocks.html</link><description>&lt;p&gt;Capslock这键平时没多大用，而Ctrl则用的非常多，所以把Capslock换成Ctrl也算是个比较常见的需求。&lt;/p&gt;
 &lt;p&gt;以前我是把xmodmap里swap脚本小改一下，也算在Arch上能用。&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;remove Lock = Caps_Lock
 remove Control = Control_L

@@ -58,8 +58,8 @@
 
     <div class='article'>
         <div class="content-title">
-            <a href="/learning/2015-10-19.html"><h1>MySQL 优化学习之路</h1></a>
-2015-10-19 23-19-34
+            <a href="/learning/mysql_opti.html"><h1>MySQL 优化学习之路</h1></a>
+2015-10-25 22-56-42
 
 by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
  
@@ -105,6 +105,59 @@ by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
 <li>index extensions: add pk after each secondary index  5.6.9</li>
 <li>two kinds of filesort</li>
 <li>group by: loose index scan vs tight index scan, depends on distribution of column(cardinality).</li>
+</ul>
+<h4>INSERT</h4>
+<ul>
+<li>use INSERT statements with multiple VALUES lists to insert several rows at a time will be faster than using separate single-row INSERT statements.</li>
+<li><code>bulk_insert_buffer_size</code> for large INSERT</li>
+<li>insert values explicitly only when the value to be inserted differs from the default.</li>
+<li>Bulk insert speed up (https://dev.mysql.com/doc/refman/5.6/en/optimizing-innodb-bulk-data-loading.html)</li>
+</ul>
+<h4>Update</h4>
+<ul>
+<li>same with INSERT</li>
+</ul>
+<h4>DELETE</h4>
+<ul>
+<li>truncate</li>
+</ul>
+<h4>Optimizing INFORMATION_SCHEMA Queries</h4>
+<ul>
+<li>Try to use constant lookup values for database and table names in the WHERE clause</li>
+<li>Write queries that minimize the number of table files that must be opened (???)</li>
+<li>Use EXPLAIN to determine whether the server can use INFORMATION_SCHEMA optimizations for a query</li>
+</ul>
+<h3>Index</h3>
+<p>Index can improve the speed of determining rows which match where statements. But useless indexs are waste of space and time for db to determinie whcih index to use and need more time to create indexs when insert.</p>
+<h4>How MySQL use index</h4>
+<ul>
+<li>the most seletive indexs</li>
+<li>leftmost prefix of the index</li>
+<li>join: <ul>
+<li>use same data type will be faster // varchar and char are the same if their size equal.</li>
+<li>must use the same character set when compare string columns</li>
+<li>comparison of dissimilar column may prevent use of indexs</li>
+</ul>
+</li>
+<li>MIN() MAX() of column <code>key_col</code> will be O(1) if all <code>key_part_N</code> before <code>key_col</code> in where statement is constant.</li>
+<li>cover index // here not mention numeric</li>
+</ul>
+<h4>Primary Key</h4>
+<ul>
+<li>use numeric pk</li>
+</ul>
+<h4>Foreign Key</h4>
+<ul>
+<li>split low-frequently data into separate table</li>
+</ul>
+<h4>Column Key</h4>
+<ul>
+<li>prefix index </li>
+<li>fulltext for char varchar and text</li>
+</ul>
+<h4>Statistic</h4>
+<ul>
+<li>expr1 = expr2 is not true when expr1 or expr2 (or both) are NULL</li>
 </ul></div>
         <hr />
     </div>
