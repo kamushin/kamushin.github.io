@@ -1,18 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Kamushin's blog</title><link>/</link><description></description><atom:link href="/feeds/kamushin.rss.xml" rel="self"></atom:link><lastBuildDate>Wed, 28 Oct 2015 16:45:51 +0800</lastBuildDate><item><title>Use webpack together with browser-sync</title><link>/tool/webpack_and_browser-sync.html</link><description>&lt;p&gt;Here are some tips about using &lt;code&gt;webpack&lt;/code&gt; and &lt;code&gt;Browsersync&lt;/code&gt; to improve working speed.&lt;/p&gt;
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Kamushin's blog</title><link>/</link><description></description><atom:link href="/feeds/kamushin.rss.xml" rel="self"></atom:link><lastBuildDate>Wed, 28 Oct 2015 16:47:03 +0800</lastBuildDate><item><title>Use webpack together with browser-sync</title><link>/tool/webpack_and_browser-sync.html</link><description>&lt;p&gt;Here are some tips about using &lt;code&gt;webpack&lt;/code&gt; and &lt;code&gt;Browsersync&lt;/code&gt; to improve working speed.&lt;/p&gt;
 &lt;h3&gt;Browsersync&lt;/h3&gt;
 &lt;p&gt;Browsersync makes your browser testing workflow faster by synchronising URLs, interactions and code changes across multiple devices.&lt;/p&gt;
-&lt;h3&gt;Proxy&lt;/h3&gt;
+&lt;h4&gt;Proxy&lt;/h4&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;browser-sync start --proxy localhost:8888 --port 4000 --files index.html --files src/*
 &lt;/pre&gt;&lt;/div&gt;
 
 
 &lt;p&gt;Used to proxy ajax request to back-end server.&lt;/p&gt;
 &lt;h3&gt;Webpack&lt;/h3&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;With webpack, don&amp;#39;t need `require.js` and `require-react-plugin` loading in `index.html`. Very useful to me.
-&lt;/pre&gt;&lt;/div&gt;
-
-
+&lt;p&gt;With webpack, don't need &lt;code&gt;require.js&lt;/code&gt; and &lt;code&gt;require-react-plugin&lt;/code&gt; loading in &lt;code&gt;index.html&lt;/code&gt;. Very useful to me.&lt;/p&gt;
 &lt;h4&gt;Work together&lt;/h4&gt;
 &lt;p&gt;&lt;code&gt;webpack.config.js&lt;/code&gt;:&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;var BrowserSyncPlugin = require(&amp;#39;browser-sync-webpack-plugin&amp;#39;);
@@ -42,7 +39,7 @@ plugins: [
 })  
 ]
 };
-&lt;/pre&gt;&lt;/div&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Kamushin</dc:creator><pubDate>Wed, 28 Oct 2015 16:45:51 +0800</pubDate><guid>tag:,2015-10-28:tool/webpack_and_browser-sync.html</guid><category>front-end</category></item><item><title>New fxg for me</title><link>/tool/fxg_new.html</link><description>&lt;p&gt;&lt;a href="http://kamushin.github.io/tool/fxg.html"&gt;previos article about fxg&lt;/a&gt;&lt;/p&gt;
+&lt;/pre&gt;&lt;/div&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Kamushin</dc:creator><pubDate>Wed, 28 Oct 2015 16:47:03 +0800</pubDate><guid>tag:,2015-10-28:tool/webpack_and_browser-sync.html</guid><category>front-end</category></item><item><title>New fxg for me</title><link>/tool/fxg_new.html</link><description>&lt;p&gt;&lt;a href="http://kamushin.github.io/tool/fxg.html"&gt;previos article about fxg&lt;/a&gt;&lt;/p&gt;
 &lt;p&gt;&lt;code&gt;fxg&lt;/code&gt; means &lt;code&gt;find&lt;/code&gt; and &lt;code&gt;xargs&lt;/code&gt; then &lt;code&gt;grep&lt;/code&gt;. It has a insufferable performace, so &lt;br /&gt;
 I use &lt;code&gt;ag&lt;/code&gt; to instead, after forking some tools made by &lt;a href="https://github.com/lilydjwg/search-and-view"&gt;lilydjwg&lt;/a&gt;
 The tool chain is used for finding pattern in files and opening file by vim.

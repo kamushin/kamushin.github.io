@@ -54,7 +54,7 @@
     <div class='article'>
         <div class="content-title">
             <h1>Use webpack together with browser-sync</h1>
-2015-10-28 16-45-51
+2015-10-28 16-47-03
 
 by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
  
@@ -65,17 +65,14 @@ by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
         <div><p>Here are some tips about using <code>webpack</code> and <code>Browsersync</code> to improve working speed.</p>
 <h3>Browsersync</h3>
 <p>Browsersync makes your browser testing workflow faster by synchronising URLs, interactions and code changes across multiple devices.</p>
-<h3>Proxy</h3>
+<h4>Proxy</h4>
 <div class="highlight"><pre>browser-sync start --proxy localhost:8888 --port 4000 --files index.html --files src/*
 </pre></div>
 
 
 <p>Used to proxy ajax request to back-end server.</p>
 <h3>Webpack</h3>
-<div class="highlight"><pre>With webpack, don&#39;t need `require.js` and `require-react-plugin` loading in `index.html`. Very useful to me.
-</pre></div>
-
-
+<p>With webpack, don't need <code>require.js</code> and <code>require-react-plugin</code> loading in <code>index.html</code>. Very useful to me.</p>
 <h4>Work together</h4>
 <p><code>webpack.config.js</code>:</p>
 <div class="highlight"><pre>var BrowserSyncPlugin = require(&#39;browser-sync-webpack-plugin&#39;);
