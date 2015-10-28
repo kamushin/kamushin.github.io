@@ -59,7 +59,7 @@
     <div class='article'>
         <div class="content-title">
             <a href="/tool/webpack_and_browser-sync.html"><h1>Use webpack together with browser-sync</h1></a>
-2015-10-28 16-47-03
+2015-10-28 16-56-48
 
 by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
  
@@ -70,7 +70,8 @@ by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
         
         <div><p>Here are some tips about using <code>webpack</code> and <code>Browsersync</code> to improve working speed.</p>
 <h3>Browsersync</h3>
-<p>Browsersync makes your browser testing workflow faster by synchronising URLs, interactions and code changes across multiple devices.</p>
+<p>Browsersync makes your browser testing workflow faster by synchronising URLs, interactions and code changes across multiple devices. <br />
+<code>npm install browser-sync@2.7.1 -g</code></p>
 <h4>Proxy</h4>
 <div class="highlight"><pre>browser-sync start --proxy localhost:8888 --port 4000 --files index.html --files src/*
 </pre></div>
@@ -78,9 +79,11 @@ by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
 
 <p>Used to proxy ajax request to back-end server.</p>
 <h3>Webpack</h3>
-<p>With webpack, don't need <code>require.js</code> and <code>require-react-plugin</code> loading in <code>index.html</code>. Very useful to me.</p>
+<p>With webpack, don't need <code>require.js</code> and <code>require-react-plugin</code> loading in <code>index.html</code>. Very useful to me. <br />
+<code>npm install webpack -g</code></p>
 <h4>Work together</h4>
-<p><code>webpack.config.js</code>:</p>
+<p><code>npm install -g browser-sync-webpack-plugin</code>
+And config <code>webpack.config.js</code>:</p>
 <div class="highlight"><pre>var BrowserSyncPlugin = require(&#39;browser-sync-webpack-plugin&#39;);
 module.exports = {
 entry: &#39;./src/js/index.js&#39;,
