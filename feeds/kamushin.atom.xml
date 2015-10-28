@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Kamushin's blog</title><link href="/" rel="alternate"></link><link href="/feeds/kamushin.atom.xml" rel="self"></link><id>/</id><updated>2015-10-28T16:32:00+08:00</updated><entry><title>Use webpack together with browser-sync</title><link href="/tool/webpack_and_browser-sync.html" rel="alternate"></link><updated>2015-10-28T16:32:00+08:00</updated><author><name>Kamushin</name></author><id>tag:,2015-10-28:tool/webpack_and_browser-sync.html</id><summary type="html">&lt;p&gt;Here are some tips about using &lt;code&gt;webpack&lt;/code&gt; and &lt;code&gt;Browsersync&lt;/code&gt; to improve working speed.&lt;/p&gt;
-&lt;h4&gt;Browsersync Proxy&lt;/h4&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Kamushin's blog</title><link href="/" rel="alternate"></link><link href="/feeds/kamushin.atom.xml" rel="self"></link><id>/</id><updated>2015-10-28T16:45:51+08:00</updated><entry><title>Use webpack together with browser-sync</title><link href="/tool/webpack_and_browser-sync.html" rel="alternate"></link><updated>2015-10-28T16:45:51+08:00</updated><author><name>Kamushin</name></author><id>tag:,2015-10-28:tool/webpack_and_browser-sync.html</id><summary type="html">&lt;p&gt;Here are some tips about using &lt;code&gt;webpack&lt;/code&gt; and &lt;code&gt;Browsersync&lt;/code&gt; to improve working speed.&lt;/p&gt;
+&lt;h3&gt;Browsersync&lt;/h3&gt;
+&lt;p&gt;Browsersync makes your browser testing workflow faster by synchronising URLs, interactions and code changes across multiple devices.&lt;/p&gt;
+&lt;h3&gt;Proxy&lt;/h3&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;browser-sync start --proxy localhost:8888 --port 4000 --files index.html --files src/*
 &lt;/pre&gt;&lt;/div&gt;
 
