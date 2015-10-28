@@ -51,59 +51,80 @@
     <div class="row">
 
         <div class="span9">
+        
 
-<h1>Archives</h1>
-
-<table class="table">
-    <tbody>
-        <tr>
-        <td>28 10 2015</td>
-        <td><a href='/tool/webpack_and_browser-sync.html'>Use webpack together with browser-sync</a></td>
-        </tr>
-        <tr>
-        <td>26 10 2015</td>
-        <td><a href='/tool/fxg_new.html'>New fxg for me</a></td>
-        </tr>
-        <tr>
-        <td>25 10 2015</td>
-        <td><a href='/learning/mysql_opti.html'>MySQL 优化学习之路</a></td>
-        </tr>
-        <tr>
-        <td>20 10 2015</td>
-        <td><a href='/tool/2015-10-20.html'>Pip 无网络环境安装包</a></td>
-        </tr>
-        <tr>
-        <td>19 10 2015</td>
-        <td><a href='/learning/2015-10-19-2.html'>当我们在谈论异常时我们在谈论什么?</a></td>
-        </tr>
-        <tr>
-        <td>19 10 2015</td>
-        <td><a href='/nix/Change_caplocks.html'>把Capslock重定向为Ctrl</a></td>
-        </tr>
-        <tr>
-        <td>19 10 2015</td>
-        <td><a href='/nix/Chrome_be_hijacked.html'>Mac上遇到了一个Chrome和Safari被劫持的问题</a></td>
-        </tr>
-        <tr>
-        <td>19 10 2015</td>
-        <td><a href='/nix/Pelican.html'>Pelican上增加评论和自动删除文章的一些坑</a></td>
-        </tr>
-        <tr>
-        <td>19 10 2015</td>
-        <td><a href='/tool/fxg.html'>用正则来解决grep时行过长的问题</a></td>
-        </tr>
-        <tr>
-        <td>19 10 2015</td>
-        <td><a href='/learning/tcp-self-connect.html'>TCP自连接</a></td>
-        </tr>
-        <tr>
-        <td>19 10 2015</td>
-        <td><a href='/learning/test.html'>开始学习陈硕的网络编程课程</a></td>
-        </tr>
-    </tbody>
-</table>
+        
 
 
+    <div class='article'>
+        <div class="content-title">
+            <a href="/tool/webpack_and_browser-sync.html"><h1>Use webpack together with browser-sync</h1></a>
+2015-10-28 16-32-00
+
+by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
+ 
+
+
+ 
+        </div>
+        
+        <div><p>Here are some tips about using <code>webpack</code> and <code>Browsersync</code> to improve working speed.</p>
+<h4>Browsersync Proxy</h4>
+<div class="highlight"><pre>browser-sync start --proxy localhost:8888 --port 4000 --files index.html --files src/*
+</pre></div>
+
+
+<p>Used to proxy ajax request to back-end server.</p>
+<h3>Webpack</h3>
+<div class="highlight"><pre>With webpack, don&#39;t need `require.js` and `require-react-plugin` loading in `index.html`. Very useful to me.
+</pre></div>
+
+
+<h4>Work together</h4>
+<p><code>webpack.config.js</code>:</p>
+<div class="highlight"><pre>var BrowserSyncPlugin = require(&#39;browser-sync-webpack-plugin&#39;);
+module.exports = {
+entry: &#39;./src/js/index.js&#39;,
+output: {
+    publicPath: &#39;./dist/&#39;,
+    path: &#39;./dist/&#39;,
+    filename: &#39;bundle.js&#39;,
+    pathinfo: true
+},
+resolve: {
+    root: &#39;.&#39;
+},
+module: {
+    loaders: [
+    {test: /\.js/, loader: &#39;jsx-loader?harmony&#39;}
+    ]
+},
+plugins: [
+    new BrowserSyncPlugin({
+    host: &#39;localhost&#39;,
+    port: 4000,
+    proxy: &#39;localhost:8888&#39;,
+    files: &#39;src/*&#39;,
+    files: &#39;index.html&#39;
+})  
+]
+};
+</pre></div></div>
+        <hr />
+    </div>
+		
+<div class="pagination">
+<ul>
+    <li class="prev disabled"><a href="#">&larr; Previous</a></li>
+
+    <li class="active"><a href="/tag/front-end.html">1</a></li>
+
+    <li class="next disabled"><a href="#">&rarr; Next</a></li>
+
+</ul>
+</div>
+ 
+  
         </div>
         
         <div class="span3">
