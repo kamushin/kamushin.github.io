@@ -58,8 +58,8 @@
 
     <div class='article'>
         <div class="content-title">
-            <a href="/learning/mysql_opti.html"><h1>MySQL 优化学习之路</h1></a>
-2015-10-25 22-56-42
+            <a href="/learning/python_oracle.html"><h1>Some tricks when using cx_Oracle</h1></a>
+2015-11-27 16-01-57
 
 by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
  
@@ -68,100 +68,52 @@ by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
  
         </div>
         
-        <div><h3>Overview</h3>
-<h4>DB Level</h4>
-<ul>
-<li>table structure: column data type | table with few or many columns</li>
-<li>right indexs</li>
-<li>storage engine</li>
-<li>data format: compression or not</li>
-<li>locking strategy</li>
-<li>caching size</li>
-</ul>
-<h4>Hardware Level</h4>
-<ul>
-<li>Disk seeks 10ms</li>
-<li>Disk reading and writing. easier to optimize than disk seeks</li>
-<li>CPU cycles large tables compared to the amount of memory ???</li>
-<li>Memory bandwith when CPU needs more data to fit in CPU cache ???</li>
-</ul>
-<h3>SQL</h3>
-<ul>
-<li>use explain</li>
-<li>indexs</li>
-<li>avoid full table scan</li>
-<li>analyze table periodically</li>
-<li>read-only transactions 5.6.4+ // had read an article on ATA about this</li>
-<li>avoid transforming query hard to read, optimizer will do this</li>
-</ul>
-<h4>SELECT</h4>
-<ul>
-<li>cover index: In some cases, MySQL can read rows from the index without even consulting the data file. If all columns used from the index are numeric, only the index tree is used to resolve the query. // need numeric ? TODO</li>
-<li>range index<ul>
-<li>MySQL does not support merging ranges， use union</li>
-<li><code>eq_range_index_dive_limit</code> To permit use of index dives for comparisons of up to N equality ranges, set <code>eq_range_index_dive_limit</code> to N + 1</li>
-</ul>
-</li>
-<li>index extensions: add pk after each secondary index  5.6.9</li>
-<li>two kinds of filesort</li>
-<li>group by: loose index scan vs tight index scan, depends on distribution of column(cardinality).</li>
-</ul>
-<h4>INSERT</h4>
-<ul>
-<li>use INSERT statements with multiple VALUES lists to insert several rows at a time will be faster than using separate single-row INSERT statements.</li>
-<li><code>bulk_insert_buffer_size</code> for large INSERT</li>
-<li>insert values explicitly only when the value to be inserted differs from the default.</li>
-<li>Bulk insert speed up (https://dev.mysql.com/doc/refman/5.6/en/optimizing-innodb-bulk-data-loading.html)</li>
-</ul>
-<h4>Update</h4>
-<ul>
-<li>same with INSERT</li>
-</ul>
-<h4>DELETE</h4>
-<ul>
-<li>truncate</li>
-</ul>
-<h4>Optimizing INFORMATION_SCHEMA Queries</h4>
-<ul>
-<li>Try to use constant lookup values for database and table names in the WHERE clause</li>
-<li>Write queries that minimize the number of table files that must be opened (???)</li>
-<li>Use EXPLAIN to determine whether the server can use INFORMATION_SCHEMA optimizations for a query</li>
-</ul>
-<h3>Index</h3>
-<p>Index can improve the speed of determining rows which match where statements. But useless indexs are waste of space and time for db to determinie whcih index to use and need more time to create indexs when insert.</p>
-<h4>How MySQL use index</h4>
-<ul>
-<li>the most seletive indexs</li>
-<li>leftmost prefix of the index</li>
-<li>join: <ul>
-<li>use same data type will be faster // varchar and char are the same if their size equal.</li>
-<li>must use the same character set when compare string columns</li>
-<li>comparison of dissimilar column may prevent use of indexs</li>
-</ul>
-</li>
-<li>MIN() MAX() of column <code>key_col</code> will be O(1) if all <code>key_part_N</code> before <code>key_col</code> in where statement is constant.</li>
-<li>cover index // here not mention numeric</li>
-</ul>
-<h4>Primary Key</h4>
-<ul>
-<li>use numeric pk</li>
-</ul>
-<h4>Foreign Key</h4>
-<ul>
-<li>split low-frequently data into separate table</li>
-</ul>
-<h4>Column Key</h4>
-<ul>
-<li>prefix index </li>
-<li>fulltext for char varchar and text</li>
-</ul>
-<h4>Statistic</h4>
-<ul>
-<li>expr1 = expr2 is not true when expr1 or expr2 (or both) are NULL</li>
-</ul></div>
+        <div><p>cx_Oracle is a Python module that enables access to Oracle databases.<br />
+However, users may have confusion due to some fetures of this module.</p>
+<h4>Thread safe</h4>
+<p>The default setting of cx_Oracle is not thread-safe.  <br />
+So if user have multiple threads, make sure that specifying <code>threaded=True</code> when creating the connection.   </p>
+<p><code>conn = cx_Oracle.connect(user + '/' + passwd + "@" + host + "/" + db, threaded=True)</code>   </p>
+<p>Otherwise, the program will crash with error message like    </p>
+<p><code>ORA-24550: signal received: [si_signo=11] [si_errno=0] [si_code=2] [si_addr=0000000000000000]</code>  </p>
+<h4>Fetch LOB column</h4>
+<blockquote>
+<p>Internally, Oracle uses LOB locators which are allocated based on the cursor array size. Thus, it is important that the data in the LOB object be manipulated before another internal fetch takes place. The safest way to do this is to use the cursor as an iterator. In particular, do not use the fetchall() method. The exception “LOB variable no longer valid after subsequent fetch” will be raised if an attempt to access a LOB variable after a subsequent fetch is detected.</p>
+</blockquote>
+<p>Use curosr as an iterator rather than use <code>fetchall()</code> method.</p>
+<div class="highlight"><pre>self._cursor.execute(sql, *args)
+def fix_lob(row):
+    def convert(col):
+        if isinstance(col, cx_Oracle.LOB):
+            return str(col)
+        else:
+            return col
+
+    return [convert(c) for c in row]
+
+return [fix_lob(r) for r in self._cursor]
+</pre></div></div>
         <hr />
     </div>
 		
+
+ 
+        
+
+ 
+
+    <div class='article'>
+        <a href="/learning/mysql_opti.html"><h2>MySQL 优化学习之路</h2></a>
+        <div class= "well small"> 2015-10-25 22-56-42
+
+by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
+ 
+
+
+ </div>
+        <div class="summary"><p>阅读MySQL文档, 总结优化经验</p> <a class="btn btn-info xsmall" href="/learning/mysql_opti.html">read more</a></div>
+    </div>	
+				
 
  
         
