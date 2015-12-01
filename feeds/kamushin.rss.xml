@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Kamushin's blog</title><link>/</link><description></description><atom:link href="/feeds/kamushin.rss.xml" rel="self"></atom:link><lastBuildDate>Fri, 27 Nov 2015 16:01:57 +0800</lastBuildDate><item><title>Some tricks when using cx_Oracle</title><link>/learning/python_oracle.html</link><description>&lt;p&gt;cx_Oracle is a Python module that enables access to Oracle databases.&lt;br /&gt;
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Kamushin's blog</title><link>/</link><description></description><atom:link href="/feeds/kamushin.rss.xml" rel="self"></atom:link><lastBuildDate>Tue, 01 Dec 2015 14:15:28 +0800</lastBuildDate><item><title>Difference between ArrayList and Arrays.asList()</title><link>/learning/java-arrayList.html</link><description>&lt;p&gt;&lt;code&gt;Arrays.asList&lt;/code&gt; does not return an &lt;code&gt;ArrayList&lt;/code&gt; instance which has an &lt;code&gt;add&lt;/code&gt; method implemented correctly. &lt;br /&gt;
+It returns a List that is a "view" onto the array - a wrapper that makes the array look like a list&lt;br /&gt;
+Changes to the returned list &lt;code&gt;write through&lt;/code&gt; to the array&lt;br /&gt;
+Since the returned instance is a fixed-size array, the &lt;code&gt;add&lt;/code&gt; method always throw an UnsupporedOperationException.&lt;br /&gt;
+If want to use &lt;code&gt;add&lt;/code&gt; method  &lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;  new ArrayList(Arrays.asList(myArray)); //copies the content of the array to a new ArrayList 
+&lt;/pre&gt;&lt;/div&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Kamushin</dc:creator><pubDate>Tue, 01 Dec 2015 14:15:28 +0800</pubDate><guid>tag:,2015-12-01:learning/java-arrayList.html</guid><category>Java</category></item><item><title>Some tricks when using cx_Oracle</title><link>/learning/python_oracle.html</link><description>&lt;p&gt;cx_Oracle is a Python module that enables access to Oracle databases.&lt;br /&gt;
 However, users may have confusion due to some fetures of this module.&lt;/p&gt;
 &lt;h4&gt;Thread safe&lt;/h4&gt;
 &lt;p&gt;The default setting of cx_Oracle is not thread-safe.  &lt;br /&gt;

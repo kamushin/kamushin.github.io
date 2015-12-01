@@ -51,67 +51,41 @@
     <div class="row">
 
         <div class="span9">
+    <div class='article'>
+        <div class="content-title">
+            <h1>Difference between ArrayList and Arrays.asList()</h1>
+2015-12-01 14-15-28
 
-<h1>Archives</h1>
-
-<table class="table">
-    <tbody>
-        <tr>
-        <td>01 12 2015</td>
-        <td><a href='/learning/java-arrayList.html'>Difference between ArrayList and Arrays.asList()</a></td>
-        </tr>
-        <tr>
-        <td>27 11 2015</td>
-        <td><a href='/learning/python_oracle.html'>Some tricks when using cx_Oracle</a></td>
-        </tr>
-        <tr>
-        <td>28 10 2015</td>
-        <td><a href='/tool/webpack_and_browser-sync.html'>Use webpack together with browser-sync</a></td>
-        </tr>
-        <tr>
-        <td>26 10 2015</td>
-        <td><a href='/tool/fxg_new.html'>New fxg for me</a></td>
-        </tr>
-        <tr>
-        <td>25 10 2015</td>
-        <td><a href='/learning/mysql_opti.html'>MySQL 优化学习之路</a></td>
-        </tr>
-        <tr>
-        <td>20 10 2015</td>
-        <td><a href='/tool/2015-10-20.html'>Pip 无网络环境安装包</a></td>
-        </tr>
-        <tr>
-        <td>19 10 2015</td>
-        <td><a href='/learning/2015-10-19-2.html'>当我们在谈论异常时我们在谈论什么?</a></td>
-        </tr>
-        <tr>
-        <td>19 10 2015</td>
-        <td><a href='/nix/Change_caplocks.html'>把Capslock重定向为Ctrl</a></td>
-        </tr>
-        <tr>
-        <td>19 10 2015</td>
-        <td><a href='/nix/Chrome_be_hijacked.html'>Mac上遇到了一个Chrome和Safari被劫持的问题</a></td>
-        </tr>
-        <tr>
-        <td>19 10 2015</td>
-        <td><a href='/nix/Pelican.html'>Pelican上增加评论和自动删除文章的一些坑</a></td>
-        </tr>
-        <tr>
-        <td>19 10 2015</td>
-        <td><a href='/tool/fxg.html'>用正则来解决grep时行过长的问题</a></td>
-        </tr>
-        <tr>
-        <td>19 10 2015</td>
-        <td><a href='/learning/tcp-self-connect.html'>TCP自连接</a></td>
-        </tr>
-        <tr>
-        <td>19 10 2015</td>
-        <td><a href='/learning/test.html'>开始学习陈硕的网络编程课程</a></td>
-        </tr>
-    </tbody>
-</table>
+by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
+ 
 
 
+        </div>
+	
+        <div><p><code>Arrays.asList</code> does not return an <code>ArrayList</code> instance which has an <code>add</code> method implemented correctly. <br />
+It returns a List that is a "view" onto the array - a wrapper that makes the array look like a list<br />
+Changes to the returned list <code>write through</code> to the array<br />
+Since the returned instance is a fixed-size array, the <code>add</code> method always throw an UnsupporedOperationException.<br />
+If want to use <code>add</code> method  </p>
+<div class="highlight"><pre>  new ArrayList(Arrays.asList(myArray)); //copies the content of the array to a new ArrayList 
+</pre></div></div>
+	
+        <hr>
+
+        <h2>Comments</h2>
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'kamushin'; 
+    var disqus_title = 'Difference between ArrayList and Arrays.asList()';
+
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    </div>
         </div>
         
         <div class="span3">

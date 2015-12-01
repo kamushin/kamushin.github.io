@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Kamushin's blog</title><link href="/" rel="alternate"></link><link href="/feeds/kamushin.atom.xml" rel="self"></link><id>/</id><updated>2015-11-27T16:01:57+08:00</updated><entry><title>Some tricks when using cx_Oracle</title><link href="/learning/python_oracle.html" rel="alternate"></link><updated>2015-11-27T16:01:57+08:00</updated><author><name>Kamushin</name></author><id>tag:,2015-11-27:learning/python_oracle.html</id><summary type="html">&lt;p&gt;cx_Oracle is a Python module that enables access to Oracle databases.&lt;br /&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Kamushin's blog</title><link href="/" rel="alternate"></link><link href="/feeds/kamushin.atom.xml" rel="self"></link><id>/</id><updated>2015-12-01T14:15:28+08:00</updated><entry><title>Difference between ArrayList and Arrays.asList()</title><link href="/learning/java-arrayList.html" rel="alternate"></link><updated>2015-12-01T14:15:28+08:00</updated><author><name>Kamushin</name></author><id>tag:,2015-12-01:learning/java-arrayList.html</id><summary type="html">&lt;p&gt;&lt;code&gt;Arrays.asList&lt;/code&gt; does not return an &lt;code&gt;ArrayList&lt;/code&gt; instance which has an &lt;code&gt;add&lt;/code&gt; method implemented correctly. &lt;br /&gt;
+It returns a List that is a "view" onto the array - a wrapper that makes the array look like a list&lt;br /&gt;
+Changes to the returned list &lt;code&gt;write through&lt;/code&gt; to the array&lt;br /&gt;
+Since the returned instance is a fixed-size array, the &lt;code&gt;add&lt;/code&gt; method always throw an UnsupporedOperationException.&lt;br /&gt;
+If want to use &lt;code&gt;add&lt;/code&gt; method  &lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;  new ArrayList(Arrays.asList(myArray)); //copies the content of the array to a new ArrayList 
+&lt;/pre&gt;&lt;/div&gt;</summary><category term="Java"></category></entry><entry><title>Some tricks when using cx_Oracle</title><link href="/learning/python_oracle.html" rel="alternate"></link><updated>2015-11-27T16:01:57+08:00</updated><author><name>Kamushin</name></author><id>tag:,2015-11-27:learning/python_oracle.html</id><summary type="html">&lt;p&gt;cx_Oracle is a Python module that enables access to Oracle databases.&lt;br /&gt;
 However, users may have confusion due to some fetures of this module.&lt;/p&gt;
 &lt;h4&gt;Thread safe&lt;/h4&gt;
 &lt;p&gt;The default setting of cx_Oracle is not thread-safe.  &lt;br /&gt;
