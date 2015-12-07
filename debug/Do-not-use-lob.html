@@ -51,136 +51,73 @@
     <div class="row">
 
         <div class="span9">
-        
-
-        
-
-
     <div class='article'>
         <div class="content-title">
-            <a href="/tool/webpack_and_browser-sync.html"><h1>Use webpack together with browser-sync</h1></a>
-2015-10-28 16-56-48
+            <h1>Do not use LOB in Oracle(OLTP) -- record an optimization experience</h1>
+2015-12-08 01-52-18
 
 by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
  
 
 
- 
         </div>
-        
-        <div><p>Here are some tips about using <code>webpack</code> and <code>Browsersync</code> to improve working speed.</p>
-<h3>Browsersync</h3>
-<p>Browsersync makes your browser testing workflow faster by synchronising URLs, interactions and code changes across multiple devices. <br />
-<code>npm install browser-sync@2.7.1 -g</code></p>
-<h4>Proxy</h4>
-<div class="highlight"><pre>browser-sync start --proxy localhost:8888 --port 4000 --files index.html --files src/*
+	
+        <div><h2>Front knowledge</h2>
+<h3>LOB in Oracle</h3>
+<p>LOB is used in Oracle to store text logger than 4000.  <br />
+We don't use Oracle in a OLTP system. <br />
+Conside of RT and IO, we choose some other ways to provide log text. For example, CDN.</p>
+<h3>LOB in cx_Oracle</h3>
+<p>As mentioned in <a href="http://kamushin.github.io/learning/python_oracle.html">Some tricks when using cx_Oracle</a>, we must convert LOB to string for each line we fetched.    </p>
+<div class="highlight"><pre>  self._cursor.execute(sql, *args)
+    def fix_lob(row):
+        def convert(col):
+            if isinstance(col, cx_Oracle.LOB):
+                return str(col)
+            else:
+                return col
+
+        return [convert(c) for c in row]
+
+  return [fix_lob(r) for r in self._cursor]
 </pre></div>
 
 
-<p>Used to proxy ajax request to back-end server.</p>
-<h3>Webpack</h3>
-<p>With webpack, don't need <code>require.js</code> and <code>require-react-plugin</code> loading in <code>index.html</code>. Very useful to me. <br />
-<code>npm install webpack -g</code></p>
-<h4>Work together</h4>
-<p><code>npm install -g browser-sync-webpack-plugin</code>
-And config <code>webpack.config.js</code>:</p>
-<div class="highlight"><pre>var BrowserSyncPlugin = require(&#39;browser-sync-webpack-plugin&#39;);
-module.exports = {
-entry: &#39;./src/js/index.js&#39;,
-output: {
-    publicPath: &#39;./dist/&#39;,
-    path: &#39;./dist/&#39;,
-    filename: &#39;bundle.js&#39;,
-    pathinfo: true
-},
-resolve: {
-    root: &#39;.&#39;
-},
-module: {
-    loaders: [
-    {test: /\.js/, loader: &#39;jsx-loader?harmony&#39;}
-    ]
-},
-plugins: [
-    new BrowserSyncPlugin({
-    host: &#39;localhost&#39;,
-    port: 4000,
-    proxy: &#39;localhost:8888&#39;,
-    files: &#39;src/*&#39;,
-    files: &#39;index.html&#39;
-})  
-]
-};
-</pre></div></div>
-        <hr />
+<p>But it will bring out a significant cost of CPU time in Python, which you chould see later.</p>
+<h2>Profile</h2>
+<p>I use <code>CProfile</code> to profile my Python code. It's very easy to use.</p>
+<div class="highlight"><pre>  <span class="kn">import</span> <span class="nn">CProfile</span>
+  <span class="n">CProfile</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="s">&quot;unittest....&quot;</span><span class="p">)</span>
+</pre></div>
+
+
+<p>This is part of my profile.</p>
+<div class="highlight"><pre>      <span class="nx">ncalls</span>  <span class="nx">tottime</span>  <span class="nx">percall</span>  <span class="nx">cumtime</span>  <span class="nx">percall</span> <span class="nx">filename</span><span class="o">:</span><span class="nx">lineno</span><span class="p">(</span><span class="kd">function</span><span class="p">)</span>
+      <span class="mi">209391</span> <span class="mf">1286.084</span>  <span class="mf">0.006</span> <span class="mf">1286.559</span>    <span class="mf">0.006</span>   <span class="nx">DB</span><span class="p">.</span><span class="nx">py</span><span class="o">:</span><span class="mi">116</span><span class="p">(</span><span class="nx">convert</span><span class="p">)</span>
+      <span class="mi">4630</span>   <span class="mf">346.679</span>   <span class="mf">0.075</span>  <span class="mf">346.679</span>    <span class="mf">0.075</span>   <span class="p">{</span><span class="nx">method</span> <span class="s1">&#39;executemany&#39;</span> <span class="nx">of</span> <span class="s1">&#39;cx_Oracle.Cursor&#39;</span> <span class="nx">objects</span><span class="p">}</span>
+      <span class="mi">4654</span>   <span class="mf">90.788</span>    <span class="mf">0.020</span>   <span class="mf">90.788</span>    <span class="mf">0.020</span>   <span class="p">{</span><span class="nx">method</span> <span class="s1">&#39;commit&#39;</span> <span class="nx">of</span> <span class="s1">&#39;cx_Oracle.Connection&#39;</span> <span class="nx">objects</span><span class="p">}</span>
+</pre></div>
+
+
+<p>200k times call of <code>convert</code> cost 2000+ sec. Is't because Python <code>LOB=&gt;str</code> is very slow.  <br />
+4k times of <code>commit</code> and <code>executemany</code> because of the lag between two servers.</p></div>
+	
+        <hr>
+
+        <h2>Comments</h2>
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'kamushin'; 
+    var disqus_title = 'Do not use LOB in Oracle(OLTP) -- record an optimization experience';
+
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
     </div>
-		
-
- 
-        
-
- 
-
-    <div class='article'>
-        <a href="/tool/fxg_new.html"><h2>New fxg for me</h2></a>
-        <div class= "well small"> 2015-10-26 00-07-54
-
-by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
- 
-
-
- </div>
-        <div class="summary"><p>find then grep has a insufferable performace, and I use ag to instead.</p> <a class="btn btn-info xsmall" href="/tool/fxg_new.html">read more</a></div>
-    </div>	
-				
-
- 
-        
-
- 
-
-    <div class='article'>
-        <a href="/tool/2015-10-20.html"><h2>Pip 无网络环境安装包</h2></a>
-        <div class= "well small"> 2015-10-20 22-28-48
-
-by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
- 
-
-
- </div>
-        <div class="summary"><p>在内网环境部署 Python 包, 抽取依赖</p> <a class="btn btn-info xsmall" href="/tool/2015-10-20.html">read more</a></div>
-    </div>	
-				
-
- 
-        
-
- 
-
-    <div class='article'>
-        <a href="/tool/fxg.html"><h2>用正则来解决grep时行过长的问题</h2></a>
-        <div class= "well small"> 2015-10-19 21-37-24
-
-by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
- 
-
-
- </div>
-        <div class="summary"><p>grep输出内容过长，行过长</p> <a class="btn btn-info xsmall" href="/tool/fxg.html">read more</a></div>
-    </div>	
-				
-<div class="pagination">
-<ul>
-    <li class="prev disabled"><a href="#">&larr; Previous</a></li>
-
-    <li class="active"><a href="/tool/index.html">1</a></li>
-
-    <li class="next disabled"><a href="#">&rarr; Next</a></li>
-
-</ul>
-</div>
- 
-  
         </div>
         
         <div class="span3">

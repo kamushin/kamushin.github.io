@@ -1,5 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Kamushin's blog</title><link>/</link><description></description><atom:link href="/feeds/kamushin.rss.xml" rel="self"></atom:link><lastBuildDate>Tue, 01 Dec 2015 14:17:02 +0800</lastBuildDate><item><title>Difference between ArrayList and Arrays.asList() in Java</title><link>/learning/java-arrayList.html</link><description>&lt;p&gt;&lt;code&gt;Arrays.asList&lt;/code&gt; does not return an &lt;code&gt;ArrayList&lt;/code&gt; instance which has an &lt;code&gt;add&lt;/code&gt; method implemented correctly. &lt;br /&gt;
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Kamushin's blog</title><link>/</link><description></description><atom:link href="/feeds/kamushin.rss.xml" rel="self"></atom:link><lastBuildDate>Tue, 08 Dec 2015 01:52:18 +0800</lastBuildDate><item><title>Do not use LOB in Oracle(OLTP) -- record an optimization experience</title><link>/debug/Do-not-use-lob.html</link><description>&lt;h2&gt;Front knowledge&lt;/h2&gt;
+&lt;h3&gt;LOB in Oracle&lt;/h3&gt;
+&lt;p&gt;LOB is used in Oracle to store text logger than 4000.  &lt;br /&gt;
+We don't use Oracle in a OLTP system. &lt;br /&gt;
+Conside of RT and IO, we choose some other ways to provide log text. For example, CDN.&lt;/p&gt;
+&lt;h3&gt;LOB in cx_Oracle&lt;/h3&gt;
+&lt;p&gt;As mentioned in &lt;a href="http://kamushin.github.io/learning/python_oracle.html"&gt;Some tricks when using cx_Oracle&lt;/a&gt;, we must convert LOB to string for each line we fetched.    &lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;  self._cursor.execute(sql, *args)
+    def fix_lob(row):
+        def convert(col):
+            if isinstance(col, cx_Oracle.LOB):
+                return str(col)
+            else:
+                return col
+
+        return [convert(c) for c in row]
+
+  return [fix_lob(r) for r in self._cursor]
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;But it will bring out a significant cost of CPU time in Python, which you chould see later.&lt;/p&gt;
+&lt;h2&gt;Profile&lt;/h2&gt;
+&lt;p&gt;I use &lt;code&gt;CProfile&lt;/code&gt; to profile my Python code. It's very easy to use.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;  &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;CProfile&lt;/span&gt;
+  &lt;span class="n"&gt;CProfile&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;run&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;unittest....&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;This is part of my profile.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;      &lt;span class="nx"&gt;ncalls&lt;/span&gt;  &lt;span class="nx"&gt;tottime&lt;/span&gt;  &lt;span class="nx"&gt;percall&lt;/span&gt;  &lt;span class="nx"&gt;cumtime&lt;/span&gt;  &lt;span class="nx"&gt;percall&lt;/span&gt; &lt;span class="nx"&gt;filename&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;&lt;span class="nx"&gt;lineno&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kd"&gt;function&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+      &lt;span class="mi"&gt;209391&lt;/span&gt; &lt;span class="mf"&gt;1286.084&lt;/span&gt;  &lt;span class="mf"&gt;0.006&lt;/span&gt; &lt;span class="mf"&gt;1286.559&lt;/span&gt;    &lt;span class="mf"&gt;0.006&lt;/span&gt;   &lt;span class="nx"&gt;DB&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;py&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;&lt;span class="mi"&gt;116&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;convert&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+      &lt;span class="mi"&gt;4630&lt;/span&gt;   &lt;span class="mf"&gt;346.679&lt;/span&gt;   &lt;span class="mf"&gt;0.075&lt;/span&gt;  &lt;span class="mf"&gt;346.679&lt;/span&gt;    &lt;span class="mf"&gt;0.075&lt;/span&gt;   &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="nx"&gt;method&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;executemany&amp;#39;&lt;/span&gt; &lt;span class="nx"&gt;of&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;cx_Oracle.Cursor&amp;#39;&lt;/span&gt; &lt;span class="nx"&gt;objects&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+      &lt;span class="mi"&gt;4654&lt;/span&gt;   &lt;span class="mf"&gt;90.788&lt;/span&gt;    &lt;span class="mf"&gt;0.020&lt;/span&gt;   &lt;span class="mf"&gt;90.788&lt;/span&gt;    &lt;span class="mf"&gt;0.020&lt;/span&gt;   &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="nx"&gt;method&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;commit&amp;#39;&lt;/span&gt; &lt;span class="nx"&gt;of&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;cx_Oracle.Connection&amp;#39;&lt;/span&gt; &lt;span class="nx"&gt;objects&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;200k times call of &lt;code&gt;convert&lt;/code&gt; cost 2000+ sec. Is't because Python &lt;code&gt;LOB=&amp;gt;str&lt;/code&gt; is very slow.  &lt;br /&gt;
+4k times of &lt;code&gt;commit&lt;/code&gt; and &lt;code&gt;executemany&lt;/code&gt; because of the lag between two servers.&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Kamushin</dc:creator><pubDate>Tue, 08 Dec 2015 01:52:18 +0800</pubDate><guid>tag:,2015-12-08:debug/Do-not-use-lob.html</guid><category>Oracle</category><category>Python</category></item><item><title>Difference between ArrayList and Arrays.asList() in Java</title><link>/learning/java-arrayList.html</link><description>&lt;p&gt;&lt;code&gt;Arrays.asList&lt;/code&gt; does not return an &lt;code&gt;ArrayList&lt;/code&gt; instance which has an &lt;code&gt;add&lt;/code&gt; method implemented correctly. &lt;br /&gt;
 It returns a List that is a "view" onto the array - a wrapper that makes the array look like a list&lt;br /&gt;
 Changes to the returned list &lt;code&gt;write through&lt;/code&gt; to the array&lt;br /&gt;
 Since the returned instance is a fixed-size array, the &lt;code&gt;add&lt;/code&gt; method always throw an UnsupporedOperationException.&lt;br /&gt;
