@@ -59,7 +59,7 @@
     <div class='article'>
         <div class="content-title">
             <a href="/tool/fxg_new.html"><h1>New fxg for me</h1></a>
-2015-10-26 00-07-54
+2015-12-09 09-39-29
 
 by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
  
@@ -103,6 +103,16 @@ I rewrite a simple version of <code>vv</code>.</p>
 And I also add a <code>-G</code> for file pattern.</p>
 <div class="highlight"><pre>fxg () {
     ag -s -G $1 --column --nogroup --color $2 | nl &amp;&amp; ag -s -G $1 --column --nogroup $2 | nl &gt; /tmp/fxg.log
+}
+</pre></div>
+
+
+<h3>Update: 15-12-9</h3>
+<p><code>Ag</code> on my MacOSX has an unstable sorting result. It makes the twice call of <code>Ag</code> return different order.<br />
+So I add <code>sort</code> to this command. 
+<code>-0</code> or <code>-print0</code> will take <code>space</code> in filename as a special character.</p>
+<div class="highlight"><pre>fxg () {
+    ag -s -G $1 --column --nogroup --color -0 $2 | sort | nl &amp;&amp; ag -s -G $1 --column --nogroup -0 $2 | sort | nl &gt; /tmp/fxg.log
 }
 </pre></div></div>
         <hr />

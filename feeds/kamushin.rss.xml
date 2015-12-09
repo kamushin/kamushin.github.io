@@ -1,5 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Kamushin's blog</title><link>/</link><description></description><atom:link href="/feeds/kamushin.rss.xml" rel="self"></atom:link><lastBuildDate>Tue, 08 Dec 2015 01:52:18 +0800</lastBuildDate><item><title>Do not use LOB in Oracle(OLTP) -- record an optimization experience</title><link>/debug/Do-not-use-lob.html</link><description>&lt;h2&gt;Front knowledge&lt;/h2&gt;
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Kamushin's blog</title><link>/</link><description></description><atom:link href="/feeds/kamushin.rss.xml" rel="self"></atom:link><lastBuildDate>Wed, 09 Dec 2015 09:39:29 +0800</lastBuildDate><item><title>New fxg for me</title><link>/tool/fxg_new.html</link><description>&lt;p&gt;&lt;a href="http://kamushin.github.io/tool/fxg.html"&gt;previos article about fxg&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;fxg&lt;/code&gt; means &lt;code&gt;find&lt;/code&gt; and &lt;code&gt;xargs&lt;/code&gt; then &lt;code&gt;grep&lt;/code&gt;. It has a insufferable performace, so &lt;br /&gt;
+I use &lt;code&gt;ag&lt;/code&gt; to instead, after forking some tools made by &lt;a href="https://github.com/lilydjwg/search-and-view"&gt;lilydjwg&lt;/a&gt;
+The tool chain is used for finding pattern in files and opening file by vim.
+I rewrite a simple version of &lt;code&gt;vv&lt;/code&gt;.&lt;/p&gt;
+&lt;table class="highlighttable"&gt;&lt;tr&gt;&lt;td class="linenos"&gt;&lt;div class="linenodiv"&gt;&lt;pre&gt; 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12&lt;/pre&gt;&lt;/div&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="c"&gt;#!/usr/bin/env python&lt;/span&gt;
+&lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;sys&lt;/span&gt;
+&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;subprocess&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;call&lt;/span&gt;
+&lt;span class="n"&gt;line_number&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nb"&gt;int&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;sys&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;argv&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;])&lt;/span&gt;
+&lt;span class="k"&gt;with&lt;/span&gt; &lt;span class="nb"&gt;open&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;/tmp/fxg.log&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;as&lt;/span&gt; &lt;span class="n"&gt;f&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+    &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;index&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;line&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="nb"&gt;enumerate&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;f&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;readlines&lt;/span&gt;&lt;span class="p"&gt;()):&lt;/span&gt;
+        &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="n"&gt;index&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="n"&gt;line_number&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+            &lt;span class="n"&gt;args&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;line&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;split&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;:&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+            &lt;span class="n"&gt;filename&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;args&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;strip&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;split&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;&lt;/span&gt;&lt;span class="se"&gt;\t&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;)[&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+            &lt;span class="n"&gt;file_line&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;args&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+            &lt;span class="k"&gt;print&lt;/span&gt; &lt;span class="n"&gt;filename&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="s"&gt;&amp;quot;:&amp;quot;&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;file_line&lt;/span&gt;
+            &lt;span class="n"&gt;call&lt;/span&gt;&lt;span class="p"&gt;([&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;vim&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;filename&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;  &lt;span class="s"&gt;&amp;quot;+&amp;quot;&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;file_line&lt;/span&gt;&lt;span class="p"&gt;])&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+
+&lt;p&gt;Insert of writing regex pattern to match the complex colored output, I call ag the second time to gen a un-colored output to log file.
+And I also add a &lt;code&gt;-G&lt;/code&gt; for file pattern.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;fxg () {
+    ag -s -G $1 --column --nogroup --color $2 | nl &amp;amp;&amp;amp; ag -s -G $1 --column --nogroup $2 | nl &amp;gt; /tmp/fxg.log
+}
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h3&gt;Update: 15-12-9&lt;/h3&gt;
+&lt;p&gt;&lt;code&gt;Ag&lt;/code&gt; on my MacOSX has an unstable sorting result. It makes the twice call of &lt;code&gt;Ag&lt;/code&gt; return different order.&lt;br /&gt;
+So I add &lt;code&gt;sort&lt;/code&gt; to this command. 
+&lt;code&gt;-0&lt;/code&gt; or &lt;code&gt;-print0&lt;/code&gt; will take &lt;code&gt;space&lt;/code&gt; in filename as a special character.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;fxg () {
+    ag -s -G $1 --column --nogroup --color -0 $2 | sort | nl &amp;amp;&amp;amp; ag -s -G $1 --column --nogroup -0 $2 | sort | nl &amp;gt; /tmp/fxg.log
+}
+&lt;/pre&gt;&lt;/div&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Kamushin</dc:creator><pubDate>Wed, 09 Dec 2015 09:39:29 +0800</pubDate><guid>tag:,2015-12-09:tool/fxg_new.html</guid><category>Ag</category><category>Linux</category></item><item><title>Do not use LOB in Oracle(OLTP) -- record an optimization experience</title><link>/debug/Do-not-use-lob.html</link><description>&lt;h2&gt;Front knowledge&lt;/h2&gt;
 &lt;h3&gt;LOB in Oracle&lt;/h3&gt;
 &lt;p&gt;LOB is used in Oracle to store text logger than 4000.  &lt;br /&gt;
 We don't use Oracle in a OLTP system. &lt;br /&gt;
@@ -110,43 +156,7 @@ plugins: [
 })  
 ]
 };
-&lt;/pre&gt;&lt;/div&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Kamushin</dc:creator><pubDate>Wed, 28 Oct 2015 16:56:48 +0800</pubDate><guid>tag:,2015-10-28:tool/webpack_and_browser-sync.html</guid><category>front-end</category></item><item><title>New fxg for me</title><link>/tool/fxg_new.html</link><description>&lt;p&gt;&lt;a href="http://kamushin.github.io/tool/fxg.html"&gt;previos article about fxg&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;fxg&lt;/code&gt; means &lt;code&gt;find&lt;/code&gt; and &lt;code&gt;xargs&lt;/code&gt; then &lt;code&gt;grep&lt;/code&gt;. It has a insufferable performace, so &lt;br /&gt;
-I use &lt;code&gt;ag&lt;/code&gt; to instead, after forking some tools made by &lt;a href="https://github.com/lilydjwg/search-and-view"&gt;lilydjwg&lt;/a&gt;
-The tool chain is used for finding pattern in files and opening file by vim.
-I rewrite a simple version of &lt;code&gt;vv&lt;/code&gt;.&lt;/p&gt;
-&lt;table class="highlighttable"&gt;&lt;tr&gt;&lt;td class="linenos"&gt;&lt;div class="linenodiv"&gt;&lt;pre&gt; 1
- 2
- 3
- 4
- 5
- 6
- 7
- 8
- 9
-10
-11
-12&lt;/pre&gt;&lt;/div&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="c"&gt;#!/usr/bin/env python&lt;/span&gt;
-&lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;sys&lt;/span&gt;
-&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;subprocess&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;call&lt;/span&gt;
-&lt;span class="n"&gt;line_number&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nb"&gt;int&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;sys&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;argv&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;])&lt;/span&gt;
-&lt;span class="k"&gt;with&lt;/span&gt; &lt;span class="nb"&gt;open&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;/tmp/fxg.log&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;as&lt;/span&gt; &lt;span class="n"&gt;f&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
-    &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;index&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;line&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="nb"&gt;enumerate&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;f&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;readlines&lt;/span&gt;&lt;span class="p"&gt;()):&lt;/span&gt;
-        &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="n"&gt;index&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="n"&gt;line_number&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
-            &lt;span class="n"&gt;args&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;line&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;split&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;:&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-            &lt;span class="n"&gt;filename&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;args&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;strip&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;split&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;&lt;/span&gt;&lt;span class="se"&gt;\t&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;)[&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
-            &lt;span class="n"&gt;file_line&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;args&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
-            &lt;span class="k"&gt;print&lt;/span&gt; &lt;span class="n"&gt;filename&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="s"&gt;&amp;quot;:&amp;quot;&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;file_line&lt;/span&gt;
-            &lt;span class="n"&gt;call&lt;/span&gt;&lt;span class="p"&gt;([&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;vim&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;filename&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;  &lt;span class="s"&gt;&amp;quot;+&amp;quot;&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;file_line&lt;/span&gt;&lt;span class="p"&gt;])&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-
-&lt;p&gt;Insert of writing regex pattern to match the complex colored output, I call ag the second time to gen a un-colored output to log file.
-And I also add a &lt;code&gt;-G&lt;/code&gt; for file pattern.&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;fxg () {
-    ag -s -G $1 --column --nogroup --color $2 | nl &amp;amp;&amp;amp; ag -s -G $1 --column --nogroup $2 | nl &amp;gt; /tmp/fxg.log
-}
-&lt;/pre&gt;&lt;/div&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Kamushin</dc:creator><pubDate>Mon, 26 Oct 2015 00:07:54 +0800</pubDate><guid>tag:,2015-10-26:tool/fxg_new.html</guid><category>Ag</category><category>Linux</category></item><item><title>MySQL 优化学习之路</title><link>/learning/mysql_opti.html</link><description>&lt;h3&gt;Overview&lt;/h3&gt;
+&lt;/pre&gt;&lt;/div&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Kamushin</dc:creator><pubDate>Wed, 28 Oct 2015 16:56:48 +0800</pubDate><guid>tag:,2015-10-28:tool/webpack_and_browser-sync.html</guid><category>front-end</category></item><item><title>MySQL 优化学习之路</title><link>/learning/mysql_opti.html</link><description>&lt;h3&gt;Overview&lt;/h3&gt;
 &lt;h4&gt;DB Level&lt;/h4&gt;
 &lt;ul&gt;
 &lt;li&gt;table structure: column data type | table with few or many columns&lt;/li&gt;
