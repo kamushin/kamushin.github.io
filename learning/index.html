@@ -58,8 +58,8 @@
 
     <div class='article'>
         <div class="content-title">
-            <a href="/learning/python_pro.html"><h1>Write Python like a Pro</h1></a>
-2015-12-21 17-26-57
+            <a href="/learning/python_pro_zh_cn.html"><h1>Python开发经验--从问题入手</h1></a>
+2015-12-21 17-35-52
 
 by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
  
@@ -68,137 +68,134 @@ by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
  
         </div>
         
-        <div><h3>Context Managers</h3>
-<p>If you have a function <code>do_sth()</code>, before invoking this method, it needs connect to Database and get filelock. And code maybe like this:  </p>
-<div class="highlight"><pre>  try:
-    db.connect()
-    getfilelock()
-    do_sth()
-  except:
-    ...
-  finally:
-    releasefilelock()
-    db.close()
+        <div><h3>上下文管理</h3>
+<p>如果你要做一件事情<code>do_sth()</code>，在这之前，需要连接数据库，需要持有文件锁。那么你很可能这么写：</p>
+<div class="highlight"><pre>
 </pre></div>
 
 
-<p>What if <code>do_sth</code> be called at many palces? If filelock is now don't need, code should be rewrited at each palce when <code>do_sth</code> is called. <br />
-After wasting a whole afternoon rewriting the code, you find it's useful to have a function to do this. Then code will be:  </p>
-<div class="highlight"><pre>  try:
-    prepare()
-    do_sth()
-  except:
-    ...
-  finally:
-    close()
+<p>如果<code>do_sth</code>在 N 个地方出现呢？如果我策略修改了，不再需要<code>filelock</code> 了呢？是不是需要去改这 N 个地方？<br />
+花了一下午去修改了 N 个地方，测试了几次终于没有遗漏后，你发现这个做法多么低效，于是你终于想起来用一个函数去做这件事情。<br />
+你把代码写成了这样  </p>
+<div class="highlight"><pre><span class="k">try</span><span class="o">:</span>
+    <span class="n">db</span><span class="o">.</span><span class="na">connect</span><span class="o">()</span>
+    <span class="n">getfilelock</span><span class="o">()</span>
+    <span class="n">do_sth</span><span class="o">()</span>
+<span class="n">except</span><span class="o">:</span>
+    <span class="o">...</span>
+<span class="n">finally</span><span class="o">:</span>
+    <span class="n">releasefilelock</span><span class="o">()</span>
+    <span class="n">db</span><span class="o">.</span><span class="na">close</span><span class="o">()</span>
 </pre></div>
 
 
-<p>Each palce <code>do_sth</code> invoked is full of <code>prepare/close</code>. And both of them has no relation with bussiness logic. It makes the code longer and longer.<br />
-Although you don't care about the cofusion you may have when you see these code after 2 months(because the only one line of bussiness logic code is hidden in seven lines of non-business code),
-you should be friendly to those who review your code. A funciton more than 500 lines is horrible. I think writing code is an action to get abstraction from complex logic, if there is no 
-abstraction in code, it's not coding but translating.
-What <code>prepare/close</code> doed indeed? They are preapre or release an environment to <code>do_sth</code>, that is context.<br />
-Python use <code>with</code> statement to manage context.</p>
-<div class="highlight"><pre>  <span class="k">class</span> <span class="n">A</span>():
+<p><code>do_sth</code>所在的 N 个地方，都写满了 <code>prepare</code>, <code>close</code> 这一系列和业务逻辑无关的代码, 这使得我们的代码变得冗长。
+即使你不在乎自己过了两个月后是否还愿意看这段代码，至少你要照顾下帮你 review 代码的人，一个函数写了500行还能 review 吗？
+我认为一个程序员写代码的过程，就是从复杂的逻辑中进行抽象的过程，如果不进行抽象，那么就不是写代码，而是在做翻译。我们来看看这里有什么可以抽象的。<br />
+<code>prepare</code>, <code>close</code> 这些是在做什么？是在预备和释放一个可以<code>do_sth</code>的环境，也就是我们常说的上下文管理。<br />
+Python 提供了<code>with</code>语句来帮助我们管理上下文。代码变成了这样：</p>
+<div class="highlight"><pre><span class="k">class</span> <span class="n">A</span>():
     <span class="n">def</span> <span class="n">do_sth</span>(<span class="k">self</span>):
-      <span class="nb">pass</span>
+        <span class="nb">pass</span>
 
     <span class="n">def</span> <span class="n">__enter__</span>(<span class="k">self</span>):
-      <span class="n">db</span>.<span class="nb">connect</span>()
-      <span class="n">getfilelock</span>()
-      <span class="k">return</span> <span class="k">self</span>
+        <span class="n">db</span>.<span class="nb">connect</span>()
+        <span class="n">getfilelock</span>()
+        <span class="k">return</span> <span class="k">self</span>
 
     <span class="n">def</span> <span class="n">__exit__</span>(<span class="k">self</span>, <span class="n">type</span>, <span class="nb">value</span>, <span class="n">traceback</span>):
       <span class="n">releasefilelock</span>()
       <span class="n">db</span>.<span class="nb">close</span>()
 
-  <span class="n">with</span> <span class="n">A</span>() <span class="k">as</span> <span class="n">a:</span>
+<span class="n">with</span> <span class="n">A</span>() <span class="k">as</span> <span class="n">a:</span>
     <span class="n">a</span>.<span class="n">do_sth</span>()
 </pre></div>
 
 
-<p>Now the reviewer will only see</p>
+<p>现在帮你 review 代码的人，只会在那 N 个<code>do_sth</code> 存在的地方，看到  </p>
 <div class="highlight"><pre>  with A() as a:
     a.do_sth()
 </pre></div>
 
 
-<p>Context manager is uesd explictly. Bussiness logic and impelement are splited.</p>
+<p>很显示的使用了上下文进行管理，分离了业务逻辑和具体实现。</p>
 <blockquote>
 <p>Explicit is better than implicit.
   Simple is better than complex.</p>
 </blockquote>
-<p>Anthor common way is using <code>__del__</code></p>
-<div class="highlight"><pre>  <span class="k">class</span> <span class="n">A</span>():
-      <span class="n">def</span> <span class="n">__init__</span>(<span class="k">self</span>):
-          <span class="n">db</span>.<span class="nb">connect</span>()
-          <span class="n">getfilelock</span>()
+<p>另一个常见的做法是使用<code>__del__</code></p>
+<div class="highlight"><pre><span class="k">class</span> <span class="n">A</span>():
+    <span class="n">def</span> <span class="n">__init__</span>(<span class="k">self</span>):
+        <span class="n">db</span>.<span class="nb">connect</span>()
+        <span class="n">getfilelock</span>()
 
-      <span class="n">def</span> <span class="n">__del__</span>(<span class="k">self</span>, <span class="n">type</span>, <span class="nb">value</span>, <span class="n">traceback</span>):
-          <span class="n">releasefilelock</span>()
-          <span class="n">db</span>.<span class="nb">close</span>()
+    <span class="n">def</span> <span class="n">__del__</span>(<span class="k">self</span>, <span class="n">type</span>, <span class="nb">value</span>, <span class="n">traceback</span>):
+        <span class="n">releasefilelock</span>()
+        <span class="n">db</span>.<span class="nb">close</span>()
 
-  <span class="n">a</span> =  <span class="n">A</span>()
-  <span class="n">a</span>.<span class="n">do_sth</span>()
+<span class="n">a</span> =  <span class="n">A</span>()
+<span class="n">a</span>.<span class="n">do_sth</span>()
 </pre></div>
 
 
-<p>The good part of this way is no need of wiring <code>with</code>. But it's not a explicit context manager.
-To <code>GC</code> languages like Python or Java, there is no way to invoke a destructor method.
-Although object has leaved the scope, if it was not cleaned by <code>GC</code>, the resource it takes will not be released.<br />
-If the resource is database connect, close lately is acceptable, but to resource like <code>mutex</code>, we need <code>with</code> statement to release it immediately.</p>
-<h3>Generation</h3>
-<p>A function with <code>yield</code> is a generator. Generation maintains a context to eval result when it is need.
-For example:  </p>
+<p>这个做法的优点是不需要写<code>with</code> 语句，缺点是这不是明显的上下文管理，对于 Python/Java 这种带
+<code>GC</code> 的语言来说，是不能手动调用一个对象的析构函数的，即使对象离开了作用域，它依然会因为还没有被<code>GC</code>而存活。<br />
+所以对于锁这样的，我们需要很快去释放的资源，使用<code>with</code> 更加的可控。
+可能会有人去对比 C++ 中的<code>RAII</code> 规则，Python中是做不到 <code>RAII</code> 的, 因为以上原因。</p>
+<h3>生成器</h3>
+<p>一个函数如果在代码段中有 <code>yield</code> 那么它就从一个函数变成了一个 <code>generator</code>。生成器的好处是保留了一个上下文在需要时去运算。<br />
+同样从一个实际例子出发：  </p>
 <div class="highlight"><pre>  for i in range(100000):
-      do_sth()
+    do_sth()
 </pre></div>
 
 
-<p>It creates an array of 1-100000 before <code>do_sth</code> which will make a waste of memory. 
-Another loop with <code>xrange</code>:</p>
+<p>这段代码，在什么都没做之前，就产生了一个1-100000这些数字的数组，占用了内存。<br />
+而</p>
 <div class="highlight"><pre>  for i in xrange(100000):
-      do_sth()
+    do_sth()
 </pre></div>
 
 
-<p>That is what we know in C++, <code>do_sth</code> once and then <code>i++</code>, loops. </p>
+<p>这才是我们知道的C++中的</p>
 <div class="highlight"><pre>  for(int i = 0; i &lt; 100000; i++) {
-      do_sth()
+    do_sth()
   }
 </pre></div>
 
 
-<p>So <code>xrange</code> will use less memory than <code>range</code>.</p>
-<div class="highlight"><pre>    def fetchmany(self, *args, **kwargs):
-        &#39;&#39;&#39;
-           A generator to fetch data.
-        &#39;&#39;&#39;
-        cur = self._conn.cursor()  
-        numRows = 200
-        try:
-            cur.execute(*args, **kwargs)
-            self._conn.commit()
-        except Exception as e:
-            self.logger.error(str(e))
-            self._conn.rollback()
+<p>执行一次 <code>do_sth</code>，再生成一次 i 值。 <br />
+所以<code>xrange</code>会比<code>range</code>更省内存。（在 Py2 是这样。Py3中，<code>range</code> 就是 Py2 的 <code>xrange</code>。 另外据我所知，不存在 xrange 是 C 实现这么一回事)。
+再来一个例子：</p>
+<div class="highlight"><pre>def fetchmany(self, *args, **kwargs):
+    &#39;&#39;&#39;
+       A generator to fetch data.
+       prams: numRows -&gt; the number of rows to fetch.
+    &#39;&#39;&#39;
+    cur = self._conn.cursor()  
+    numRows = 200
+    try:
+        cur.execute(*args, **kwargs)
+        self._conn.commit()
+    except Exception as e:
+        self.logger.error(str(e))
+        self._conn.rollback()
+        return
+    while True:
+        rows = cur.fetchmany(numRows)
+        if rows:
+            yield rows
+        else:
+            cur.close()
             return
-        while True:
-            rows = cur.fetchmany(numRows)
-            if rows:
-                yield rows
-            else:
-                cur.close()
-                return
 
 for rows in fetchmany(sql):
-    do_sth_with_rows(rows)
+  do_sth_with_rows(rows)
 </pre></div>
 
 
-<p><code>fetchmany</code> is a generator, and a generator is iteratable. Only 200 rows will be taken in a patch, not all of the results.  </p>
-<p>Generator can also be used to make a co-routine.  </p>
+<p>这就实现了每次取出200条，消费完再取200条。而不是一次性取到内存中。同时也封装了<code>commit</code>，<code>rollback</code>等操作。</p>
+<p>生成器也可以用来构造对称式协程</p>
 <div class="highlight"><pre><span class="kn">import</span> <span class="nn">random</span>
 
 <span class="k">def</span> <span class="nf">get_data</span><span class="p">():</span>
@@ -236,10 +233,21 @@ for rows in fetchmany(sql):
 </pre></div>
 
 
-<p>More useful cases in <code>Tornado</code>.  </p>
+<p>在这个例子中， 不需要队列，就做到了一个一对一的生产与消费。当然这个1对1的并没有什么实际意义。对于协程和生成器的作用，如果感兴趣，可以看看<code>Tornado</code>的实现。</p>
+<h3>Exception</h3>
+<p>这块Python和其他语言没什么不同的，拿出来讲是因为看到很多代码里充满了魔数。<br />
+比如 <code>return 'unknown'</code>. 既然是<code>unknown</code>就应该抛出异常。而不是用一堆的常量字符串在各个函数直接传来传去。<br />
+类似的例子还有<code>return 'ok'</code>, <code>return 'mysql'</code>, <code>return 2</code>. <br />
+另外尽可能抛出和接收特定的异常。</p>
+<h3>Functional Programming</h3>
+<p>Python 其实是不怎么 FP 的，不过一些基本的 FP 支持还是有的。<br />
+比如高阶函数，<code>map reduce filter</code>。<br />
+用<code>map reduce filter</code> 可以更好的做抽象。<br />
+<code>reduce(lambda x, y: x + y, query_res)</code><br />
+很简单就能看出，虽然我不知道具体 <code>x</code>,<code>y</code> 是什么，但是我知道，这是把 <code>query_res</code> 中的每个值加到一起。<br />
+不用去管<code>x</code>, <code>y</code>的类型，只需要他们支持<code>+</code>操作。这种编程思维可以再次把业务逻辑和实现分开。</p>
 <h3>Decorator</h3>
-<p>Decorator is a useful syntax sugar to split implement detail.
-For example</p>
+<p>装饰器算是 Python 的一大亮点。看下面这个例子：</p>
 <div class="highlight"><pre>  begin = time.time()
   do_sth()
   end = time.time()
@@ -247,8 +255,8 @@ For example</p>
 </pre></div>
 
 
-<p>In above code, profile code is mixed in logic code.<br />
-By decorator  </p>
+<p>业务逻辑里混杂着统计时间的逻辑。添加要加三行，什么时候不要了，又要删三行。
+如果用上装饰器</p>
 <div class="highlight"><pre>def logtime(func):
     @wraps(func)
     def wrapper(*args, **kwds):
@@ -270,11 +278,11 @@ do_sth()
 </pre></div>
 
 
-<p>When <code>do_sth</code> be invoked, the caller don't need to know about <code>logtime</code>.
-There is also a <code>@</code> used in Java. But that is a <code>annotation</code>, it's not run-time but a complie time reflect.<br />
-That has no relation with decorator in Python.</p>
+<p>代码被调用的时候，不需要知道做了时间的统计，也不需要把统计代码混杂在业务逻辑中。 <br />
+Java中同样也有<code>@</code>字符的运用，不同的是，Java中那个叫<code>annotation</code>, 也就是注解。 
+注解是编译期的，它是用来做反射的，也就是提供给外部一些关于我本身信息的。和 Python 的用法没有关系。  </p>
 <h3>Unicode</h3>
-<p>Here are some code to show the relation with <code>unicode</code> and <code>str</code></p>
+<p>下面直接用一些例子来显示 Python2中的 Unicode 和 Str 的关系。</p>
 <div class="highlight"><pre>&gt;&gt;&gt; a = &#39;我&#39;
 &gt;&gt;&gt; a
 &#39;\xe6\x88\x91&#39;
@@ -294,7 +302,7 @@ u&#39;\u6211&#39;
 </pre></div>
 
 
-<p>In Python2, <code>str</code> is byte array and <code>unicode</code> is charset code of the character.</p></div>
+<p>很明显可以看出，Python2中，str 类型其实是 byte 字节流。而 Unicode 类型则是表示了 Unicode 字符号。</p></div>
         <hr />
     </div>
 		
@@ -305,15 +313,15 @@ u&#39;\u6211&#39;
  
 
     <div class='article'>
-        <a href="/learning/python_pro_zh_cn.html"><h2>Python开发经验--从问题入手</h2></a>
-        <div class= "well small"> 2015-12-21 15-56-37
+        <a href="/learning/python_pro.html"><h2>Write Python like a Pro</h2></a>
+        <div class= "well small"> 2015-12-21 17-26-57
 
 by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
  
 
 
  </div>
-        <div class="summary"><p>从一系列实际问题出发, 谈 Python 的一些使用知识</p> <a class="btn btn-info xsmall" href="/learning/python_pro_zh_cn.html">read more</a></div>
+        <div class="summary"><p>Something I know about how to write Python code</p> <a class="btn btn-info xsmall" href="/learning/python_pro.html">read more</a></div>
     </div>	
 				
 

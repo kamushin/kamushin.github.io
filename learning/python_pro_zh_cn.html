@@ -54,7 +54,7 @@
     <div class='article'>
         <div class="content-title">
             <h1>Python开发经验--从问题入手</h1>
-2015-12-21 15-56-37
+2015-12-21 17-35-52
 
 by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
  
@@ -64,28 +64,22 @@ by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
 	
         <div><h3>上下文管理</h3>
 <p>如果你要做一件事情<code>do_sth()</code>，在这之前，需要连接数据库，需要持有文件锁。那么你很可能这么写：</p>
-<div class="highlight"><pre>  try:
-    db.connect()
-    getfilelock()
-    do_sth()
-  except:
-    ...
-  finally:
-    releasefilelock()
-    db.close()
+<div class="highlight"><pre>
 </pre></div>
 
 
 <p>如果<code>do_sth</code>在 N 个地方出现呢？如果我策略修改了，不再需要<code>filelock</code> 了呢？是不是需要去改这 N 个地方？<br />
 花了一下午去修改了 N 个地方，测试了几次终于没有遗漏后，你发现这个做法多么低效，于是你终于想起来用一个函数去做这件事情。<br />
 你把代码写成了这样  </p>
-<div class="highlight"><pre>  try:
-    prepare()
-    do_sth()
-  except:
-    ...
-  finally:
-    close()
+<div class="highlight"><pre><span class="k">try</span><span class="o">:</span>
+    <span class="n">db</span><span class="o">.</span><span class="na">connect</span><span class="o">()</span>
+    <span class="n">getfilelock</span><span class="o">()</span>
+    <span class="n">do_sth</span><span class="o">()</span>
+<span class="n">except</span><span class="o">:</span>
+    <span class="o">...</span>
+<span class="n">finally</span><span class="o">:</span>
+    <span class="n">releasefilelock</span><span class="o">()</span>
+    <span class="n">db</span><span class="o">.</span><span class="na">close</span><span class="o">()</span>
 </pre></div>
 
 
@@ -94,20 +88,20 @@ by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
 我认为一个程序员写代码的过程，就是从复杂的逻辑中进行抽象的过程，如果不进行抽象，那么就不是写代码，而是在做翻译。我们来看看这里有什么可以抽象的。<br />
 <code>prepare</code>, <code>close</code> 这些是在做什么？是在预备和释放一个可以<code>do_sth</code>的环境，也就是我们常说的上下文管理。<br />
 Python 提供了<code>with</code>语句来帮助我们管理上下文。代码变成了这样：</p>
-<div class="highlight"><pre>  <span class="k">class</span> <span class="n">A</span>():
+<div class="highlight"><pre><span class="k">class</span> <span class="n">A</span>():
     <span class="n">def</span> <span class="n">do_sth</span>(<span class="k">self</span>):
-      <span class="nb">pass</span>
+        <span class="nb">pass</span>
 
     <span class="n">def</span> <span class="n">__enter__</span>(<span class="k">self</span>):
-      <span class="n">db</span>.<span class="nb">connect</span>()
-      <span class="n">getfilelock</span>()
-      <span class="k">return</span> <span class="k">self</span>
+        <span class="n">db</span>.<span class="nb">connect</span>()
+        <span class="n">getfilelock</span>()
+        <span class="k">return</span> <span class="k">self</span>
 
     <span class="n">def</span> <span class="n">__exit__</span>(<span class="k">self</span>, <span class="n">type</span>, <span class="nb">value</span>, <span class="n">traceback</span>):
       <span class="n">releasefilelock</span>()
       <span class="n">db</span>.<span class="nb">close</span>()
 
-  <span class="n">with</span> <span class="n">A</span>() <span class="k">as</span> <span class="n">a:</span>
+<span class="n">with</span> <span class="n">A</span>() <span class="k">as</span> <span class="n">a:</span>
     <span class="n">a</span>.<span class="n">do_sth</span>()
 </pre></div>
 
@@ -124,17 +118,17 @@ Python 提供了<code>with</code>语句来帮助我们管理上下文。代码�
   Simple is better than complex.</p>
 </blockquote>
 <p>另一个常见的做法是使用<code>__del__</code></p>
-<div class="highlight"><pre>  <span class="k">class</span> <span class="n">A</span>():
+<div class="highlight"><pre><span class="k">class</span> <span class="n">A</span>():
     <span class="n">def</span> <span class="n">__init__</span>(<span class="k">self</span>):
-      <span class="n">db</span>.<span class="nb">connect</span>()
-      <span class="n">getfilelock</span>()
+        <span class="n">db</span>.<span class="nb">connect</span>()
+        <span class="n">getfilelock</span>()
 
     <span class="n">def</span> <span class="n">__del__</span>(<span class="k">self</span>, <span class="n">type</span>, <span class="nb">value</span>, <span class="n">traceback</span>):
-      <span class="n">releasefilelock</span>()
-      <span class="n">db</span>.<span class="nb">close</span>()
+        <span class="n">releasefilelock</span>()
+        <span class="n">db</span>.<span class="nb">close</span>()
 
-    <span class="n">a</span> =  <span class="n">A</span>()
-    <span class="n">a</span>.<span class="n">do_sth</span>()
+<span class="n">a</span> =  <span class="n">A</span>()
+<span class="n">a</span>.<span class="n">do_sth</span>()
 </pre></div>
 
 
@@ -167,27 +161,27 @@ Python 提供了<code>with</code>语句来帮助我们管理上下文。代码�
 <p>执行一次 <code>do_sth</code>，再生成一次 i 值。 <br />
 所以<code>xrange</code>会比<code>range</code>更省内存。（在 Py2 是这样。Py3中，<code>range</code> 就是 Py2 的 <code>xrange</code>。 另外据我所知，不存在 xrange 是 C 实现这么一回事)。
 再来一个例子：</p>
-<div class="highlight"><pre>    def fetchmany(self, *args, **kwargs):
-        &#39;&#39;&#39;
-           A generator to fetch data.
-           prams: numRows -&gt; the number of rows to fetch.
-        &#39;&#39;&#39;
-        cur = self._conn.cursor()  
-        numRows = 200
-        try:
-            cur.execute(*args, **kwargs)
-            self._conn.commit()
-        except Exception as e:
-            self.logger.error(str(e))
-            self._conn.rollback()
+<div class="highlight"><pre>def fetchmany(self, *args, **kwargs):
+    &#39;&#39;&#39;
+       A generator to fetch data.
+       prams: numRows -&gt; the number of rows to fetch.
+    &#39;&#39;&#39;
+    cur = self._conn.cursor()  
+    numRows = 200
+    try:
+        cur.execute(*args, **kwargs)
+        self._conn.commit()
+    except Exception as e:
+        self.logger.error(str(e))
+        self._conn.rollback()
+        return
+    while True:
+        rows = cur.fetchmany(numRows)
+        if rows:
+            yield rows
+        else:
+            cur.close()
             return
-        while True:
-            rows = cur.fetchmany(numRows)
-            if rows:
-                yield rows
-            else:
-                cur.close()
-                return
 
 for rows in fetchmany(sql):
   do_sth_with_rows(rows)
