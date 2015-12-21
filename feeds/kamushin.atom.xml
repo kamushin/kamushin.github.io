@@ -1,5 +1,471 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Kamushin's blog</title><link href="/" rel="alternate"></link><link href="/feeds/kamushin.atom.xml" rel="self"></link><id>/</id><updated>2015-12-09T09:39:29+08:00</updated><entry><title>New fxg for me</title><link href="/tool/fxg_new.html" rel="alternate"></link><updated>2015-12-09T09:39:29+08:00</updated><author><name>Kamushin</name></author><id>tag:,2015-12-09:tool/fxg_new.html</id><summary type="html">&lt;p&gt;&lt;a href="http://kamushin.github.io/tool/fxg.html"&gt;previos article about fxg&lt;/a&gt;&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Kamushin's blog</title><link href="/" rel="alternate"></link><link href="/feeds/kamushin.atom.xml" rel="self"></link><id>/</id><updated>2015-12-21T17:26:57+08:00</updated><entry><title>Write Python like a Pro</title><link href="/learning/python_pro.html" rel="alternate"></link><updated>2015-12-21T17:26:57+08:00</updated><author><name>Kamushin</name></author><id>tag:,2015-12-21:learning/python_pro.html</id><summary type="html">&lt;h3&gt;Context Managers&lt;/h3&gt;
+&lt;p&gt;If you have a function &lt;code&gt;do_sth()&lt;/code&gt;, before invoking this method, it needs connect to Database and get filelock. And code maybe like this:  &lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;  try:
+    db.connect()
+    getfilelock()
+    do_sth()
+  except:
+    ...
+  finally:
+    releasefilelock()
+    db.close()
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;What if &lt;code&gt;do_sth&lt;/code&gt; be called at many palces? If filelock is now don't need, code should be rewrited at each palce when &lt;code&gt;do_sth&lt;/code&gt; is called. &lt;br /&gt;
+After wasting a whole afternoon rewriting the code, you find it's useful to have a function to do this. Then code will be:  &lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;  try:
+    prepare()
+    do_sth()
+  except:
+    ...
+  finally:
+    close()
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Each palce &lt;code&gt;do_sth&lt;/code&gt; invoked is full of &lt;code&gt;prepare/close&lt;/code&gt;. And both of them has no relation with bussiness logic. It makes the code longer and longer.&lt;br /&gt;
+Although you don't care about the cofusion you may have when you see these code after 2 months(because the only one line of bussiness logic code is hidden in seven lines of non-business code),
+you should be friendly to those who review your code. A funciton more than 500 lines is horrible. I think writing code is an action to get abstraction from complex logic, if there is no 
+abstraction in code, it's not coding but translating.
+What &lt;code&gt;prepare/close&lt;/code&gt; doed indeed? They are preapre or release an environment to &lt;code&gt;do_sth&lt;/code&gt;, that is context.&lt;br /&gt;
+Python use &lt;code&gt;with&lt;/code&gt; statement to manage context.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;  &lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="n"&gt;A&lt;/span&gt;():
+    &lt;span class="n"&gt;def&lt;/span&gt; &lt;span class="n"&gt;do_sth&lt;/span&gt;(&lt;span class="k"&gt;self&lt;/span&gt;):
+      &lt;span class="nb"&gt;pass&lt;/span&gt;
+
+    &lt;span class="n"&gt;def&lt;/span&gt; &lt;span class="n"&gt;__enter__&lt;/span&gt;(&lt;span class="k"&gt;self&lt;/span&gt;):
+      &lt;span class="n"&gt;db&lt;/span&gt;.&lt;span class="nb"&gt;connect&lt;/span&gt;()
+      &lt;span class="n"&gt;getfilelock&lt;/span&gt;()
+      &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="k"&gt;self&lt;/span&gt;
+
+    &lt;span class="n"&gt;def&lt;/span&gt; &lt;span class="n"&gt;__exit__&lt;/span&gt;(&lt;span class="k"&gt;self&lt;/span&gt;, &lt;span class="n"&gt;type&lt;/span&gt;, &lt;span class="nb"&gt;value&lt;/span&gt;, &lt;span class="n"&gt;traceback&lt;/span&gt;):
+      &lt;span class="n"&gt;releasefilelock&lt;/span&gt;()
+      &lt;span class="n"&gt;db&lt;/span&gt;.&lt;span class="nb"&gt;close&lt;/span&gt;()
+
+  &lt;span class="n"&gt;with&lt;/span&gt; &lt;span class="n"&gt;A&lt;/span&gt;() &lt;span class="k"&gt;as&lt;/span&gt; &lt;span class="n"&gt;a:&lt;/span&gt;
+    &lt;span class="n"&gt;a&lt;/span&gt;.&lt;span class="n"&gt;do_sth&lt;/span&gt;()
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Now the reviewer will only see&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;  with A() as a:
+    a.do_sth()
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Context manager is uesd explictly. Bussiness logic and impelement are splited.&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Explicit is better than implicit.
+  Simple is better than complex.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;Anthor common way is using &lt;code&gt;__del__&lt;/code&gt;&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;  &lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="n"&gt;A&lt;/span&gt;():
+      &lt;span class="n"&gt;def&lt;/span&gt; &lt;span class="n"&gt;__init__&lt;/span&gt;(&lt;span class="k"&gt;self&lt;/span&gt;):
+          &lt;span class="n"&gt;db&lt;/span&gt;.&lt;span class="nb"&gt;connect&lt;/span&gt;()
+          &lt;span class="n"&gt;getfilelock&lt;/span&gt;()
+
+      &lt;span class="n"&gt;def&lt;/span&gt; &lt;span class="n"&gt;__del__&lt;/span&gt;(&lt;span class="k"&gt;self&lt;/span&gt;, &lt;span class="n"&gt;type&lt;/span&gt;, &lt;span class="nb"&gt;value&lt;/span&gt;, &lt;span class="n"&gt;traceback&lt;/span&gt;):
+          &lt;span class="n"&gt;releasefilelock&lt;/span&gt;()
+          &lt;span class="n"&gt;db&lt;/span&gt;.&lt;span class="nb"&gt;close&lt;/span&gt;()
+
+  &lt;span class="n"&gt;a&lt;/span&gt; =  &lt;span class="n"&gt;A&lt;/span&gt;()
+  &lt;span class="n"&gt;a&lt;/span&gt;.&lt;span class="n"&gt;do_sth&lt;/span&gt;()
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;The good part of this way is no need of wiring &lt;code&gt;with&lt;/code&gt;. But it's not a explicit context manager.
+To &lt;code&gt;GC&lt;/code&gt; languages like Python or Java, there is no way to invoke a destructor method.
+Although object has leaved the scope, if it was not cleaned by &lt;code&gt;GC&lt;/code&gt;, the resource it takes will not be released.&lt;br /&gt;
+If the resource is database connect, close lately is acceptable, but to resource like &lt;code&gt;mutex&lt;/code&gt;, we need &lt;code&gt;with&lt;/code&gt; statement to release it immediately.&lt;/p&gt;
+&lt;h3&gt;Generation&lt;/h3&gt;
+&lt;p&gt;A function with &lt;code&gt;yield&lt;/code&gt; is a generator. Generation maintains a context to eval result when it is need.
+For example:  &lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;  for i in range(100000):
+      do_sth()
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;It creates an array of 1-100000 before &lt;code&gt;do_sth&lt;/code&gt; which will make a waste of memory. 
+Another loop with &lt;code&gt;xrange&lt;/code&gt;:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;  for i in xrange(100000):
+      do_sth()
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;That is what we know in C++, &lt;code&gt;do_sth&lt;/code&gt; once and then &lt;code&gt;i++&lt;/code&gt;, loops. &lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;  for(int i = 0; i &amp;lt; 100000; i++) {
+      do_sth()
+  }
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;So &lt;code&gt;xrange&lt;/code&gt; will use less memory than &lt;code&gt;range&lt;/code&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;    def fetchmany(self, *args, **kwargs):
+        &amp;#39;&amp;#39;&amp;#39;
+           A generator to fetch data.
+        &amp;#39;&amp;#39;&amp;#39;
+        cur = self._conn.cursor()  
+        numRows = 200
+        try:
+            cur.execute(*args, **kwargs)
+            self._conn.commit()
+        except Exception as e:
+            self.logger.error(str(e))
+            self._conn.rollback()
+            return
+        while True:
+            rows = cur.fetchmany(numRows)
+            if rows:
+                yield rows
+            else:
+                cur.close()
+                return
+
+for rows in fetchmany(sql):
+    do_sth_with_rows(rows)
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;&lt;code&gt;fetchmany&lt;/code&gt; is a generator, and a generator is iteratable. Only 200 rows will be taken in a patch, not all of the results.  &lt;/p&gt;
+&lt;p&gt;Generator can also be used to make a co-routine.  &lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;random&lt;/span&gt;
+
+&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;get_data&lt;/span&gt;&lt;span class="p"&gt;():&lt;/span&gt;
+    &lt;span class="sd"&gt;&amp;quot;&amp;quot;&amp;quot;Return 3 random integers between 0 and 9&amp;quot;&amp;quot;&amp;quot;&lt;/span&gt;
+    &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;random&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;sample&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;range&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;10&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="mi"&gt;3&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+
+&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;consume&lt;/span&gt;&lt;span class="p"&gt;():&lt;/span&gt;
+    &lt;span class="sd"&gt;&amp;quot;&amp;quot;&amp;quot;Displays a running average across lists of integers sent to it&amp;quot;&amp;quot;&amp;quot;&lt;/span&gt;
+    &lt;span class="n"&gt;running_sum&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;
+    &lt;span class="n"&gt;data_items_seen&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;
+
+    &lt;span class="k"&gt;while&lt;/span&gt; &lt;span class="bp"&gt;True&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+        &lt;span class="n"&gt;data&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="k"&gt;yield&lt;/span&gt;
+        &lt;span class="n"&gt;data_items_seen&lt;/span&gt; &lt;span class="o"&gt;+=&lt;/span&gt; &lt;span class="nb"&gt;len&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;data&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+        &lt;span class="n"&gt;running_sum&lt;/span&gt; &lt;span class="o"&gt;+=&lt;/span&gt; &lt;span class="nb"&gt;sum&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;data&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+        &lt;span class="k"&gt;print&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;The running average is {}&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;format&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;running_sum&lt;/span&gt; &lt;span class="o"&gt;/&lt;/span&gt; &lt;span class="nb"&gt;float&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;data_items_seen&lt;/span&gt;&lt;span class="p"&gt;)))&lt;/span&gt;
+
+&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;produce&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;consumer&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+    &lt;span class="sd"&gt;&amp;quot;&amp;quot;&amp;quot;Produces a set of values and forwards them to the pre-defined consumer&lt;/span&gt;
+&lt;span class="sd"&gt;    function&amp;quot;&amp;quot;&amp;quot;&lt;/span&gt;
+    &lt;span class="k"&gt;while&lt;/span&gt; &lt;span class="bp"&gt;True&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+        &lt;span class="n"&gt;data&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;get_data&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+        &lt;span class="k"&gt;print&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;Produced {}&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;format&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;data&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+        &lt;span class="n"&gt;consumer&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;send&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;data&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+        &lt;span class="k"&gt;yield&lt;/span&gt;
+
+&lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="n"&gt;__name__&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="s"&gt;&amp;#39;__main__&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+    &lt;span class="n"&gt;consumer&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;consume&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+    &lt;span class="n"&gt;consumer&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;send&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="bp"&gt;None&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="n"&gt;producer&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;produce&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;consumer&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+
+    &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;_&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="nb"&gt;range&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;10&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+        &lt;span class="k"&gt;print&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;Producing...&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+        &lt;span class="nb"&gt;next&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;producer&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;More useful cases in &lt;code&gt;Tornado&lt;/code&gt;.  &lt;/p&gt;
+&lt;h3&gt;Decorator&lt;/h3&gt;
+&lt;p&gt;Decorator is a useful syntax sugar to split implement detail.
+For example&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;  begin = time.time()
+  do_sth()
+  end = time.time()
+  print &amp;#39;do sth used %s second&amp;#39; % (end-begin)
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;In above code, profile code is mixed in logic code.&lt;br /&gt;
+By decorator  &lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;def logtime(func):
+    @wraps(func)
+    def wrapper(*args, **kwds):
+        start_time = time.time()
+        ret = func(*args, **kwds)
+        use_time = time.time() - start_time
+        if use_time &amp;gt; 1.0:
+            logging.info(&amp;quot;%s use %s s&amp;quot;, func.__name__, use_time)
+        return ret
+    return wrapper
+
+@logtime
+def do_sth():
+  ...
+
+
+
+do_sth()
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;When &lt;code&gt;do_sth&lt;/code&gt; be invoked, the caller don't need to know about &lt;code&gt;logtime&lt;/code&gt;.
+There is also a &lt;code&gt;@&lt;/code&gt; used in Java. But that is a &lt;code&gt;annotation&lt;/code&gt;, it's not run-time but a complie time reflect.&lt;br /&gt;
+That has no relation with decorator in Python.&lt;/p&gt;
+&lt;h3&gt;Unicode&lt;/h3&gt;
+&lt;p&gt;Here are some code to show the relation with &lt;code&gt;unicode&lt;/code&gt; and &lt;code&gt;str&lt;/code&gt;&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&amp;gt;&amp;gt;&amp;gt; a = &amp;#39;我&amp;#39;
+&amp;gt;&amp;gt;&amp;gt; a
+&amp;#39;\xe6\x88\x91&amp;#39;
+&amp;gt;&amp;gt;&amp;gt; type(a)
+&amp;lt;type &amp;#39;str&amp;#39;&amp;gt;
+
+&amp;gt;&amp;gt;&amp;gt; b = &amp;#39;我&amp;#39;.decode(&amp;#39;utf-8&amp;#39;)
+&amp;gt;&amp;gt;&amp;gt; b
+u&amp;#39;\u6211&amp;#39;
+&amp;gt;&amp;gt;&amp;gt; type(b)
+&amp;lt;type &amp;#39;unicode&amp;#39;&amp;gt;
+
+&amp;gt;&amp;gt;&amp;gt; b.encode(&amp;#39;utf-8&amp;#39;)
+&amp;#39;\xe6\x88\x91&amp;#39;
+&amp;gt;&amp;gt;&amp;gt; b.encode(&amp;#39;gbk&amp;#39;)
+&amp;#39;\xce\xd2&amp;#39;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;In Python2, &lt;code&gt;str&lt;/code&gt; is byte array and &lt;code&gt;unicode&lt;/code&gt; is charset code of the character.&lt;/p&gt;</summary><category term="Python"></category></entry><entry><title>Python开发经验--从问题入手</title><link href="/learning/python_pro_zh_cn.html" rel="alternate"></link><updated>2015-12-21T15:56:37+08:00</updated><author><name>Kamushin</name></author><id>tag:,2015-12-21:learning/python_pro_zh_cn.html</id><summary type="html">&lt;h3&gt;上下文管理&lt;/h3&gt;
+&lt;p&gt;如果你要做一件事情&lt;code&gt;do_sth()&lt;/code&gt;，在这之前，需要连接数据库，需要持有文件锁。那么你很可能这么写：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;  try:
+    db.connect()
+    getfilelock()
+    do_sth()
+  except:
+    ...
+  finally:
+    releasefilelock()
+    db.close()
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;如果&lt;code&gt;do_sth&lt;/code&gt;在 N 个地方出现呢？如果我策略修改了，不再需要&lt;code&gt;filelock&lt;/code&gt; 了呢？是不是需要去改这 N 个地方？&lt;br /&gt;
+花了一下午去修改了 N 个地方，测试了几次终于没有遗漏后，你发现这个做法多么低效，于是你终于想起来用一个函数去做这件事情。&lt;br /&gt;
+你把代码写成了这样  &lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;  try:
+    prepare()
+    do_sth()
+  except:
+    ...
+  finally:
+    close()
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;&lt;code&gt;do_sth&lt;/code&gt;所在的 N 个地方，都写满了 &lt;code&gt;prepare&lt;/code&gt;, &lt;code&gt;close&lt;/code&gt; 这一系列和业务逻辑无关的代码, 这使得我们的代码变得冗长。
+即使你不在乎自己过了两个月后是否还愿意看这段代码，至少你要照顾下帮你 review 代码的人，一个函数写了500行还能 review 吗？
+我认为一个程序员写代码的过程，就是从复杂的逻辑中进行抽象的过程，如果不进行抽象，那么就不是写代码，而是在做翻译。我们来看看这里有什么可以抽象的。&lt;br /&gt;
+&lt;code&gt;prepare&lt;/code&gt;, &lt;code&gt;close&lt;/code&gt; 这些是在做什么？是在预备和释放一个可以&lt;code&gt;do_sth&lt;/code&gt;的环境，也就是我们常说的上下文管理。&lt;br /&gt;
+Python 提供了&lt;code&gt;with&lt;/code&gt;语句来帮助我们管理上下文。代码变成了这样：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;  &lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="n"&gt;A&lt;/span&gt;():
+    &lt;span class="n"&gt;def&lt;/span&gt; &lt;span class="n"&gt;do_sth&lt;/span&gt;(&lt;span class="k"&gt;self&lt;/span&gt;):
+      &lt;span class="nb"&gt;pass&lt;/span&gt;
+
+    &lt;span class="n"&gt;def&lt;/span&gt; &lt;span class="n"&gt;__enter__&lt;/span&gt;(&lt;span class="k"&gt;self&lt;/span&gt;):
+      &lt;span class="n"&gt;db&lt;/span&gt;.&lt;span class="nb"&gt;connect&lt;/span&gt;()
+      &lt;span class="n"&gt;getfilelock&lt;/span&gt;()
+      &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="k"&gt;self&lt;/span&gt;
+
+    &lt;span class="n"&gt;def&lt;/span&gt; &lt;span class="n"&gt;__exit__&lt;/span&gt;(&lt;span class="k"&gt;self&lt;/span&gt;, &lt;span class="n"&gt;type&lt;/span&gt;, &lt;span class="nb"&gt;value&lt;/span&gt;, &lt;span class="n"&gt;traceback&lt;/span&gt;):
+      &lt;span class="n"&gt;releasefilelock&lt;/span&gt;()
+      &lt;span class="n"&gt;db&lt;/span&gt;.&lt;span class="nb"&gt;close&lt;/span&gt;()
+
+  &lt;span class="n"&gt;with&lt;/span&gt; &lt;span class="n"&gt;A&lt;/span&gt;() &lt;span class="k"&gt;as&lt;/span&gt; &lt;span class="n"&gt;a:&lt;/span&gt;
+    &lt;span class="n"&gt;a&lt;/span&gt;.&lt;span class="n"&gt;do_sth&lt;/span&gt;()
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;现在帮你 review 代码的人，只会在那 N 个&lt;code&gt;do_sth&lt;/code&gt; 存在的地方，看到  &lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;  with A() as a:
+    a.do_sth()
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;很显示的使用了上下文进行管理，分离了业务逻辑和具体实现。&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Explicit is better than implicit.
+  Simple is better than complex.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;另一个常见的做法是使用&lt;code&gt;__del__&lt;/code&gt;&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;  &lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="n"&gt;A&lt;/span&gt;():
+    &lt;span class="n"&gt;def&lt;/span&gt; &lt;span class="n"&gt;__init__&lt;/span&gt;(&lt;span class="k"&gt;self&lt;/span&gt;):
+      &lt;span class="n"&gt;db&lt;/span&gt;.&lt;span class="nb"&gt;connect&lt;/span&gt;()
+      &lt;span class="n"&gt;getfilelock&lt;/span&gt;()
+
+    &lt;span class="n"&gt;def&lt;/span&gt; &lt;span class="n"&gt;__del__&lt;/span&gt;(&lt;span class="k"&gt;self&lt;/span&gt;, &lt;span class="n"&gt;type&lt;/span&gt;, &lt;span class="nb"&gt;value&lt;/span&gt;, &lt;span class="n"&gt;traceback&lt;/span&gt;):
+      &lt;span class="n"&gt;releasefilelock&lt;/span&gt;()
+      &lt;span class="n"&gt;db&lt;/span&gt;.&lt;span class="nb"&gt;close&lt;/span&gt;()
+
+    &lt;span class="n"&gt;a&lt;/span&gt; =  &lt;span class="n"&gt;A&lt;/span&gt;()
+    &lt;span class="n"&gt;a&lt;/span&gt;.&lt;span class="n"&gt;do_sth&lt;/span&gt;()
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;这个做法的优点是不需要写&lt;code&gt;with&lt;/code&gt; 语句，缺点是这不是明显的上下文管理，对于 Python/Java 这种带
+&lt;code&gt;GC&lt;/code&gt; 的语言来说，是不能手动调用一个对象的析构函数的，即使对象离开了作用域，它依然会因为还没有被&lt;code&gt;GC&lt;/code&gt;而存活。&lt;br /&gt;
+所以对于锁这样的，我们需要很快去释放的资源，使用&lt;code&gt;with&lt;/code&gt; 更加的可控。
+可能会有人去对比 C++ 中的&lt;code&gt;RAII&lt;/code&gt; 规则，Python中是做不到 &lt;code&gt;RAII&lt;/code&gt; 的, 因为以上原因。&lt;/p&gt;
+&lt;h3&gt;生成器&lt;/h3&gt;
+&lt;p&gt;一个函数如果在代码段中有 &lt;code&gt;yield&lt;/code&gt; 那么它就从一个函数变成了一个 &lt;code&gt;generator&lt;/code&gt;。生成器的好处是保留了一个上下文在需要时去运算。&lt;br /&gt;
+同样从一个实际例子出发：  &lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;  for i in range(100000):
+    do_sth()
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;这段代码，在什么都没做之前，就产生了一个1-100000这些数字的数组，占用了内存。&lt;br /&gt;
+而&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;  for i in xrange(100000):
+    do_sth()
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;这才是我们知道的C++中的&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;  for(int i = 0; i &amp;lt; 100000; i++) {
+    do_sth()
+  }
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;执行一次 &lt;code&gt;do_sth&lt;/code&gt;，再生成一次 i 值。 &lt;br /&gt;
+所以&lt;code&gt;xrange&lt;/code&gt;会比&lt;code&gt;range&lt;/code&gt;更省内存。（在 Py2 是这样。Py3中，&lt;code&gt;range&lt;/code&gt; 就是 Py2 的 &lt;code&gt;xrange&lt;/code&gt;。 另外据我所知，不存在 xrange 是 C 实现这么一回事)。
+再来一个例子：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;    def fetchmany(self, *args, **kwargs):
+        &amp;#39;&amp;#39;&amp;#39;
+           A generator to fetch data.
+           prams: numRows -&amp;gt; the number of rows to fetch.
+        &amp;#39;&amp;#39;&amp;#39;
+        cur = self._conn.cursor()  
+        numRows = 200
+        try:
+            cur.execute(*args, **kwargs)
+            self._conn.commit()
+        except Exception as e:
+            self.logger.error(str(e))
+            self._conn.rollback()
+            return
+        while True:
+            rows = cur.fetchmany(numRows)
+            if rows:
+                yield rows
+            else:
+                cur.close()
+                return
+
+for rows in fetchmany(sql):
+  do_sth_with_rows(rows)
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;这就实现了每次取出200条，消费完再取200条。而不是一次性取到内存中。同时也封装了&lt;code&gt;commit&lt;/code&gt;，&lt;code&gt;rollback&lt;/code&gt;等操作。&lt;/p&gt;
+&lt;p&gt;生成器也可以用来构造对称式协程&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;random&lt;/span&gt;
+
+&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;get_data&lt;/span&gt;&lt;span class="p"&gt;():&lt;/span&gt;
+    &lt;span class="sd"&gt;&amp;quot;&amp;quot;&amp;quot;Return 3 random integers between 0 and 9&amp;quot;&amp;quot;&amp;quot;&lt;/span&gt;
+    &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;random&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;sample&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;range&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;10&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="mi"&gt;3&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+
+&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;consume&lt;/span&gt;&lt;span class="p"&gt;():&lt;/span&gt;
+    &lt;span class="sd"&gt;&amp;quot;&amp;quot;&amp;quot;Displays a running average across lists of integers sent to it&amp;quot;&amp;quot;&amp;quot;&lt;/span&gt;
+    &lt;span class="n"&gt;running_sum&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;
+    &lt;span class="n"&gt;data_items_seen&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;
+
+    &lt;span class="k"&gt;while&lt;/span&gt; &lt;span class="bp"&gt;True&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+        &lt;span class="n"&gt;data&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="k"&gt;yield&lt;/span&gt;
+        &lt;span class="n"&gt;data_items_seen&lt;/span&gt; &lt;span class="o"&gt;+=&lt;/span&gt; &lt;span class="nb"&gt;len&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;data&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+        &lt;span class="n"&gt;running_sum&lt;/span&gt; &lt;span class="o"&gt;+=&lt;/span&gt; &lt;span class="nb"&gt;sum&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;data&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+        &lt;span class="k"&gt;print&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;The running average is {}&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;format&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;running_sum&lt;/span&gt; &lt;span class="o"&gt;/&lt;/span&gt; &lt;span class="nb"&gt;float&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;data_items_seen&lt;/span&gt;&lt;span class="p"&gt;)))&lt;/span&gt;
+
+&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;produce&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;consumer&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+    &lt;span class="sd"&gt;&amp;quot;&amp;quot;&amp;quot;Produces a set of values and forwards them to the pre-defined consumer&lt;/span&gt;
+&lt;span class="sd"&gt;    function&amp;quot;&amp;quot;&amp;quot;&lt;/span&gt;
+    &lt;span class="k"&gt;while&lt;/span&gt; &lt;span class="bp"&gt;True&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+        &lt;span class="n"&gt;data&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;get_data&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+        &lt;span class="k"&gt;print&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;Produced {}&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;format&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;data&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+        &lt;span class="n"&gt;consumer&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;send&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;data&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+        &lt;span class="k"&gt;yield&lt;/span&gt;
+
+&lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="n"&gt;__name__&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="s"&gt;&amp;#39;__main__&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+    &lt;span class="n"&gt;consumer&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;consume&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+    &lt;span class="n"&gt;consumer&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;send&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="bp"&gt;None&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="n"&gt;producer&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;produce&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;consumer&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+
+    &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;_&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="nb"&gt;range&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;10&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+        &lt;span class="k"&gt;print&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;Producing...&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+        &lt;span class="nb"&gt;next&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;producer&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;在这个例子中， 不需要队列，就做到了一个一对一的生产与消费。当然这个1对1的并没有什么实际意义。对于协程和生成器的作用，如果感兴趣，可以看看&lt;code&gt;Tornado&lt;/code&gt;的实现。&lt;/p&gt;
+&lt;h3&gt;Exception&lt;/h3&gt;
+&lt;p&gt;这块Python和其他语言没什么不同的，拿出来讲是因为看到很多代码里充满了魔数。&lt;br /&gt;
+比如 &lt;code&gt;return 'unknown'&lt;/code&gt;. 既然是&lt;code&gt;unknown&lt;/code&gt;就应该抛出异常。而不是用一堆的常量字符串在各个函数直接传来传去。&lt;br /&gt;
+类似的例子还有&lt;code&gt;return 'ok'&lt;/code&gt;, &lt;code&gt;return 'mysql'&lt;/code&gt;, &lt;code&gt;return 2&lt;/code&gt;. &lt;br /&gt;
+另外尽可能抛出和接收特定的异常。&lt;/p&gt;
+&lt;h3&gt;Functional Programming&lt;/h3&gt;
+&lt;p&gt;Python 其实是不怎么 FP 的，不过一些基本的 FP 支持还是有的。&lt;br /&gt;
+比如高阶函数，&lt;code&gt;map reduce filter&lt;/code&gt;。&lt;br /&gt;
+用&lt;code&gt;map reduce filter&lt;/code&gt; 可以更好的做抽象。&lt;br /&gt;
+&lt;code&gt;reduce(lambda x, y: x + y, query_res)&lt;/code&gt;&lt;br /&gt;
+很简单就能看出，虽然我不知道具体 &lt;code&gt;x&lt;/code&gt;,&lt;code&gt;y&lt;/code&gt; 是什么，但是我知道，这是把 &lt;code&gt;query_res&lt;/code&gt; 中的每个值加到一起。&lt;br /&gt;
+不用去管&lt;code&gt;x&lt;/code&gt;, &lt;code&gt;y&lt;/code&gt;的类型，只需要他们支持&lt;code&gt;+&lt;/code&gt;操作。这种编程思维可以再次把业务逻辑和实现分开。&lt;/p&gt;
+&lt;h3&gt;Decorator&lt;/h3&gt;
+&lt;p&gt;装饰器算是 Python 的一大亮点。看下面这个例子：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;  begin = time.time()
+  do_sth()
+  end = time.time()
+  print &amp;#39;do sth used %s second&amp;#39; % (end-begin)
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;业务逻辑里混杂着统计时间的逻辑。添加要加三行，什么时候不要了，又要删三行。
+如果用上装饰器&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;def logtime(func):
+    @wraps(func)
+    def wrapper(*args, **kwds):
+        start_time = time.time()
+        ret = func(*args, **kwds)
+        use_time = time.time() - start_time
+        if use_time &amp;gt; 1.0:
+            logging.info(&amp;quot;%s use %s s&amp;quot;, func.__name__, use_time)
+        return ret
+    return wrapper
+
+@logtime
+def do_sth():
+  ...
+
+
+
+do_sth()
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;代码被调用的时候，不需要知道做了时间的统计，也不需要把统计代码混杂在业务逻辑中。 &lt;br /&gt;
+Java中同样也有&lt;code&gt;@&lt;/code&gt;字符的运用，不同的是，Java中那个叫&lt;code&gt;annotation&lt;/code&gt;, 也就是注解。 
+注解是编译期的，它是用来做反射的，也就是提供给外部一些关于我本身信息的。和 Python 的用法没有关系。  &lt;/p&gt;
+&lt;h3&gt;Unicode&lt;/h3&gt;
+&lt;p&gt;下面直接用一些例子来显示 Python2中的 Unicode 和 Str 的关系。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&amp;gt;&amp;gt;&amp;gt; a = &amp;#39;我&amp;#39;
+&amp;gt;&amp;gt;&amp;gt; a
+&amp;#39;\xe6\x88\x91&amp;#39;
+&amp;gt;&amp;gt;&amp;gt; type(a)
+&amp;lt;type &amp;#39;str&amp;#39;&amp;gt;
+
+&amp;gt;&amp;gt;&amp;gt; b = &amp;#39;我&amp;#39;.decode(&amp;#39;utf-8&amp;#39;)
+&amp;gt;&amp;gt;&amp;gt; b
+u&amp;#39;\u6211&amp;#39;
+&amp;gt;&amp;gt;&amp;gt; type(b)
+&amp;lt;type &amp;#39;unicode&amp;#39;&amp;gt;
+
+&amp;gt;&amp;gt;&amp;gt; b.encode(&amp;#39;utf-8&amp;#39;)
+&amp;#39;\xe6\x88\x91&amp;#39;
+&amp;gt;&amp;gt;&amp;gt; b.encode(&amp;#39;gbk&amp;#39;)
+&amp;#39;\xce\xd2&amp;#39;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;很明显可以看出，Python2中，str 类型其实是 byte 字节流。而 Unicode 类型则是表示了 Unicode 字符号。&lt;/p&gt;</summary><category term="Python"></category></entry><entry><title>New fxg for me</title><link href="/tool/fxg_new.html" rel="alternate"></link><updated>2015-12-09T09:39:29+08:00</updated><author><name>Kamushin</name></author><id>tag:,2015-12-09:tool/fxg_new.html</id><summary type="html">&lt;p&gt;&lt;a href="http://kamushin.github.io/tool/fxg.html"&gt;previos article about fxg&lt;/a&gt;&lt;/p&gt;
 &lt;p&gt;&lt;code&gt;fxg&lt;/code&gt; means &lt;code&gt;find&lt;/code&gt; and &lt;code&gt;xargs&lt;/code&gt; then &lt;code&gt;grep&lt;/code&gt;. It has a insufferable performace, so &lt;br /&gt;
 I use &lt;code&gt;ag&lt;/code&gt; to instead, after forking some tools made by &lt;a href="https://github.com/lilydjwg/search-and-view"&gt;lilydjwg&lt;/a&gt;
 The tool chain is used for finding pattern in files and opening file by vim.
