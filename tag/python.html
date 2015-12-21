@@ -59,7 +59,7 @@
     <div class='article'>
         <div class="content-title">
             <a href="/learning/python_pro_zh_cn.html"><h1>Python开发经验--从问题入手</h1></a>
-2015-12-21 17-35-52
+2015-12-21 17-37-35
 
 by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
  
@@ -70,13 +70,6 @@ by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
         
         <div><h3>上下文管理</h3>
 <p>如果你要做一件事情<code>do_sth()</code>，在这之前，需要连接数据库，需要持有文件锁。那么你很可能这么写：</p>
-<div class="highlight"><pre>
-</pre></div>
-
-
-<p>如果<code>do_sth</code>在 N 个地方出现呢？如果我策略修改了，不再需要<code>filelock</code> 了呢？是不是需要去改这 N 个地方？<br />
-花了一下午去修改了 N 个地方，测试了几次终于没有遗漏后，你发现这个做法多么低效，于是你终于想起来用一个函数去做这件事情。<br />
-你把代码写成了这样  </p>
 <div class="highlight"><pre><span class="k">try</span><span class="o">:</span>
     <span class="n">db</span><span class="o">.</span><span class="na">connect</span><span class="o">()</span>
     <span class="n">getfilelock</span><span class="o">()</span>
@@ -86,6 +79,19 @@ by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
 <span class="n">finally</span><span class="o">:</span>
     <span class="n">releasefilelock</span><span class="o">()</span>
     <span class="n">db</span><span class="o">.</span><span class="na">close</span><span class="o">()</span>
+</pre></div>
+
+
+<p>如果<code>do_sth</code>在 N 个地方出现呢？如果我策略修改了，不再需要<code>filelock</code> 了呢？是不是需要去改这 N 个地方？<br />
+花了一下午去修改了 N 个地方，测试了几次终于没有遗漏后，你发现这个做法多么低效，于是你终于想起来用一个函数去做这件事情。<br />
+你把代码写成了这样  </p>
+<div class="highlight"><pre><span class="k">try</span><span class="o">:</span>
+    <span class="n">prepare</span><span class="o">()</span>
+    <span class="n">do_sth</span><span class="o">()</span>
+<span class="n">except</span><span class="o">:</span>
+    <span class="o">...</span>
+<span class="n">finally</span><span class="o">:</span>
+    <span class="n">close</span><span class="o">()</span>
 </pre></div>
 
 

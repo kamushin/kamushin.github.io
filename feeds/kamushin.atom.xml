@@ -1,13 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Kamushin's blog</title><link href="/" rel="alternate"></link><link href="/feeds/kamushin.atom.xml" rel="self"></link><id>/</id><updated>2015-12-21T17:35:52+08:00</updated><entry><title>Python开发经验--从问题入手</title><link href="/learning/python_pro_zh_cn.html" rel="alternate"></link><updated>2015-12-21T17:35:52+08:00</updated><author><name>Kamushin</name></author><id>tag:,2015-12-21:learning/python_pro_zh_cn.html</id><summary type="html">&lt;h3&gt;上下文管理&lt;/h3&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Kamushin's blog</title><link href="/" rel="alternate"></link><link href="/feeds/kamushin.atom.xml" rel="self"></link><id>/</id><updated>2015-12-21T17:37:35+08:00</updated><entry><title>Python开发经验--从问题入手</title><link href="/learning/python_pro_zh_cn.html" rel="alternate"></link><updated>2015-12-21T17:37:35+08:00</updated><author><name>Kamushin</name></author><id>tag:,2015-12-21:learning/python_pro_zh_cn.html</id><summary type="html">&lt;h3&gt;上下文管理&lt;/h3&gt;
 &lt;p&gt;如果你要做一件事情&lt;code&gt;do_sth()&lt;/code&gt;，在这之前，需要连接数据库，需要持有文件锁。那么你很可能这么写：&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;如果&lt;code&gt;do_sth&lt;/code&gt;在 N 个地方出现呢？如果我策略修改了，不再需要&lt;code&gt;filelock&lt;/code&gt; 了呢？是不是需要去改这 N 个地方？&lt;br /&gt;
-花了一下午去修改了 N 个地方，测试了几次终于没有遗漏后，你发现这个做法多么低效，于是你终于想起来用一个函数去做这件事情。&lt;br /&gt;
-你把代码写成了这样  &lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="k"&gt;try&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;
     &lt;span class="n"&gt;db&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;connect&lt;/span&gt;&lt;span class="o"&gt;()&lt;/span&gt;
     &lt;span class="n"&gt;getfilelock&lt;/span&gt;&lt;span class="o"&gt;()&lt;/span&gt;
@@ -17,6 +10,19 @@
 &lt;span class="n"&gt;finally&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;
     &lt;span class="n"&gt;releasefilelock&lt;/span&gt;&lt;span class="o"&gt;()&lt;/span&gt;
     &lt;span class="n"&gt;db&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;close&lt;/span&gt;&lt;span class="o"&gt;()&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;如果&lt;code&gt;do_sth&lt;/code&gt;在 N 个地方出现呢？如果我策略修改了，不再需要&lt;code&gt;filelock&lt;/code&gt; 了呢？是不是需要去改这 N 个地方？&lt;br /&gt;
+花了一下午去修改了 N 个地方，测试了几次终于没有遗漏后，你发现这个做法多么低效，于是你终于想起来用一个函数去做这件事情。&lt;br /&gt;
+你把代码写成了这样  &lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="k"&gt;try&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;
+    &lt;span class="n"&gt;prepare&lt;/span&gt;&lt;span class="o"&gt;()&lt;/span&gt;
+    &lt;span class="n"&gt;do_sth&lt;/span&gt;&lt;span class="o"&gt;()&lt;/span&gt;
+&lt;span class="n"&gt;except&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;
+    &lt;span class="o"&gt;...&lt;/span&gt;
+&lt;span class="n"&gt;finally&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;
+    &lt;span class="n"&gt;close&lt;/span&gt;&lt;span class="o"&gt;()&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
 
 
