@@ -51,10 +51,56 @@
     <div class="row">
 
         <div class="span9">
-    <h1>Authors on Kamushin's blog</h1>
+    <div class='article'>
+        <div class="content-title">
+            <h1>Compare assert exception in should(JavaScript) and unittest(Python)</h1>
+2015-12-22 15-16-23
 
-    <ul>        <li><a href="/author/kamushin.html">Kamushin</a> (17)</li>
-    </ul>
+by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
+ 
+
+
+        </div>
+	
+        <div><h3>should</h3>
+<p>With <code>should</code>, exception is asserted like this:  </p>
+<div class="highlight"><pre><span class="nx">it</span><span class="p">(</span><span class="s1">&#39;should throw when n isnt Number&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="p">(</span><span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+      <span class="nx">main</span><span class="p">.</span><span class="nx">fibonacci</span><span class="p">(</span><span class="s1">&#39;abcd&#39;</span><span class="p">);</span>
+    <span class="p">}).</span><span class="nx">should</span><span class="p">.</span><span class="k">throw</span><span class="p">(</span><span class="s1">&#39;n should be a Number&#39;</span><span class="p">);</span>
+  <span class="p">});</span>
+</pre></div>
+
+
+<p>This library adds an attribute <code>should</code> to  <code>Object</code>. The <code>should</code> attribute includes a bunch of assert functions. With this, you can do
+<code>(5).should.above(3)</code>. It will be even harder in Python, because types defined in C cannot be monkeypatched.
+The implement of <code>should.throw</code> is a simple <code>try/catch</code>.  </p>
+<h3>unittest</h3>
+<p>With <code>assertRaises</code> in <code>unittest</code>, exception is asserted like this:</p>
+<div class="highlight"><pre><span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">assertRaisesRegexp</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">,</span> <span class="s">&#39;literal&#39;</span><span class="p">):</span>
+    <span class="nb">int</span><span class="p">(</span><span class="s">&#39;XYZ&#39;</span><span class="p">)</span>
+</pre></div>
+
+
+<p>It's much more simple than another way, because we don't need to pass test function as an argument to the assert function, no matter the argument called <code>this</code> lol.<br />
+Exception is not catched by a <code>try/except</code> statement, but in <code>__exit__</code> context manager.</p></div>
+	
+        <hr>
+
+        <h2>Comments</h2>
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'kamushin'; 
+    var disqus_title = 'Compare assert exception in should(JavaScript) and unittest(Python)';
+
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    </div>
         </div>
         
         <div class="span3">
