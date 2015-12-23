@@ -54,7 +54,7 @@
     <div class='article'>
         <div class="content-title">
             <h1>Python开发经验--从问题入手</h1>
-2015-12-21 17-37-35
+2015-12-23 10-49-26
 
 by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
  
@@ -279,7 +279,35 @@ do_sth()
 
 
 <p>代码被调用的时候，不需要知道做了时间的统计，也不需要把统计代码混杂在业务逻辑中。 <br />
-Java中同样也有<code>@</code>字符的运用，不同的是，Java中那个叫<code>annotation</code>, 也就是注解。 
+考虑下面的代码，用 Java 应该怎么实现？</p>
+<div class="highlight"><pre>def make_spin(spin_style=Default, words=&quot;&quot;):
+    spinner = Spinner(spin_style)
+    queue = Queue()
+
+    def add_queue(func):
+        @wraps(func)
+        def wrapper():
+            func()
+            queue.put_nowait(1)
+        return wrapper
+
+    def decorator(func):
+        @wraps(func)
+        def wrapper():
+            process = Process(target=add_queue(func))
+            process.start()
+            while queue.empty():
+                print(text_type(&quot;\r{0}    {1}&quot;).format(spinner.next(), words),
+                      end=&quot;&quot;)
+                sys.stdout.flush()
+                time.sleep(0.1)
+            print(&#39;&#39;)
+        return wrapper
+    return decorator
+</pre></div>
+
+
+<p>Java中同样也有<code>@</code>字符的运用，不同的是，Java中那个叫<code>annotation</code>, 也就是注解。 
 注解是编译期的，它是用来做反射的，也就是提供给外部一些关于我本身信息的。和 Python 的用法没有关系。  </p>
 <h3>Unicode</h3>
 <p>下面直接用一些例子来显示 Python2中的 Unicode 和 Str 的关系。</p>

@@ -1,26 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Kamushin's blog</title><link>/</link><description></description><atom:link href="/feeds/kamushin.rss.xml" rel="self"></atom:link><lastBuildDate>Tue, 22 Dec 2015 15:16:23 +0800</lastBuildDate><item><title>Compare assert exception in should(JavaScript) and unittest(Python)</title><link>/learning/compare_assert_exception.html</link><description>&lt;h3&gt;should&lt;/h3&gt;
-&lt;p&gt;With &lt;code&gt;should&lt;/code&gt;, exception is asserted like this:  &lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="nx"&gt;it&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;should throw when n isnt Number&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="kd"&gt;function&lt;/span&gt; &lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
-    &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kd"&gt;function&lt;/span&gt; &lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
-      &lt;span class="nx"&gt;main&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;fibonacci&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;abcd&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
-    &lt;span class="p"&gt;}).&lt;/span&gt;&lt;span class="nx"&gt;should&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="k"&gt;throw&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;n should be a Number&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
-  &lt;span class="p"&gt;});&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;This library adds an attribute &lt;code&gt;should&lt;/code&gt; to  &lt;code&gt;Object&lt;/code&gt;. The &lt;code&gt;should&lt;/code&gt; attribute includes a bunch of assert functions. With this, you can do
-&lt;code&gt;(5).should.above(3)&lt;/code&gt;. It will be even harder in Python, because types defined in C cannot be monkeypatched.
-The implement of &lt;code&gt;should.throw&lt;/code&gt; is a simple &lt;code&gt;try/catch&lt;/code&gt;.  &lt;/p&gt;
-&lt;h3&gt;unittest&lt;/h3&gt;
-&lt;p&gt;With &lt;code&gt;assertRaises&lt;/code&gt; in &lt;code&gt;unittest&lt;/code&gt;, exception is asserted like this:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="k"&gt;with&lt;/span&gt; &lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;assertRaisesRegexp&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="ne"&gt;ValueError&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s"&gt;&amp;#39;literal&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
-    &lt;span class="nb"&gt;int&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;XYZ&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;It's much more simple than another way, because we don't need to pass test function as an argument to the assert function, no matter the argument called &lt;code&gt;this&lt;/code&gt; lol.&lt;br /&gt;
-Exception is not catched by a &lt;code&gt;try/except&lt;/code&gt; statement, but in &lt;code&gt;__exit__&lt;/code&gt; context manager.&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Kamushin</dc:creator><pubDate>Tue, 22 Dec 2015 15:16:23 +0800</pubDate><guid>tag:,2015-12-22:learning/compare_assert_exception.html</guid><category>unittest</category></item><item><title>Python开发经验--从问题入手</title><link>/learning/python_pro_zh_cn.html</link><description>&lt;h3&gt;上下文管理&lt;/h3&gt;
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Kamushin's blog</title><link>/</link><description></description><atom:link href="/feeds/kamushin.rss.xml" rel="self"></atom:link><lastBuildDate>Wed, 23 Dec 2015 10:49:26 +0800</lastBuildDate><item><title>Python开发经验--从问题入手</title><link>/learning/python_pro_zh_cn.html</link><description>&lt;h3&gt;上下文管理&lt;/h3&gt;
 &lt;p&gt;如果你要做一件事情&lt;code&gt;do_sth()&lt;/code&gt;，在这之前，需要连接数据库，需要持有文件锁。那么你很可能这么写：&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="k"&gt;try&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;
     &lt;span class="n"&gt;db&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;connect&lt;/span&gt;&lt;span class="o"&gt;()&lt;/span&gt;
@@ -237,7 +216,35 @@ do_sth()
 
 
 &lt;p&gt;代码被调用的时候，不需要知道做了时间的统计，也不需要把统计代码混杂在业务逻辑中。 &lt;br /&gt;
-Java中同样也有&lt;code&gt;@&lt;/code&gt;字符的运用，不同的是，Java中那个叫&lt;code&gt;annotation&lt;/code&gt;, 也就是注解。 
+考虑下面的代码，用 Java 应该怎么实现？&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;def make_spin(spin_style=Default, words=&amp;quot;&amp;quot;):
+    spinner = Spinner(spin_style)
+    queue = Queue()
+
+    def add_queue(func):
+        @wraps(func)
+        def wrapper():
+            func()
+            queue.put_nowait(1)
+        return wrapper
+
+    def decorator(func):
+        @wraps(func)
+        def wrapper():
+            process = Process(target=add_queue(func))
+            process.start()
+            while queue.empty():
+                print(text_type(&amp;quot;\r{0}    {1}&amp;quot;).format(spinner.next(), words),
+                      end=&amp;quot;&amp;quot;)
+                sys.stdout.flush()
+                time.sleep(0.1)
+            print(&amp;#39;&amp;#39;)
+        return wrapper
+    return decorator
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Java中同样也有&lt;code&gt;@&lt;/code&gt;字符的运用，不同的是，Java中那个叫&lt;code&gt;annotation&lt;/code&gt;, 也就是注解。 
 注解是编译期的，它是用来做反射的，也就是提供给外部一些关于我本身信息的。和 Python 的用法没有关系。  &lt;/p&gt;
 &lt;h3&gt;Unicode&lt;/h3&gt;
 &lt;p&gt;下面直接用一些例子来显示 Python2中的 Unicode 和 Str 的关系。&lt;/p&gt;
@@ -260,7 +267,28 @@ u&amp;#39;\u6211&amp;#39;
 &lt;/pre&gt;&lt;/div&gt;
 
 
-&lt;p&gt;很明显可以看出，Python2中，str 类型其实是 byte 字节流。而 Unicode 类型则是表示了 Unicode 字符号。&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Kamushin</dc:creator><pubDate>Mon, 21 Dec 2015 17:37:35 +0800</pubDate><guid>tag:,2015-12-21:learning/python_pro_zh_cn.html</guid><category>Python</category></item><item><title>Write Python like a Pro</title><link>/learning/python_pro.html</link><description>&lt;h3&gt;Context Managers&lt;/h3&gt;
+&lt;p&gt;很明显可以看出，Python2中，str 类型其实是 byte 字节流。而 Unicode 类型则是表示了 Unicode 字符号。&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Kamushin</dc:creator><pubDate>Wed, 23 Dec 2015 10:49:26 +0800</pubDate><guid>tag:,2015-12-23:learning/python_pro_zh_cn.html</guid><category>Python</category></item><item><title>Compare assert exception in should(JavaScript) and unittest(Python)</title><link>/learning/compare_assert_exception.html</link><description>&lt;h3&gt;should&lt;/h3&gt;
+&lt;p&gt;With &lt;code&gt;should&lt;/code&gt;, exception is asserted like this:  &lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="nx"&gt;it&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;should throw when n isnt Number&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="kd"&gt;function&lt;/span&gt; &lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+    &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kd"&gt;function&lt;/span&gt; &lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+      &lt;span class="nx"&gt;main&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;fibonacci&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;abcd&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+    &lt;span class="p"&gt;}).&lt;/span&gt;&lt;span class="nx"&gt;should&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="k"&gt;throw&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;n should be a Number&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+  &lt;span class="p"&gt;});&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;This library adds an attribute &lt;code&gt;should&lt;/code&gt; to  &lt;code&gt;Object&lt;/code&gt;. The &lt;code&gt;should&lt;/code&gt; attribute includes a bunch of assert functions. With this, you can do
+&lt;code&gt;(5).should.above(3)&lt;/code&gt;. It will be even harder in Python, because types defined in C cannot be monkeypatched.
+The implement of &lt;code&gt;should.throw&lt;/code&gt; is a simple &lt;code&gt;try/catch&lt;/code&gt;.  &lt;/p&gt;
+&lt;h3&gt;unittest&lt;/h3&gt;
+&lt;p&gt;With &lt;code&gt;assertRaises&lt;/code&gt; in &lt;code&gt;unittest&lt;/code&gt;, exception is asserted like this:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="k"&gt;with&lt;/span&gt; &lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;assertRaisesRegexp&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="ne"&gt;ValueError&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s"&gt;&amp;#39;literal&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+    &lt;span class="nb"&gt;int&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;XYZ&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;It's much more simple than another way, because we don't need to pass test function as an argument to the assert function, no matter the argument called &lt;code&gt;this&lt;/code&gt; lol.&lt;br /&gt;
+Exception is not catched by a &lt;code&gt;try/except&lt;/code&gt; statement, but in &lt;code&gt;__exit__&lt;/code&gt; context manager.&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Kamushin</dc:creator><pubDate>Tue, 22 Dec 2015 15:16:23 +0800</pubDate><guid>tag:,2015-12-22:learning/compare_assert_exception.html</guid><category>unittest</category></item><item><title>Write Python like a Pro</title><link>/learning/python_pro.html</link><description>&lt;h3&gt;Context Managers&lt;/h3&gt;
 &lt;p&gt;If you have a function &lt;code&gt;do_sth()&lt;/code&gt;, before invoking this method, it needs connect to Database and get filelock. And code maybe like this:  &lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;  try:
     db.connect()
