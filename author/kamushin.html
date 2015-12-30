@@ -59,7 +59,7 @@
     <div class='article'>
         <div class="content-title">
             <a href="/learning/coroutine_in_Python_and_Js.html"><h1>coroutine in Python Tornado and NodeJs</h1></a>
-2015-12-30 14-54-01
+2015-12-30 14-55-00
 
 by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
  
@@ -86,40 +86,40 @@ Let's enjoy the source code of the implement of coroutine.   </p>
 
 <p><code>future</code> -- an instance of <code>Future</code> -- is an object that used to collect and send result to <code>generator</code>.  </p>
 <p>A coroutine that uses above <code>fetch</code></p>
-<div class="highlight"><pre>@gen.coroutine
-def request(self, uri):
-    response = yield http.fetch(uri)
+<div class="highlight"><pre><span class="nd">@gen.coroutine</span>
+<span class="k">def</span> <span class="nf">request</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uri</span><span class="p">):</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="k">yield</span> <span class="n">http</span><span class="o">.</span><span class="n">fetch</span><span class="p">(</span><span class="n">uri</span><span class="p">)</span>
 </pre></div>
 
 
 <p>And we all know <code>@gen.coroutine</code> is a syntax sugar of   </p>
-<div class="highlight"><pre>request = gen.coroutine(request)
+<div class="highlight"><pre><span class="n">request</span> <span class="o">=</span> <span class="n">gen</span><span class="o">.</span><span class="n">coroutine</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
 </pre></div>
 
 
 <p><code>coroutine</code> wrapper function, also exception handle removed </p>
-<div class="highlight"><pre><span class="nx">def</span> <span class="nx">_make_coroutine_wrapper</span><span class="p">(</span><span class="nx">func</span><span class="p">,</span> <span class="nx">replace_callback</span><span class="p">)</span><span class="o">:</span>
-    <span class="err">@</span><span class="nx">functools</span><span class="p">.</span><span class="nx">wraps</span><span class="p">(</span><span class="nx">func</span><span class="p">)</span>
-    <span class="nx">def</span> <span class="nx">wrapper</span><span class="p">(</span><span class="o">*</span><span class="nx">args</span><span class="p">,</span> <span class="o">**</span><span class="nx">kwargs</span><span class="p">)</span><span class="o">:</span>
-        <span class="nx">future</span> <span class="o">=</span> <span class="nx">TracebackFuture</span><span class="p">()</span>
-        <span class="k">try</span><span class="o">:</span>
-            <span class="nx">result</span> <span class="o">=</span> <span class="nx">func</span><span class="p">(</span><span class="o">*</span><span class="nx">args</span><span class="p">,</span> <span class="o">**</span><span class="nx">kwargs</span><span class="p">)</span> <span class="err">#</span> <span class="nx">result</span> <span class="nx">is</span> <span class="nx">a</span> <span class="nx">generator</span> <span class="k">if</span> <span class="nx">the</span> <span class="kd">function</span> <span class="nx">is</span> <span class="nx">a</span> <span class="nx">generator</span> <span class="kd">function</span>
-        <span class="nx">except</span> <span class="p">(</span><span class="nx">Return</span><span class="p">,</span> <span class="nx">StopIteration</span><span class="p">)</span> <span class="nx">as</span> <span class="nx">e</span><span class="o">:</span>
-            <span class="nx">result</span> <span class="o">=</span> <span class="nx">getattr</span><span class="p">(</span><span class="nx">e</span><span class="p">,</span> <span class="s1">&#39;value&#39;</span><span class="p">,</span> <span class="nx">None</span><span class="p">)</span>
-        <span class="k">else</span><span class="o">:</span>
-            <span class="k">if</span> <span class="nx">isinstance</span><span class="p">(</span><span class="nx">result</span><span class="p">,</span> <span class="nx">types</span><span class="p">.</span><span class="nx">GeneratorType</span><span class="p">)</span><span class="o">:</span> <span class="err">#</span> <span class="k">if</span> <span class="nx">the</span> <span class="kd">function</span> <span class="nx">is</span> <span class="nx">a</span> <span class="nx">generator</span> <span class="kd">function</span>
-                <span class="k">try</span><span class="o">:</span>
-                    <span class="nx">yielded</span> <span class="o">=</span> <span class="nx">next</span><span class="p">(</span><span class="nx">result</span><span class="p">)</span> <span class="err">#</span> <span class="nx">generator</span><span class="p">.</span><span class="nx">next</span><span class="p">()</span> <span class="nx">will</span> <span class="nx">run</span> <span class="nx">the</span> <span class="nx">code</span> <span class="nx">above</span> <span class="nx">and</span> <span class="nx">right</span> <span class="nx">hand</span> <span class="nx">of</span> <span class="nx">the</span> <span class="nx">generator</span><span class="p">,</span> <span class="k">for</span> <span class="nx">our</span> <span class="nx">example</span> <span class="nx">request</span> <span class="nx">here</span><span class="p">,</span> <span class="nx">http</span><span class="p">.</span><span class="nx">fetch</span><span class="p">(</span><span class="nx">uri</span><span class="p">)</span> <span class="nx">will</span> <span class="nx">run</span> <span class="nx">and</span> <span class="k">return</span> <span class="nx">yielded</span><span class="p">(</span><span class="nx">a</span> <span class="nx">instance</span> <span class="nx">of</span> <span class="nx">Future</span><span class="p">).</span>
-                <span class="nx">except</span> <span class="p">(</span><span class="nx">StopIteration</span><span class="p">,</span> <span class="nx">Return</span><span class="p">)</span> <span class="nx">as</span> <span class="nx">e</span><span class="o">:</span>
-                    <span class="nx">future</span><span class="p">.</span><span class="nx">set_result</span><span class="p">(</span><span class="nx">getattr</span><span class="p">(</span><span class="nx">e</span><span class="p">,</span> <span class="s1">&#39;value&#39;</span><span class="p">,</span> <span class="nx">None</span><span class="p">))</span>
-                <span class="k">else</span><span class="o">:</span>
-                    <span class="nx">Runner</span><span class="p">(</span><span class="nx">gen</span><span class="o">=</span><span class="nx">result</span><span class="p">,</span> <span class="nx">result_future</span><span class="o">=</span><span class="nx">future</span><span class="p">,</span> <span class="nx">first_yielded</span><span class="o">=</span><span class="nx">yielded</span><span class="p">)</span> <span class="err">#</span> <span class="nx">Runner</span> <span class="nx">is</span> <span class="nx">like</span> <span class="nx">the</span> <span class="nx">co</span> <span class="nx">lib</span> <span class="k">in</span> <span class="nx">Js</span> <span class="nx">written</span> <span class="nx">by</span> <span class="nx">TJ</span><span class="p">,</span> <span class="nx">Runner</span> <span class="nx">use</span> <span class="nx">a</span> <span class="nx">While</span> <span class="nx">True</span> <span class="nx">rather</span> <span class="nx">than</span> <span class="nx">recursive</span><span class="p">,</span> <span class="nx">because</span> <span class="nx">recursive</span> <span class="nx">is</span> <span class="nx">slower</span> <span class="k">in</span> <span class="nx">Python</span><span class="p">.</span>
-                <span class="k">return</span> <span class="nx">future</span>
-            <span class="k">else</span><span class="o">:</span> <span class="err">#</span> <span class="nx">or</span> <span class="nx">the</span> <span class="kd">function</span> <span class="nx">is</span> <span class="nx">jsut</span> <span class="nx">a</span> <span class="nx">normal</span> <span class="kd">function</span>
-              <span class="nx">pass</span> 
-        <span class="nx">future</span><span class="p">.</span><span class="nx">set_result</span><span class="p">(</span><span class="nx">result</span><span class="p">)</span>
-        <span class="k">return</span> <span class="nx">future</span>
-    <span class="k">return</span> <span class="nx">wrapper</span>
+<div class="highlight"><pre><span class="k">def</span> <span class="nf">_make_coroutine_wrapper</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">replace_callback</span><span class="p">):</span>
+    <span class="nd">@functools.wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">future</span> <span class="o">=</span> <span class="n">TracebackFuture</span><span class="p">()</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="c"># result is a generator if the function is a generator function</span>
+        <span class="k">except</span> <span class="p">(</span><span class="n">Return</span><span class="p">,</span> <span class="ne">StopIteration</span><span class="p">)</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="s">&#39;value&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">types</span><span class="o">.</span><span class="n">GeneratorType</span><span class="p">):</span> <span class="c"># if the function is a generator function</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">yielded</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">result</span><span class="p">)</span> <span class="c"># generator.next() will run the code above and right hand of the generator, for our example request here, http.fetch(uri) will run and return yielded(a instance of Future).</span>
+                <span class="k">except</span> <span class="p">(</span><span class="ne">StopIteration</span><span class="p">,</span> <span class="n">Return</span><span class="p">)</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                    <span class="n">future</span><span class="o">.</span><span class="n">set_result</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="s">&#39;value&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">))</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">Runner</span><span class="p">(</span><span class="n">gen</span><span class="o">=</span><span class="n">result</span><span class="p">,</span> <span class="n">result_future</span><span class="o">=</span><span class="n">future</span><span class="p">,</span> <span class="n">first_yielded</span><span class="o">=</span><span class="n">yielded</span><span class="p">)</span> <span class="c"># Runner is like the co lib in Js written by TJ, Runner use a While True rather than recursive, because recursive is slower in Python.</span>
+                <span class="k">return</span> <span class="n">future</span>
+            <span class="k">else</span><span class="p">:</span> <span class="c"># or the function is jsut a normal function</span>
+              <span class="k">pass</span> 
+        <span class="n">future</span><span class="o">.</span><span class="n">set_result</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">future</span>
+    <span class="k">return</span> <span class="n">wrapper</span>
 </pre></div>
 
 
