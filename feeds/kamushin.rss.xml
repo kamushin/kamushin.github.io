@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Kamushin's blog</title><link>/</link><description></description><atom:link href="/feeds/kamushin.rss.xml" rel="self"></atom:link><lastBuildDate>Wed, 30 Dec 2015 14:55:00 +0800</lastBuildDate><item><title>coroutine in Python Tornado and NodeJs</title><link>/learning/coroutine_in_Python_and_Js.html</link><description>&lt;p&gt;&lt;code&gt;yield&lt;/code&gt; and &lt;code&gt;generator&lt;/code&gt; will be the front knowledge of this article. And you should also have some sense of &lt;code&gt;epoll/kqueue&lt;/code&gt; and &lt;code&gt;callback style&lt;/code&gt;.&lt;br /&gt;
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Kamushin's blog</title><link>/</link><description></description><atom:link href="/feeds/kamushin.rss.xml" rel="self"></atom:link><lastBuildDate>Wed, 30 Dec 2015 14:58:32 +0800</lastBuildDate><item><title>coroutine in Python Tornado and NodeJs</title><link>/learning/coroutine_in_Python_and_Js.html</link><description>&lt;p&gt;&lt;code&gt;yield&lt;/code&gt; and &lt;code&gt;generator&lt;/code&gt; will be the front knowledge of this article. And you should also have some sense of &lt;code&gt;epoll/kqueue&lt;/code&gt; and &lt;code&gt;callback style&lt;/code&gt;.&lt;br /&gt;
 Let's enjoy the source code of the implement of coroutine.   &lt;/p&gt;
 &lt;h3&gt;Python Tornado&lt;/h3&gt;
 &lt;p&gt;A simple async fetch function used by a coroutine in Python, exception handle removed   &lt;/p&gt;
@@ -54,14 +54,12 @@ Let's enjoy the source code of the implement of coroutine.   &lt;/p&gt;
 &lt;/pre&gt;&lt;/div&gt;
 
 
-&lt;p&gt;With the above code, we can learn that you pass a function with or without &lt;code&gt;yield&lt;/code&gt; statement to the wrapper, if the function has &lt;code&gt;yield&lt;/code&gt; statement in it's code, it will be a generator function.  &lt;br /&gt;
-Invoke this function will return a &lt;code&gt;types.GeneratorType&lt;/code&gt;.   &lt;/p&gt;
 &lt;p&gt;With the Tornado usage we can learn that the function after &lt;code&gt;yield&lt;/code&gt; can be either a &lt;code&gt;coroutine&lt;/code&gt; or a normal function.   &lt;br /&gt;
 Both of them returns a &lt;code&gt;Future&lt;/code&gt;. You can write &lt;code&gt;return Future&lt;/code&gt; by yourself or use &lt;code&gt;@coroutine&lt;/code&gt;. But make sure your normal function is an async function.  &lt;/p&gt;
 &lt;p&gt;&lt;code&gt;Runner.run&lt;/code&gt; function, exception handle removed&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;__init__&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;gen&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;result_future&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;first_yielded&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt; &lt;span class="c"&gt;# init of Runner&lt;/span&gt;
     &lt;span class="o"&gt;...&lt;/span&gt; &lt;span class="c"&gt;# some attrs bind&lt;/span&gt;
-    &lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;future&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;first_yielded&lt;/span&gt; &lt;span class="c"&gt;# removed some complex logic, just show the normal logic of running the `request` generator.&lt;/span&gt;
+    &lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;future&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;first_yielded&lt;/span&gt; &lt;span class="c"&gt;# removed some complex logic, just show the basic logic of running the `request` generator.&lt;/span&gt;
     &lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;io_loop&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;add_future&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;
                 &lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;future&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="k"&gt;lambda&lt;/span&gt; &lt;span class="n"&gt;f&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;run&lt;/span&gt;&lt;span class="p"&gt;())&lt;/span&gt; &lt;span class="c"&gt;# io_loop is a epoll based loop, the second function is a callback function when future is finished.&lt;/span&gt;
 
@@ -88,14 +86,16 @@ Both of them returns a &lt;code&gt;Future&lt;/code&gt;. You can write &lt;code&g
 
 &lt;p&gt;Runner is like the &lt;code&gt;co&lt;/code&gt; lib in Js written by TJ, Runner use a While True rather than recursive, because recursive is slower in Python.  Both of them do the same thing, that is executing the generator unitl it's done.&lt;/p&gt;
 &lt;p&gt;First of all, Runner add the future, or we can say the async function &lt;code&gt;fetch&lt;/code&gt; to &lt;code&gt;io_loop&lt;/code&gt;. If &lt;code&gt;fetch&lt;/code&gt; is finish, itself will invoke the callback function &lt;code&gt;handle_response&lt;/code&gt; to set data to &lt;code&gt;future&lt;/code&gt;. And the &lt;code&gt;io_loop&lt;/code&gt; will invoke another callback function &lt;code&gt;lambda f: self.run()&lt;/code&gt; to run the function &lt;code&gt;run&lt;/code&gt; to get the &lt;code&gt;result&lt;/code&gt; from &lt;code&gt;future&lt;/code&gt; by &lt;code&gt;value = future.result()&lt;/code&gt; and &lt;code&gt;send&lt;/code&gt; to the generator by &lt;code&gt;yield = gen.send(value)&lt;/code&gt; and start the next block of the generator function if exists until the whole function is stoped and return a &lt;code&gt;StopIteration&lt;/code&gt;.&lt;/p&gt;
-&lt;p&gt;So let us figure out the effect of each object:&lt;br /&gt;
-- generator function: a function with yield statement
-- generator: invoke a generator function will return a generator
-- coroutine: a wrapper function to wrapper a generator function. It will create a runner to run the generator.
-- Future: used to collect and get result, it's a result container.
-- Runner: it will register the future to &lt;code&gt;io_loop&lt;/code&gt; and send result back to generator, and repeats unitl generator is done.&lt;/p&gt;
+&lt;p&gt;So let us figure out the effect of each object: &lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;generator function: a function with yield statement&lt;/li&gt;
+&lt;li&gt;generator: invoke a generator function will return a generator&lt;/li&gt;
+&lt;li&gt;coroutine: a wrapper function to wrapper a generator function. It will create a runner to run the generator.&lt;/li&gt;
+&lt;li&gt;Future: used to collect and get result, it's a result container.&lt;/li&gt;
+&lt;li&gt;Runner: it will register the future to &lt;code&gt;io_loop&lt;/code&gt; and send result back to generator, and repeats unitl generator is done.&lt;/li&gt;
+&lt;/ul&gt;
 &lt;h3&gt;JavaScript&lt;/h3&gt;
-&lt;p&gt;TODO&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Kamushin</dc:creator><pubDate>Wed, 30 Dec 2015 14:55:00 +0800</pubDate><guid>tag:,2015-12-30:learning/coroutine_in_Python_and_Js.html</guid><category>coroutine</category></item><item><title>Python开发经验--从问题入手</title><link>/learning/python_pro_zh_cn.html</link><description>&lt;h3&gt;上下文管理&lt;/h3&gt;
+&lt;p&gt;TODO&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Kamushin</dc:creator><pubDate>Wed, 30 Dec 2015 14:58:32 +0800</pubDate><guid>tag:,2015-12-30:learning/coroutine_in_Python_and_Js.html</guid><category>coroutine</category></item><item><title>Python开发经验--从问题入手</title><link>/learning/python_pro_zh_cn.html</link><description>&lt;h3&gt;上下文管理&lt;/h3&gt;
 &lt;p&gt;如果你要做一件事情&lt;code&gt;do_sth()&lt;/code&gt;，在这之前，需要连接数据库，需要持有文件锁。那么你很可能这么写：&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="k"&gt;try&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;
     &lt;span class="n"&gt;db&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;connect&lt;/span&gt;&lt;span class="o"&gt;()&lt;/span&gt;

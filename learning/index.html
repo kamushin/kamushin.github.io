@@ -59,7 +59,7 @@
     <div class='article'>
         <div class="content-title">
             <a href="/learning/coroutine_in_Python_and_Js.html"><h1>coroutine in Python Tornado and NodeJs</h1></a>
-2015-12-30 14-55-00
+2015-12-30 14-58-32
 
 by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
  
@@ -123,14 +123,12 @@ Let's enjoy the source code of the implement of coroutine.   </p>
 </pre></div>
 
 
-<p>With the above code, we can learn that you pass a function with or without <code>yield</code> statement to the wrapper, if the function has <code>yield</code> statement in it's code, it will be a generator function.  <br />
-Invoke this function will return a <code>types.GeneratorType</code>.   </p>
 <p>With the Tornado usage we can learn that the function after <code>yield</code> can be either a <code>coroutine</code> or a normal function.   <br />
 Both of them returns a <code>Future</code>. You can write <code>return Future</code> by yourself or use <code>@coroutine</code>. But make sure your normal function is an async function.  </p>
 <p><code>Runner.run</code> function, exception handle removed</p>
 <div class="highlight"><pre><span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gen</span><span class="p">,</span> <span class="n">result_future</span><span class="p">,</span> <span class="n">first_yielded</span><span class="p">):</span> <span class="c"># init of Runner</span>
     <span class="o">...</span> <span class="c"># some attrs bind</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">future</span> <span class="o">=</span> <span class="n">first_yielded</span> <span class="c"># removed some complex logic, just show the normal logic of running the `request` generator.</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">future</span> <span class="o">=</span> <span class="n">first_yielded</span> <span class="c"># removed some complex logic, just show the basic logic of running the `request` generator.</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">io_loop</span><span class="o">.</span><span class="n">add_future</span><span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">future</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">f</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">run</span><span class="p">())</span> <span class="c"># io_loop is a epoll based loop, the second function is a callback function when future is finished.</span>
 
@@ -157,12 +155,14 @@ Both of them returns a <code>Future</code>. You can write <code>return Future</c
 
 <p>Runner is like the <code>co</code> lib in Js written by TJ, Runner use a While True rather than recursive, because recursive is slower in Python.  Both of them do the same thing, that is executing the generator unitl it's done.</p>
 <p>First of all, Runner add the future, or we can say the async function <code>fetch</code> to <code>io_loop</code>. If <code>fetch</code> is finish, itself will invoke the callback function <code>handle_response</code> to set data to <code>future</code>. And the <code>io_loop</code> will invoke another callback function <code>lambda f: self.run()</code> to run the function <code>run</code> to get the <code>result</code> from <code>future</code> by <code>value = future.result()</code> and <code>send</code> to the generator by <code>yield = gen.send(value)</code> and start the next block of the generator function if exists until the whole function is stoped and return a <code>StopIteration</code>.</p>
-<p>So let us figure out the effect of each object:<br />
-- generator function: a function with yield statement
-- generator: invoke a generator function will return a generator
-- coroutine: a wrapper function to wrapper a generator function. It will create a runner to run the generator.
-- Future: used to collect and get result, it's a result container.
-- Runner: it will register the future to <code>io_loop</code> and send result back to generator, and repeats unitl generator is done.</p>
+<p>So let us figure out the effect of each object: </p>
+<ul>
+<li>generator function: a function with yield statement</li>
+<li>generator: invoke a generator function will return a generator</li>
+<li>coroutine: a wrapper function to wrapper a generator function. It will create a runner to run the generator.</li>
+<li>Future: used to collect and get result, it's a result container.</li>
+<li>Runner: it will register the future to <code>io_loop</code> and send result back to generator, and repeats unitl generator is done.</li>
+</ul>
 <h3>JavaScript</h3>
 <p>TODO</p></div>
         <hr />
