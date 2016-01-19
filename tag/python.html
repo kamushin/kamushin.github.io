@@ -58,8 +58,8 @@
 
     <div class='article'>
         <div class="content-title">
-            <a href="/learning/python_pro_zh_cn.html"><h1>Python开发经验--从问题入手</h1></a>
-2015-12-23 10-49-26
+            <a href="/debug/member_function_in_python.html"><h1>Member functions in Python</h1></a>
+2016-01-19 14-57-59
 
 by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
  
@@ -68,278 +68,64 @@ by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
  
         </div>
         
-        <div><h3>上下文管理</h3>
-<p>如果你要做一件事情<code>do_sth()</code>，在这之前，需要连接数据库，需要持有文件锁。那么你很可能这么写：</p>
-<div class="highlight"><pre><span class="k">try</span><span class="o">:</span>
-    <span class="n">db</span><span class="o">.</span><span class="na">connect</span><span class="o">()</span>
-    <span class="n">getfilelock</span><span class="o">()</span>
-    <span class="n">do_sth</span><span class="o">()</span>
-<span class="n">except</span><span class="o">:</span>
-    <span class="o">...</span>
-<span class="n">finally</span><span class="o">:</span>
-    <span class="n">releasefilelock</span><span class="o">()</span>
-    <span class="n">db</span><span class="o">.</span><span class="na">close</span><span class="o">()</span>
-</pre></div>
-
-
-<p>如果<code>do_sth</code>在 N 个地方出现呢？如果我策略修改了，不再需要<code>filelock</code> 了呢？是不是需要去改这 N 个地方？<br />
-花了一下午去修改了 N 个地方，测试了几次终于没有遗漏后，你发现这个做法多么低效，于是你终于想起来用一个函数去做这件事情。<br />
-你把代码写成了这样  </p>
-<div class="highlight"><pre><span class="k">try</span><span class="o">:</span>
-    <span class="n">prepare</span><span class="o">()</span>
-    <span class="n">do_sth</span><span class="o">()</span>
-<span class="n">except</span><span class="o">:</span>
-    <span class="o">...</span>
-<span class="n">finally</span><span class="o">:</span>
-    <span class="n">close</span><span class="o">()</span>
-</pre></div>
-
-
-<p><code>do_sth</code>所在的 N 个地方，都写满了 <code>prepare</code>, <code>close</code> 这一系列和业务逻辑无关的代码, 这使得我们的代码变得冗长。
-即使你不在乎自己过了两个月后是否还愿意看这段代码，至少你要照顾下帮你 review 代码的人，一个函数写了500行还能 review 吗？
-我认为一个程序员写代码的过程，就是从复杂的逻辑中进行抽象的过程，如果不进行抽象，那么就不是写代码，而是在做翻译。我们来看看这里有什么可以抽象的。<br />
-<code>prepare</code>, <code>close</code> 这些是在做什么？是在预备和释放一个可以<code>do_sth</code>的环境，也就是我们常说的上下文管理。<br />
-Python 提供了<code>with</code>语句来帮助我们管理上下文。代码变成了这样：</p>
-<div class="highlight"><pre><span class="k">class</span> <span class="n">A</span>():
-    <span class="n">def</span> <span class="n">do_sth</span>(<span class="k">self</span>):
-        <span class="nb">pass</span>
-
-    <span class="n">def</span> <span class="n">__enter__</span>(<span class="k">self</span>):
-        <span class="n">db</span>.<span class="nb">connect</span>()
-        <span class="n">getfilelock</span>()
-        <span class="k">return</span> <span class="k">self</span>
-
-    <span class="n">def</span> <span class="n">__exit__</span>(<span class="k">self</span>, <span class="n">type</span>, <span class="nb">value</span>, <span class="n">traceback</span>):
-      <span class="n">releasefilelock</span>()
-      <span class="n">db</span>.<span class="nb">close</span>()
-
-<span class="n">with</span> <span class="n">A</span>() <span class="k">as</span> <span class="n">a:</span>
-    <span class="n">a</span>.<span class="n">do_sth</span>()
-</pre></div>
-
-
-<p>现在帮你 review 代码的人，只会在那 N 个<code>do_sth</code> 存在的地方，看到  </p>
-<div class="highlight"><pre>  with A() as a:
-    a.do_sth()
-</pre></div>
-
-
-<p>很显示的使用了上下文进行管理，分离了业务逻辑和具体实现。</p>
-<blockquote>
-<p>Explicit is better than implicit.
-  Simple is better than complex.</p>
-</blockquote>
-<p>另一个常见的做法是使用<code>__del__</code></p>
-<div class="highlight"><pre><span class="k">class</span> <span class="n">A</span>():
-    <span class="n">def</span> <span class="n">__init__</span>(<span class="k">self</span>):
-        <span class="n">db</span>.<span class="nb">connect</span>()
-        <span class="n">getfilelock</span>()
-
-    <span class="n">def</span> <span class="n">__del__</span>(<span class="k">self</span>, <span class="n">type</span>, <span class="nb">value</span>, <span class="n">traceback</span>):
-        <span class="n">releasefilelock</span>()
-        <span class="n">db</span>.<span class="nb">close</span>()
-
-<span class="n">a</span> =  <span class="n">A</span>()
-<span class="n">a</span>.<span class="n">do_sth</span>()
-</pre></div>
-
-
-<p>这个做法的优点是不需要写<code>with</code> 语句，缺点是这不是明显的上下文管理，对于 Python/Java 这种带
-<code>GC</code> 的语言来说，是不能手动调用一个对象的析构函数的，即使对象离开了作用域，它依然会因为还没有被<code>GC</code>而存活。<br />
-所以对于锁这样的，我们需要很快去释放的资源，使用<code>with</code> 更加的可控。
-可能会有人去对比 C++ 中的<code>RAII</code> 规则，Python中是做不到 <code>RAII</code> 的, 因为以上原因。</p>
-<h3>生成器</h3>
-<p>一个函数如果在代码段中有 <code>yield</code> 那么它就从一个函数变成了一个 <code>generator</code>。生成器的好处是保留了一个上下文在需要时去运算。<br />
-同样从一个实际例子出发：  </p>
-<div class="highlight"><pre>  for i in range(100000):
-    do_sth()
-</pre></div>
-
-
-<p>这段代码，在什么都没做之前，就产生了一个1-100000这些数字的数组，占用了内存。<br />
-而</p>
-<div class="highlight"><pre>  for i in xrange(100000):
-    do_sth()
-</pre></div>
-
-
-<p>这才是我们知道的C++中的</p>
-<div class="highlight"><pre>  for(int i = 0; i &lt; 100000; i++) {
-    do_sth()
-  }
-</pre></div>
-
-
-<p>执行一次 <code>do_sth</code>，再生成一次 i 值。 <br />
-所以<code>xrange</code>会比<code>range</code>更省内存。（在 Py2 是这样。Py3中，<code>range</code> 就是 Py2 的 <code>xrange</code>。 另外据我所知，不存在 xrange 是 C 实现这么一回事)。
-再来一个例子：</p>
-<div class="highlight"><pre>def fetchmany(self, *args, **kwargs):
-    &#39;&#39;&#39;
-       A generator to fetch data.
-       prams: numRows -&gt; the number of rows to fetch.
-    &#39;&#39;&#39;
-    cur = self._conn.cursor()  
-    numRows = 200
-    try:
-        cur.execute(*args, **kwargs)
-        self._conn.commit()
-    except Exception as e:
-        self.logger.error(str(e))
-        self._conn.rollback()
-        return
-    while True:
-        rows = cur.fetchmany(numRows)
-        if rows:
-            yield rows
-        else:
-            cur.close()
-            return
-
-for rows in fetchmany(sql):
-  do_sth_with_rows(rows)
-</pre></div>
-
-
-<p>这就实现了每次取出200条，消费完再取200条。而不是一次性取到内存中。同时也封装了<code>commit</code>，<code>rollback</code>等操作。</p>
-<p>生成器也可以用来构造对称式协程</p>
-<div class="highlight"><pre><span class="kn">import</span> <span class="nn">random</span>
-
-<span class="k">def</span> <span class="nf">get_data</span><span class="p">():</span>
-    <span class="sd">&quot;&quot;&quot;Return 3 random integers between 0 and 9&quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">random</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">),</span> <span class="mi">3</span><span class="p">)</span>
-
-<span class="k">def</span> <span class="nf">consume</span><span class="p">():</span>
-    <span class="sd">&quot;&quot;&quot;Displays a running average across lists of integers sent to it&quot;&quot;&quot;</span>
-    <span class="n">running_sum</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="n">data_items_seen</span> <span class="o">=</span> <span class="mi">0</span>
-
-    <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="k">yield</span>
-        <span class="n">data_items_seen</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-        <span class="n">running_sum</span> <span class="o">+=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-        <span class="k">print</span><span class="p">(</span><span class="s">&#39;The running average is {}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">running_sum</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">data_items_seen</span><span class="p">)))</span>
-
-<span class="k">def</span> <span class="nf">produce</span><span class="p">(</span><span class="n">consumer</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Produces a set of values and forwards them to the pre-defined consumer</span>
-<span class="sd">    function&quot;&quot;&quot;</span>
-    <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="n">get_data</span><span class="p">()</span>
-        <span class="k">print</span><span class="p">(</span><span class="s">&#39;Produced {}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
-        <span class="n">consumer</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-        <span class="k">yield</span>
-
-<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span><span class="p">:</span>
-    <span class="n">consumer</span> <span class="o">=</span> <span class="n">consume</span><span class="p">()</span>
-    <span class="n">consumer</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="bp">None</span><span class="p">)</span>
-    <span class="n">producer</span> <span class="o">=</span> <span class="n">produce</span><span class="p">(</span><span class="n">consumer</span><span class="p">)</span>
-
-    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
-        <span class="k">print</span><span class="p">(</span><span class="s">&#39;Producing...&#39;</span><span class="p">)</span>
-        <span class="nb">next</span><span class="p">(</span><span class="n">producer</span><span class="p">)</span>
-</pre></div>
-
-
-<p>在这个例子中， 不需要队列，就做到了一个一对一的生产与消费。当然这个1对1的并没有什么实际意义。对于协程和生成器的作用，如果感兴趣，可以看看<code>Tornado</code>的实现。</p>
-<h3>Exception</h3>
-<p>这块Python和其他语言没什么不同的，拿出来讲是因为看到很多代码里充满了魔数。<br />
-比如 <code>return 'unknown'</code>. 既然是<code>unknown</code>就应该抛出异常。而不是用一堆的常量字符串在各个函数直接传来传去。<br />
-类似的例子还有<code>return 'ok'</code>, <code>return 'mysql'</code>, <code>return 2</code>. <br />
-另外尽可能抛出和接收特定的异常。</p>
-<h3>Functional Programming</h3>
-<p>Python 其实是不怎么 FP 的，不过一些基本的 FP 支持还是有的。<br />
-比如高阶函数，<code>map reduce filter</code>。<br />
-用<code>map reduce filter</code> 可以更好的做抽象。<br />
-<code>reduce(lambda x, y: x + y, query_res)</code><br />
-很简单就能看出，虽然我不知道具体 <code>x</code>,<code>y</code> 是什么，但是我知道，这是把 <code>query_res</code> 中的每个值加到一起。<br />
-不用去管<code>x</code>, <code>y</code>的类型，只需要他们支持<code>+</code>操作。这种编程思维可以再次把业务逻辑和实现分开。</p>
-<h3>Decorator</h3>
-<p>装饰器算是 Python 的一大亮点。看下面这个例子：</p>
-<div class="highlight"><pre>  begin = time.time()
-  do_sth()
-  end = time.time()
-  print &#39;do sth used %s second&#39; % (end-begin)
-</pre></div>
-
-
-<p>业务逻辑里混杂着统计时间的逻辑。添加要加三行，什么时候不要了，又要删三行。
-如果用上装饰器</p>
-<div class="highlight"><pre>def logtime(func):
-    @wraps(func)
-    def wrapper(*args, **kwds):
-        start_time = time.time()
-        ret = func(*args, **kwds)
-        use_time = time.time() - start_time
-        if use_time &gt; 1.0:
-            logging.info(&quot;%s use %s s&quot;, func.__name__, use_time)
-        return ret
-    return wrapper
-
-@logtime
-def do_sth():
-  ...
-
-
-
-do_sth()
-</pre></div>
-
-
-<p>代码被调用的时候，不需要知道做了时间的统计，也不需要把统计代码混杂在业务逻辑中。 <br />
-考虑下面的代码，用 Java 应该怎么实现？</p>
-<div class="highlight"><pre>def make_spin(spin_style=Default, words=&quot;&quot;):
-    spinner = Spinner(spin_style)
-    queue = Queue()
-
-    def add_queue(func):
-        @wraps(func)
-        def wrapper():
-            func()
-            queue.put_nowait(1)
-        return wrapper
-
-    def decorator(func):
-        @wraps(func)
-        def wrapper():
-            process = Process(target=add_queue(func))
-            process.start()
-            while queue.empty():
-                print(text_type(&quot;\r{0}    {1}&quot;).format(spinner.next(), words),
-                      end=&quot;&quot;)
-                sys.stdout.flush()
-                time.sleep(0.1)
-            print(&#39;&#39;)
-        return wrapper
-    return decorator
-</pre></div>
-
-
-<p>Java中同样也有<code>@</code>字符的运用，不同的是，Java中那个叫<code>annotation</code>, 也就是注解。 
-注解是编译期的，它是用来做反射的，也就是提供给外部一些关于我本身信息的。和 Python 的用法没有关系。  </p>
-<h3>Unicode</h3>
-<p>下面直接用一些例子来显示 Python2中的 Unicode 和 Str 的关系。</p>
-<div class="highlight"><pre>&gt;&gt;&gt; a = &#39;我&#39;
-&gt;&gt;&gt; a
-&#39;\xe6\x88\x91&#39;
-&gt;&gt;&gt; type(a)
-&lt;type &#39;str&#39;&gt;
-
-&gt;&gt;&gt; b = &#39;我&#39;.decode(&#39;utf-8&#39;)
-&gt;&gt;&gt; b
-u&#39;\u6211&#39;
-&gt;&gt;&gt; type(b)
-&lt;type &#39;unicode&#39;&gt;
-
-&gt;&gt;&gt; b.encode(&#39;utf-8&#39;)
-&#39;\xe6\x88\x91&#39;
-&gt;&gt;&gt; b.encode(&#39;gbk&#39;)
-&#39;\xce\xd2&#39;
-</pre></div>
-
-
-<p>很明显可以看出，Python2中，str 类型其实是 byte 字节流。而 Unicode 类型则是表示了 Unicode 字符号。</p></div>
+        <div><p>TODO</p></div>
         <hr />
     </div>
 		
+
+ 
+        
+
+ 
+
+    <div class='article'>
+        <a href="/debug/logger_in_python.html"><h2>loggers and loggers manager in Python</h2></a>
+        <div class= "well small"> 2016-01-19 14-56-56
+
+by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
+ 
+
+
+ </div>
+        <div class="summary"><p>Loggers will be stored in manager in Python.</p> <a class="btn btn-info xsmall" href="/debug/logger_in_python.html">read more</a></div>
+    </div>	
+				
+
+ 
+        
+
+ 
+
+    <div class='article'>
+        <a href="/debug/sscursor_in_mysql.html"><h2>SSCursor in MySQL</h2></a>
+        <div class= "well small"> 2016-01-19 14-55-49
+
+by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
+ 
+
+
+ </div>
+        <div class="summary"><p>What is and How to use SSCursor in MySQL</p> <a class="btn btn-info xsmall" href="/debug/sscursor_in_mysql.html">read more</a></div>
+    </div>	
+				
+
+ 
+        
+
+ 
+
+    <div class='article'>
+        <a href="/learning/python_pro_zh_cn.html"><h2>Python开发经验--从问题入手</h2></a>
+        <div class= "well small"> 2015-12-23 10-49-26
+
+by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
+ 
+
+
+ </div>
+        <div class="summary"><p>从一系列实际问题出发, 谈 Python 的一些使用知识</p> <a class="btn btn-info xsmall" href="/learning/python_pro_zh_cn.html">read more</a></div>
+    </div>	
+				
 
  
         
@@ -491,7 +277,7 @@ by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
     </div>     </div> 
 <footer>
 <br />
-<p><a href="">Kamushin's blog</a> &copy; Kamushin 2015</p>
+<p><a href="">Kamushin's blog</a> &copy; Kamushin 2016</p>
 </footer>
 
 </div> <!-- /container -->

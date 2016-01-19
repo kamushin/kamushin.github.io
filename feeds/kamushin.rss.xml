@@ -1,5 +1,86 @@
 <?xml version="1.0" encoding="utf-8"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Kamushin's blog</title><link>/</link><description></description><atom:link href="/feeds/kamushin.rss.xml" rel="self"></atom:link><lastBuildDate>Sat, 02 Jan 2016 00:41:47 +0800</lastBuildDate><item><title>2015年终总结</title><link>/talk/2015_all.html</link><description>&lt;h3&gt;笔记&lt;/h3&gt;
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Kamushin's blog</title><link>/</link><description></description><atom:link href="/feeds/kamushin.rss.xml" rel="self"></atom:link><lastBuildDate>Tue, 19 Jan 2016 14:57:59 +0800</lastBuildDate><item><title>Member functions in Python</title><link>/debug/member_function_in_python.html</link><description>&lt;p&gt;TODO&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Kamushin</dc:creator><pubDate>Tue, 19 Jan 2016 14:57:59 +0800</pubDate><guid>tag:,2016-01-19:debug/member_function_in_python.html</guid><category>Python</category></item><item><title>loggers and loggers manager in Python</title><link>/debug/logger_in_python.html</link><description>&lt;p&gt;TODO&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Kamushin</dc:creator><pubDate>Tue, 19 Jan 2016 14:56:56 +0800</pubDate><guid>tag:,2016-01-19:debug/logger_in_python.html</guid><category>Python</category></item><item><title>SSCursor in MySQL</title><link>/debug/sscursor_in_mysql.html</link><description>&lt;p&gt;There are four kinds of cursors available in MySQL client side programming. In this article, I am going to
+introduce the difference between &lt;code&gt;Cursor&lt;/code&gt; the normal one and &lt;code&gt;SSCursor&lt;/code&gt; the server side one and how to use &lt;code&gt;SSCursor&lt;/code&gt;.&lt;br /&gt;
+First, let's see the definitions of those four cursors in &lt;code&gt;MySQLdb&lt;/code&gt; source code.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;Cursor&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;CursorStoreResultMixIn&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;CursorTupleRowsMixIn&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+             &lt;span class="n"&gt;BaseCursor&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+
+    &lt;span class="sd"&gt;&amp;quot;&amp;quot;&amp;quot;This is the standard Cursor class that returns rows as tuples&lt;/span&gt;
+&lt;span class="sd"&gt;    and stores the result set in the client.&amp;quot;&amp;quot;&amp;quot;&lt;/span&gt;
+
+
+&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;DictCursor&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;CursorStoreResultMixIn&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;CursorDictRowsMixIn&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+                 &lt;span class="n"&gt;BaseCursor&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+
+     &lt;span class="sd"&gt;&amp;quot;&amp;quot;&amp;quot;This is a Cursor class that returns rows as dictionaries and&lt;/span&gt;
+&lt;span class="sd"&gt;    stores the result set in the client.&amp;quot;&amp;quot;&amp;quot;&lt;/span&gt;
+
+
+&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;SSCursor&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;CursorUseResultMixIn&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;CursorTupleRowsMixIn&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+               &lt;span class="n"&gt;BaseCursor&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+
+    &lt;span class="sd"&gt;&amp;quot;&amp;quot;&amp;quot;This is a Cursor class that returns rows as tuples and stores&lt;/span&gt;
+&lt;span class="sd"&gt;    the result set in the server.&amp;quot;&amp;quot;&amp;quot;&lt;/span&gt;
+
+
+&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;SSDictCursor&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;CursorUseResultMixIn&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;CursorDictRowsMixIn&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+                   &lt;span class="n"&gt;BaseCursor&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+
+    &lt;span class="sd"&gt;&amp;quot;&amp;quot;&amp;quot;This is a Cursor class that returns rows as dictionaries and&lt;/span&gt;
+&lt;span class="sd"&gt;    stores the result set in the server.&amp;quot;&amp;quot;&amp;quot;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;In fact, there are two orthogonal features of cursors in MySQLdb. &lt;code&gt;CursorDictRowsMixIn/CursorTupleRowsMixIn&lt;/code&gt; controls result type and 
+&lt;code&gt;CursorStoreResultMixIn/CursorUseResultMixIn&lt;/code&gt; which we will focus on in this article controls the result will be store in server or client.&lt;br /&gt;
+With the definitions, we know that &lt;code&gt;SSCursor&lt;/code&gt; stores result in the server rather than in the client.&lt;/p&gt;
+&lt;h3&gt;server side VS client side&lt;/h3&gt;
+&lt;p&gt;Two simple flows show how they works.  &lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;client side&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;  &lt;span class="c"&gt;# mysql_store_result&lt;/span&gt;
+  &lt;span class="k"&gt;while&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="bp"&gt;True&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+    &lt;span class="n"&gt;result&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;produce_part_result&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="c"&gt;# find part of results that can be filled into a network package&lt;/span&gt;
+    &lt;span class="n"&gt;fill_network_package&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;result&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="n"&gt;send_network_package&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;ul&gt;
+&lt;li&gt;server side&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;  # mysql_use_result
+  while(True):
+    result = produce_part_result() # find part of results that can be filled into a network package
+
+    wait_until_the_client_invoke_`mysql_fetch_row()`
+
+    fill_network_package(result)
+    send_network_package
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;In fact, the MySQL server will not store results in server even if a &lt;code&gt;SSCursor&lt;/code&gt; is used, it will produce the part of results before fill them into 
+the network packages. So don't worry the memory use of the server when use &lt;code&gt;SSCursor&lt;/code&gt;.&lt;/p&gt;
+&lt;h3&gt;how to use SSCursor&lt;/h3&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;  &lt;span class="n"&gt;cur&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;conn&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;cursor&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;MySQLdb&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;cursors&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;SSCursor&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Here is a trap that &lt;code&gt;commit&lt;/code&gt; should be invoked after all of the results have been sent to client. Otherwise, 
+&lt;code&gt;2014, "Commands out of sync; you can't run this command now"&lt;/code&gt; error will be raised.&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;If you get Commands out of sync; you can't run this command now in your client code, you are calling client functions in the wrong order.
+This can happen, for example, if you are using mysql_use_result() and try to execute a new query before you have called mysql_free_result(). It can also happen if you try to execute two queries that return data without calling mysql_use_result() or mysql_store_result() in between.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;&lt;code&gt;commit&lt;/code&gt; is also a query, or we can say request, so the program should read all of the results then invoke &lt;code&gt;commit&lt;/code&gt;.&lt;/p&gt;
+&lt;h3&gt;advantages and disadvantages of using SSCursor&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;Less memory use in the client.&lt;/li&gt;
+&lt;li&gt;Get the first row more quickly.&lt;/li&gt;
+&lt;li&gt;The whole results sending will be slower.&lt;/li&gt;
+&lt;/ul&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Kamushin</dc:creator><pubDate>Tue, 19 Jan 2016 14:55:49 +0800</pubDate><guid>tag:,2016-01-19:debug/sscursor_in_mysql.html</guid><category>MySQL</category><category>Python</category></item><item><title>2015年终总结</title><link>/talk/2015_all.html</link><description>&lt;h3&gt;笔记&lt;/h3&gt;
 &lt;p&gt;2015年共记录和收集了295条笔记，涉及了支持向量机，数据库理论，理财，读书，Python，Java，Js，Docker，Vim，Coroutine，Paxos。 &lt;br /&gt;
 第一篇于2015-1-1，支持向量机&lt;br /&gt;
 最后一篇于2015-12-31，ovrelayfs &lt;br /&gt;
