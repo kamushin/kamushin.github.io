@@ -54,7 +54,7 @@
     <div class='article'>
         <div class="content-title">
             <h1>Member functions in Python</h1>
-2016-01-19 14-57-59
+2016-01-21 15-12-40
 
 by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
  
@@ -62,7 +62,31 @@ by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
 
         </div>
 	
-        <div><p>TODO</p></div>
+        <div><p><code>self.func</code> is a operation that bind <code>self</code> to the function.</p>
+<div class="highlight"><pre><span class="k">class</span> <span class="nc">A</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">b</span> <span class="o">=</span> <span class="n">B</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">b</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">print</span> <span class="s">&quot;callback&quot;</span>
+
+<span class="k">class</span> <span class="nc">B</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cb</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cb</span> <span class="o">=</span> <span class="n">cb</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cb</span><span class="p">()</span>
+
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="n">foo</span> <span class="o">=</span> <span class="n">A</span><span class="p">()</span>
+<span class="k">print</span> <span class="n">sys</span><span class="o">.</span><span class="n">getrefcount</span><span class="p">(</span><span class="n">foo</span><span class="p">)</span> <span class="c"># output: 3</span>
+</pre></div>
+
+
+<p>Here is 3 objects ref to <code>foo</code>: 
+- <code>foo</code> as a local variable, 
+- a ref in getrefcount
+- a ref in <code>foo.b.cb</code></p>
+<p>It's more like <code>self.func</code> is <code>func.self = self</code>, bind <code>self</code> to the function.</p></div>
 	
         <hr>
 
