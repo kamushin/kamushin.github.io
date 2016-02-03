@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Kamushin's blog</title><link href="/" rel="alternate"></link><link href="/feeds/kamushin.atom.xml" rel="self"></link><id>/</id><updated>2016-01-21T15:15:16+08:00</updated><entry><title>Member functions in Python</title><link href="/debug/member_function_in_python.html" rel="alternate"></link><updated>2016-01-21T15:15:16+08:00</updated><author><name>Kamushin</name></author><id>tag:,2016-01-21:debug/member_function_in_python.html</id><summary type="html">&lt;p&gt;&lt;code&gt;self.func&lt;/code&gt; is a operation that bind &lt;code&gt;self&lt;/code&gt; to the function.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Kamushin's blog</title><link href="/" rel="alternate"></link><link href="/feeds/kamushin.atom.xml" rel="self"></link><id>/</id><updated>2016-02-03T14:51:01+08:00</updated><entry><title>Member functions in Python</title><link href="/debug/member_function_in_python.html" rel="alternate"></link><updated>2016-02-03T14:51:01+08:00</updated><author><name>Kamushin</name></author><id>tag:,2016-02-03:debug/member_function_in_python.html</id><summary type="html">&lt;p&gt;&lt;code&gt;self.func&lt;/code&gt; is a operation that bind &lt;code&gt;self&lt;/code&gt; to the function.&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;A&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;object&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
     &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;__init__&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
         &lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;b&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;B&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
@@ -19,10 +19,12 @@
 &lt;/pre&gt;&lt;/div&gt;
 
 
-&lt;p&gt;Here are 3 objects ref to &lt;code&gt;foo&lt;/code&gt;: 
-- &lt;code&gt;foo&lt;/code&gt; as a local variable, 
-- a ref in getrefcount
-- a ref in &lt;code&gt;foo.b.cb&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Here are 3 objects ref to &lt;code&gt;foo&lt;/code&gt;: &lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;foo&lt;/code&gt; as a local variable, &lt;/li&gt;
+&lt;li&gt;a ref in getrefcount&lt;/li&gt;
+&lt;li&gt;a ref in &lt;code&gt;foo.b.cb&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
 &lt;p&gt;It's more like &lt;code&gt;self.func&lt;/code&gt; is &lt;code&gt;func.self = self&lt;/code&gt;, bind &lt;code&gt;self&lt;/code&gt; to the function.&lt;/p&gt;</summary><category term="Python"></category></entry><entry><title>loggers and loggers manager in Python</title><link href="/debug/logger_in_python.html" rel="alternate"></link><updated>2016-01-21T14:16:48+08:00</updated><author><name>Kamushin</name></author><id>tag:,2016-01-21:debug/logger_in_python.html</id><summary type="html">&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;getLogger&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;name&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="bp"&gt;None&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
     &lt;span class="sd"&gt;&amp;quot;&amp;quot;&amp;quot;&lt;/span&gt;
 &lt;span class="sd"&gt;    Return a logger with the specified name, creating it if necessary.&lt;/span&gt;
