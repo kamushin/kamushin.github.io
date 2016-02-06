@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Kamushin's blog</title><link href="/" rel="alternate"></link><link href="/feeds/kamushin.atom.xml" rel="self"></link><id>/</id><updated>2016-02-07T00:26:17+08:00</updated><entry><title>notes of ArchitectureOfDatabaseSystem</title><link href="/learning/ArchitectureOfDatabaseSystem.html" rel="alternate"></link><updated>2016-02-07T00:26:17+08:00</updated><author><name>Kamushin</name></author><id>tag:,2016-02-07:learning/ArchitectureOfDatabaseSystem.html</id><summary type="html">&lt;blockquote&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Kamushin's blog</title><link href="/" rel="alternate"></link><link href="/feeds/kamushin.atom.xml" rel="self"></link><id>/</id><updated>2016-02-07T00:27:49+08:00</updated><entry><title>notes of ArchitectureOfDatabaseSystem</title><link href="/learning/ArchitectureOfDatabaseSystem.html" rel="alternate"></link><updated>2016-02-07T00:27:49+08:00</updated><author><name>Kamushin</name></author><id>tag:,2016-02-07:learning/ArchitectureOfDatabaseSystem.html</id><summary type="html">&lt;blockquote&gt;
 &lt;p&gt;A Lightweight Thread Package is an application-level construct
 that supports multiple threads within a single OS
 process  -- page 150&lt;/p&gt;
@@ -22,7 +22,7 @@ co 应用必须使用 non-block io 是众所周知的，而像 innodb 这样完�
 非常契合，因为至少在 Linux 上 aio 还是不支持buffer io 的。不过 MySQL 是用了内核线程的，大概是它比较新的缘故。&lt;br /&gt;
 不过有意思的是，事情的发展往往是三十年河东三十年河西的，文章中提到其实 co 的概念是非常古老的，甚至在1990年的时候，
 因为没有足够好的操作系统级别的线程，大家转而使用了 co。 而在内核线程如此成熟的今天，在学习的时候，线程模型首先进入
-了我们的视角，导致很多人以为 co 是最近才发明出来的。&lt;br /&gt;
+了我们的视角，导致很多人以为 co 是最近才发明出来的, 才不是在黑前端呢哼。
 不过现代数据库只有MSSQLServer 提供 co 的支持，而且不是默认选项, 默认的是线程池。 co 这玩意在MS那里叫 Fibers。 话说回来，响马也
 做了个 fibjs，应该是向这个名字致敬的。&lt;/p&gt;
 &lt;blockquote&gt;
