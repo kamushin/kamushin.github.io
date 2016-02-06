@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Kamushin's blog</title><link href="/" rel="alternate"></link><link href="/feeds/kamushin.atom.xml" rel="self"></link><id>/</id><updated>2016-02-07T00:27:49+08:00</updated><entry><title>notes of ArchitectureOfDatabaseSystem</title><link href="/learning/ArchitectureOfDatabaseSystem.html" rel="alternate"></link><updated>2016-02-07T00:27:49+08:00</updated><author><name>Kamushin</name></author><id>tag:,2016-02-07:learning/ArchitectureOfDatabaseSystem.html</id><summary type="html">&lt;blockquote&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Kamushin's blog</title><link href="/" rel="alternate"></link><link href="/feeds/kamushin.atom.xml" rel="self"></link><id>/</id><updated>2016-02-07T00:40:21+08:00</updated><entry><title>notes of ArchitectureOfDatabaseSystem</title><link href="/learning/ArchitectureOfDatabaseSystem.html" rel="alternate"></link><updated>2016-02-07T00:40:21+08:00</updated><author><name>Kamushin</name></author><id>tag:,2016-02-07:learning/ArchitectureOfDatabaseSystem.html</id><summary type="html">&lt;blockquote&gt;
 &lt;p&gt;A Lightweight Thread Package is an application-level construct
 that supports multiple threads within a single OS
 process  -- page 150&lt;/p&gt;
@@ -22,7 +22,7 @@ co 应用必须使用 non-block io 是众所周知的，而像 innodb 这样完�
 非常契合，因为至少在 Linux 上 aio 还是不支持buffer io 的。不过 MySQL 是用了内核线程的，大概是它比较新的缘故。&lt;br /&gt;
 不过有意思的是，事情的发展往往是三十年河东三十年河西的，文章中提到其实 co 的概念是非常古老的，甚至在1990年的时候，
 因为没有足够好的操作系统级别的线程，大家转而使用了 co。 而在内核线程如此成熟的今天，在学习的时候，线程模型首先进入
-了我们的视角，导致很多人以为 co 是最近才发明出来的, 才不是在黑前端呢哼。
+了我们的视角，导致很多人以为 co 是最近才发明出来的, 才不是在黑前端呢口享。&lt;br /&gt;
 不过现代数据库只有MSSQLServer 提供 co 的支持，而且不是默认选项, 默认的是线程池。 co 这玩意在MS那里叫 Fibers。 话说回来，响马也
 做了个 fibjs，应该是向这个名字致敬的。&lt;/p&gt;
 &lt;blockquote&gt;
@@ -181,7 +181,7 @@ operate correctly with non-strict two-phase locking --page236&lt;/p&gt;
 &lt;/blockquote&gt;
 &lt;p&gt;真正有意思的来了，我看了很多书，原子性，隔离性都讲的很多，但是当原子性遇到隔离性呢？
 如果要做到 WAL，那么在回滚事务的时候，可能存在一种情况是把已经修改的内容给修改回去。这就要求事务必须是
-严格两阶段锁的。在一个非严格的状态下，一旦一个 x 锁被释放了，在同一事务内，是不可以再吃得到这个 x 锁去回滚数据的。
+严格两阶段锁的。在一个非严格的状态下，一旦一个 x 锁被释放了，在同一事务内，是不可以再得到这个 x 锁去回滚数据的。
 所以WAL的隐含前提就是，严格两阶段锁的。这段挺精彩的。&lt;/p&gt;
 &lt;blockquote&gt;
 &lt;p&gt;Perhaps the most noticeable changes in this space are
