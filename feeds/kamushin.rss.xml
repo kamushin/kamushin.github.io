@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Kamushin's blog</title><link>/</link><description></description><atom:link href="/feeds/kamushin.rss.xml" rel="self"></atom:link><lastBuildDate>Sun, 07 Feb 2016 00:21:11 +0800</lastBuildDate><item><title>notes of ArchitectureOfDatabaseSystem</title><link>/learning/ArchitectureOfDatabaseSystem.html</link><description>&lt;blockquote&gt;
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Kamushin's blog</title><link>/</link><description></description><atom:link href="/feeds/kamushin.rss.xml" rel="self"></atom:link><lastBuildDate>Sun, 07 Feb 2016 00:26:17 +0800</lastBuildDate><item><title>notes of ArchitectureOfDatabaseSystem</title><link>/learning/ArchitectureOfDatabaseSystem.html</link><description>&lt;blockquote&gt;
 &lt;p&gt;A Lightweight Thread Package is an application-level construct
 that supports multiple threads within a single OS
-process  -- page 150
-Each DBMS thread is
+process  -- page 150&lt;/p&gt;
+&lt;p&gt;Each DBMS thread is
 programmed to manage its own state, to perform all potentially blocking
 operations (e.g., I/Os) via non-blocking, asynchronous interfaces,
 and to frequently yield control to a scheduling routine that dispatches
@@ -22,7 +22,7 @@ co 应用必须使用 non-block io 是众所周知的，而像 innodb 这样完�
 非常契合，因为至少在 Linux 上 aio 还是不支持buffer io 的。不过 MySQL 是用了内核线程的，大概是它比较新的缘故。&lt;br /&gt;
 不过有意思的是，事情的发展往往是三十年河东三十年河西的，文章中提到其实 co 的概念是非常古老的，甚至在1990年的时候，
 因为没有足够好的操作系统级别的线程，大家转而使用了 co。 而在内核线程如此成熟的今天，在学习的时候，线程模型首先进入
-了我们的视角，
+了我们的视角，导致很多人以为 co 是最近才发明出来的。&lt;br /&gt;
 不过现代数据库只有MSSQLServer 提供 co 的支持，而且不是默认选项, 默认的是线程池。 co 这玩意在MS那里叫 Fibers。 话说回来，响马也
 做了个 fibjs，应该是向这个名字致敬的。&lt;/p&gt;
 &lt;blockquote&gt;
@@ -47,8 +47,8 @@ may use the client communications socket as a queue for the tuples
 it produces. More complex approaches implement client-side cursor
 caching and use the DBMS client to store results likely to be fetched
 in the near future rather than relying on the OS communications
-buffers. -- page 158
-A relational query processor takes a declarative SQL statement,
+buffers. -- page 158&lt;/p&gt;
+&lt;p&gt;A relational query processor takes a declarative SQL statement,
 validates it, optimizes it into a procedural dataflow execution plan,
 and (subject to admission control) executes that dataflow program on
 behalf of a client program. The client program then fetches (“pulls”) the
@@ -94,8 +94,8 @@ very expensive since all secondary indexes that point to this row require
 updating. Both finding and updating these rows can be costly. Rows
 need to move when an update changes the row size and space is unavailable
 on the current page for the freshly updated row. And many rows
-need to move when a B+-tree is split. -- page 195 
-DB2 uses a forwarding pointer
+need to move when a B+-tree is split. -- page 195 &lt;/p&gt;
+&lt;p&gt;DB2 uses a forwarding pointer
 to avoid the first problem. This requires a second I/O to find a moved
 page, but avoids having to update the secondary index --page 195 &lt;/p&gt;
 &lt;/blockquote&gt;
@@ -148,14 +148,14 @@ database systems operate in a mode that Haerder and Reuter call
 in place, (b) unpinned buffer pool frames can be “stolen” (and the modified
 data pages written back to disk) even if they contain uncommitted
 data, and (c) buffer pool pages need not be “forced” (flushed) to the
-database before a commit request returns to the user -- page 229 
-Another fast-path challenge in logging is to keep log records as small
+database before a commit request returns to the user -- page 229 &lt;/p&gt;
+&lt;p&gt;Another fast-path challenge in logging is to keep log records as small
 as possible, in order to increase the throughput of log I/O activity.
 A natural optimization is to log logical operations (e.g., “insert (Bob,
 $25000) into EMP”) rather than physical operations (e.g., the afterimages
 for all byte ranges modified via the tuple insertion, including
-bytes on both heap file and index blocks.)  -- page 229
-Rather than starting from the very first log
+bytes on both heap file and index blocks.)  -- page 229&lt;/p&gt;
+&lt;p&gt;Rather than starting from the very first log
 record, a correct result will be obtained by starting recovery at the
 oldest of these two log records: (1) the log record describing the earliest
 change to the oldest dirty page in the buffer pool, and (2) the log
@@ -209,7 +209,7 @@ areas of computing.&lt;/p&gt;
 文章原文来自http://120.52.72.51/perspectives.mvdirona.com/c3pr90ntcsf0/content/binary/ArchitectureOfDatabaseSystem.pdf&lt;br /&gt;
 看完后给我感觉是第6章值得一看，前1-3章的话说实话和数据库没太大关系，是个操作系统上的涉及 cpu 和 io 的应用都会涉及。
 第4章讲 query 的，这部分其实是编译原理的知识，和数据库关系不大。第5章没什么干货。
-第6章是真正数据库相关的内容，概括的比较全面，比『数据库系统基础 高级篇』要实践一点，比『MySQL技术内幕innodb存储引擎 』要理论一点。&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Kamushin</dc:creator><pubDate>Sun, 07 Feb 2016 00:21:11 +0800</pubDate><guid>tag:,2016-02-07:learning/ArchitectureOfDatabaseSystem.html</guid><category>reading</category></item><item><title>Member functions in Python</title><link>/debug/member_function_in_python.html</link><description>&lt;p&gt;&lt;code&gt;self.func&lt;/code&gt; is a operation that bind &lt;code&gt;self&lt;/code&gt; to the function.&lt;/p&gt;
+第6章是真正数据库相关的内容，概括的比较全面，比『数据库系统基础 高级篇』要实践一点，比『MySQL技术内幕innodb存储引擎 』要理论一点。&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Kamushin</dc:creator><pubDate>Sun, 07 Feb 2016 00:26:17 +0800</pubDate><guid>tag:,2016-02-07:learning/ArchitectureOfDatabaseSystem.html</guid><category>reading</category></item><item><title>Member functions in Python</title><link>/debug/member_function_in_python.html</link><description>&lt;p&gt;&lt;code&gt;self.func&lt;/code&gt; is a operation that bind &lt;code&gt;self&lt;/code&gt; to the function.&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;A&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;object&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
     &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;__init__&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
         &lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;b&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;B&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
