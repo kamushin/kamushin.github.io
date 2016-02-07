@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Kamushin's blog</title><link href="/" rel="alternate"></link><link href="/feeds/kamushin.atom.xml" rel="self"></link><id>/</id><updated>2016-02-08T02:02:05+08:00</updated><entry><title>Why Alipay lottery failed</title><link href="/think/alipay-lottery.html" rel="alternate"></link><updated>2016-02-08T02:02:05+08:00</updated><author><name>Kamushin</name></author><id>tag:,2016-02-08:think/alipay-lottery.html</id><summary type="html">&lt;h3&gt;Overview&lt;/h3&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Kamushin's blog</title><link href="/" rel="alternate"></link><link href="/feeds/kamushin.atom.xml" rel="self"></link><id>/</id><updated>2016-02-08T02:08:51+08:00</updated><entry><title>Why Alipay lottery failed</title><link href="/think/alipay-lottery.html" rel="alternate"></link><updated>2016-02-08T02:08:51+08:00</updated><author><name>Kamushin</name></author><id>tag:,2016-02-08:think/alipay-lottery.html</id><summary type="html">&lt;h3&gt;Overview&lt;/h3&gt;
 &lt;p&gt;Here I use the word &lt;em&gt;lottery&lt;/em&gt; rather than red packet, because only about 1% of the users get the final rewards. &lt;br /&gt;
 After the last round of lottery, most of the users started to question whether it's a deception.&lt;br /&gt;
 Here comes a very interesting question, how many percents of people should Alipay choose to win the lottery 
@@ -14,6 +14,10 @@ Here are two models to simulate the group of people.  &lt;/p&gt;
 &lt;p&gt;Sorry I forget the real name of this model. In this model, &lt;code&gt;Q&lt;/code&gt; is quality of a drama, &lt;code&gt;E&lt;/code&gt; is bias, and &lt;code&gt;T&lt;/code&gt; is threshold of satisfaction.
 If &lt;code&gt;Q + E &amp;gt; T&lt;/code&gt;, people will stand up and clap hands for a drama. And if &lt;code&gt;x&lt;/code&gt; percents of people stand and clap hands, everyone will stand and clap hands.&lt;br /&gt;
 &lt;code&gt;x&lt;/code&gt; is called &lt;code&gt;The Tipping Point&lt;/code&gt;.&lt;/p&gt;
+&lt;h3&gt;Solution&lt;/h3&gt;
+&lt;p&gt;In this event, two of the most importent values are &lt;code&gt;Q&lt;/code&gt; and &lt;code&gt;x&lt;/code&gt;. if &lt;code&gt;Q&lt;/code&gt; is too small, for example, everyone got 0.1 CNY, it will make this event meaningless and be forgotten.
+And if &lt;code&gt;x&lt;/code&gt; is too small, like now, most of people won't stand up and give a applause.&lt;br /&gt;
+It needs data to simulate how to give a balance between &lt;code&gt;Q&lt;/code&gt; ans &lt;code&gt;x&lt;/code&gt;.&lt;/p&gt;
 &lt;h3&gt;Summary&lt;/h3&gt;
 &lt;p&gt;Alibaba has enough resource and data to calculat &lt;code&gt;The Tipping Point&lt;/code&gt; with their proud big data tech. But they did not use and made the whole event a failure. So sad.&lt;/p&gt;</summary><category term="alipay"></category></entry><entry><title>notes of ArchitectureOfDatabaseSystem</title><link href="/learning/ArchitectureOfDatabaseSystem.html" rel="alternate"></link><updated>2016-02-07T00:40:21+08:00</updated><author><name>Kamushin</name></author><id>tag:,2016-02-07:learning/ArchitectureOfDatabaseSystem.html</id><summary type="html">&lt;blockquote&gt;
 &lt;p&gt;A Lightweight Thread Package is an application-level construct
