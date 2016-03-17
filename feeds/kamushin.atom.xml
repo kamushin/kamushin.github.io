@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Kamushin's blog</title><link href="/" rel="alternate"></link><link href="/feeds/kamushin.atom.xml" rel="self"></link><id>/</id><updated>2016-03-17T23:07:37+08:00</updated><entry><title>hashHistory and browserHistory in React-Router</title><link href="/learning/react_route.html" rel="alternate"></link><updated>2016-03-17T23:07:37+08:00</updated><author><name>Kamushin</name></author><id>tag:,2016-03-17:learning/react_route.html</id><summary type="html">&lt;p&gt;&lt;code&gt;hashHistory&lt;/code&gt; and &lt;code&gt;browserHistory&lt;/code&gt; are two kinds of common React-Router &lt;code&gt;Histories&lt;/code&gt; implementations.&lt;br /&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Kamushin's blog</title><link href="/" rel="alternate"></link><link href="/feeds/kamushin.atom.xml" rel="self"></link><id>/</id><updated>2016-03-17T23:09:38+08:00</updated><entry><title>hashHistory and browserHistory in React-Router</title><link href="/learning/react_route.html" rel="alternate"></link><updated>2016-03-17T23:09:38+08:00</updated><author><name>Kamushin</name></author><id>tag:,2016-03-17:learning/react_route.html</id><summary type="html">&lt;p&gt;&lt;code&gt;hashHistory&lt;/code&gt; and &lt;code&gt;browserHistory&lt;/code&gt; are two kinds of common React-Router &lt;code&gt;Histories&lt;/code&gt; implementations.&lt;br /&gt;
 When I was using React-Router v1.0, I read the doc in github and wrote the code like this  &lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="kr"&gt;import&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt; &lt;span class="nx"&gt;Router&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt; &lt;span class="nx"&gt;from&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;react-router&amp;#39;&lt;/span&gt;
 &lt;span class="nx"&gt;ReactDOM&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;render&lt;/span&gt; &lt;span class="p"&gt;((&lt;/span&gt; 
  &lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nx"&gt;Router&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt;
    &lt;span class="p"&gt;...&lt;/span&gt;
- &lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="err"&gt;/Router&amp;gt; &lt;/span&gt;
 &lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="nb"&gt;document&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;body&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
 
@@ -17,7 +16,6 @@ which will make a &lt;code&gt;#&lt;/code&gt; -- hash in url.&lt;/p&gt;
 &lt;span class="nx"&gt;ReactDOM&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;render&lt;/span&gt; &lt;span class="p"&gt;((&lt;/span&gt; 
  &lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nx"&gt;Router&lt;/span&gt; &lt;span class="nx"&gt;history&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="nx"&gt;browserHistory&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt; &lt;span class="o"&gt;&amp;gt;&lt;/span&gt;
    &lt;span class="p"&gt;...&lt;/span&gt;
- &lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="err"&gt;/Router&amp;gt; &lt;/span&gt;
 &lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="nb"&gt;document&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;body&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
 
@@ -26,7 +24,7 @@ which will make a &lt;code&gt;#&lt;/code&gt; -- hash in url.&lt;/p&gt;
 I forgot to deal with this, and went to write other codes.  &lt;/p&gt;
 &lt;p&gt;Today when I c&amp;amp;p this chunk of code to my new project, using some new tools. The build tool automatically install
 react-router v2.0 for me. While the hash tag is gone, and url looks like the &lt;strong&gt;real&lt;/strong&gt; url.
-But it cause another problem, that is when the url is like the &lt;strong&gt;real&lt;/strong&gt; url, it means that I should set the server side route to &lt;code&gt;* -&amp;gt; index.html&lt;/code&gt; rather than &lt;code&gt;/ -&amp;gt; index.html&lt;/code&gt;.&lt;br /&gt;
+But it cause another problem, that is when the url is like the &lt;strong&gt;real&lt;/strong&gt; url, it means that I should set the server side route to &lt;code&gt;/* -&amp;gt; index.html&lt;/code&gt; rather than &lt;code&gt;/ -&amp;gt; index.html&lt;/code&gt;.&lt;br /&gt;
 Otherwise, it will get a 404 error when the url &lt;code&gt;/home&lt;/code&gt; is re-flushed. And the problem will not raise while using &lt;code&gt;hashHistory&lt;/code&gt;, because the url is like &lt;code&gt;/#/home&lt;/code&gt; and it is still &lt;code&gt;/&lt;/code&gt;, the string after hash tag is not in the route rule.
 &lt;a href="https://github.com/reactjs/react-router/blob/master/docs/guides/Histories.md"&gt;Docs about them.&lt;/a&gt;  &lt;/p&gt;
 &lt;p&gt;I havn't find the correct way to set the server side route, because I am using a &lt;code&gt;webpack-dev-server&lt;/code&gt;-like tool, I don't know how to change the route.&lt;br /&gt;
