@@ -51,25 +51,71 @@
     <div class="row">
 
         <div class="span9">
+        
+
+        
+
+
+    <div class='article'>
+        <div class="content-title">
+            <a href="/learning/react_route.html"><h1>hashHistory and browserHistory in React-Router</h1></a>
+2016-03-17 23-02-38
+
+by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
+ 
+
+
+ 
+        </div>
+        
+        <div><p><code>hashHistory</code> and <code>browserHistory</code> are two kinds of common React-Router <code>Histories</code> implementations.<br />
+When I was using React-Router v1.0, I read the doc in github and wrote the code like this  </p>
+<div class="highlight"><pre><span class="kr">import</span> <span class="p">{</span> <span class="nx">Router</span><span class="p">}</span> <span class="nx">from</span> <span class="s1">&#39;react-router&#39;</span>
+<span class="nx">ReactDOM</span><span class="p">.</span><span class="nx">render</span> <span class="p">((</span> 
+ <span class="o">&lt;</span><span class="nx">Router</span><span class="p">}</span> <span class="o">/&gt;</span>
+   <span class="p">...</span>
+ <span class="o">&lt;</span><span class="err">/Router&gt; </span>
+<span class="p">),</span> <span class="nb">document</span><span class="p">.</span><span class="nx">body</span><span class="p">);</span>
+</pre></div>
+
+
+<p>I found something like <code>#/home/k=ckuvupr</code>. What the hell is this?<br />
+I went back to the doc and changed the code with <code>browserHistory</code>, with the doc, I knew the default is <code>hashHistory</code>, 
+which will make a <code>#</code> -- hash.</p>
+<div class="highlight"><pre><span class="kr">import</span> <span class="p">{</span> <span class="nx">browserHistory</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">&#39;react-router&#39;</span>
+<span class="nx">ReactDOM</span><span class="p">.</span><span class="nx">render</span> <span class="p">((</span> 
+ <span class="o">&lt;</span><span class="nx">Router</span> <span class="nx">history</span><span class="o">=</span><span class="p">{</span><span class="nx">browserHistory</span><span class="p">}</span> <span class="o">/&gt;</span>
+   <span class="p">...</span>
+ <span class="o">&lt;</span><span class="err">/Router&gt; </span>
+<span class="p">),</span> <span class="nb">document</span><span class="p">.</span><span class="nx">body</span><span class="p">);</span>
+</pre></div>
+
+
+<p>However, it would not effect in v1.0, it's the way in v2.0. So I didn't see anything changed. And just for a while, 
+I forgot to deal with this, and went to write other codes.  </p>
+<p>Today when I c&amp;p this chunk of code to my new project, using some new tools. The build tool automatically install
+react-router v2.0 for me. While the hash tag is gone, and url looks like the <strong>real</strong> url.
+But it cause another problem, that is when the url is like the <strong>real</strong> url, it means that I should set the server side route to <code>* -&gt; index.html</code> rather than <code>/ -&gt; index.html</code>.<br />
+Otherwise, it will get a 404 error when the url <code>/home</code> is re-flushed. And the problem will not raise while using <code>hashHistory</code>, because the url is like <code>/#/home</code> and it is still <code>/</code>, the string after hash tag is not in the route rule.
+<a href="https://github.com/reactjs/react-router/blob/master/docs/guides/Histories.md">Docs about them.</a>  </p>
+<p>I havn't find the correct way to set the server side route, because I am using a <code>webpack-dev-server</code>-like tool, I don't know how to change the route.<br />
+So I go back to use the ugly <code>hashHistory</code>.</p>
+<p>It seems a waste of time, my fault is reading doc but not paid attention to version, but I still hate the doc because the difference between v1.0 and v2.0 is not heightlighted.</p></div>
+        <hr />
+    </div>
+		
+<div class="pagination">
 <ul>
-    <li><a href="/tag/ag.html">Ag</a></li>
-    <li><a href="/tag/alipay.html">alipay</a></li>
-    <li><a href="/tag/coroutine.html">coroutine</a></li>
-    <li><a href="/tag/exception.html">exception</a></li>
-    <li><a href="/tag/front-end.html">front-end</a></li>
-    <li><a href="/tag/java.html">Java</a></li>
-    <li><a href="/tag/linux.html">Linux</a></li>
-    <li><a href="/tag/mysql.html">MySQL</a></li>
-    <li><a href="/tag/oracle.html">Oracle</a></li>
-    <li><a href="/tag/pelican.html">Pelican</a></li>
-    <li><a href="/tag/python.html">Python</a></li>
-    <li><a href="/tag/react.html">react</a></li>
-    <li><a href="/tag/reading.html">reading</a></li>
-    <li><a href="/tag/talk.html">talk</a></li>
-    <li><a href="/tag/unittest.html">unittest</a></li>
-    <li><a href="/tag/wang-luo-bian-cheng.html">网络编程</a></li>
-    <li><a href="/tag/za-shi.html">杂事</a></li>
+    <li class="prev disabled"><a href="#">&larr; Previous</a></li>
+
+    <li class="active"><a href="/tag/react.html">1</a></li>
+
+    <li class="next disabled"><a href="#">&rarr; Next</a></li>
+
 </ul>
+</div>
+ 
+  
         </div>
         
         <div class="span3">

@@ -58,8 +58,8 @@
 
     <div class='article'>
         <div class="content-title">
-            <a href="/think/alipay-lottery.html"><h1>Why Alipay lottery failed</h1></a>
-2016-02-08 02-13-37
+            <a href="/learning/react_route.html"><h1>hashHistory and browserHistory in React-Router</h1></a>
+2016-03-17 23-02-38
 
 by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
  
@@ -68,30 +68,60 @@ by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
  
         </div>
         
-        <div><h3>Overview</h3>
-<p>Here I use the word <em>lottery</em> rather than red packet, because only about 1% of the users get the final rewards. <br />
-After the last round of lottery, most of the users started to question whether it's a deception.<br />
-Here comes a very interesting question, how many percents of people should Alipay choose to win the lottery 
-will be satisfied ? Does it really a magic number or can be calculated and proved to be the most satisfied number?<br />
-Here are two models to simulate the group of people.  </p>
-<h3>Granovettor model</h3>
-<blockquote>
-<p>Granovetter has done research on a model of how fads are created. Consider a hypothetical mob assuming that each person's decision whether to riot or not is dependent on what everyone else is doing. Instigators will begin rioting even if no one else is, while others need to see a critical number of trouble makers before they riot, too. This threshold is assumed to be distributed to some probability distribution. The outcomes may diverge largely although the initial condition of threshold may only differ very slightly. This threshold model of social behavior was proposed previously by Thomas Schelling and later popularized by Malcolm Gladwell's book The Tipping Point. via wiki</p>
-</blockquote>
-<p>It's a threshold model that is to say there is a threshold to decide if Alipay lottery will be rejected by most of the users.</p>
-<h3>Stand up and clap hands model</h3>
-<p>Sorry I forget the real name of this model. In this model, <code>Q</code> is quality of a drama, <code>E</code> is bias, and <code>T</code> is threshold of satisfaction.
-If <code>Q + E &gt; T</code>, people will stand up and clap hands for a drama. And if <code>x</code> percents of people stand and clap hands, everyone will stand and clap hands.<br />
-<code>x</code> is called <code>The Tipping Point</code>.</p>
-<h3>Solution</h3>
-<p>In this event, two of the most importent values are <code>Q</code> and <code>x</code>. if <code>Q</code> is too small, for example, everyone got 0.1 CNY, it will make this event meaningless and be forgotten.
-And if <code>x</code> is too small, like now, most of people won't stand up and give a applause.<br />
-It needs data to simulate how to give a balance between <code>Q</code> ans <code>x</code>.</p>
-<h3>Summary</h3>
-<p>Alibaba has enough resource and data to calculat <code>The Tipping Point</code> with their proud big data tech. But they did not use and made the whole event a failure. Sigh.</p></div>
+        <div><p><code>hashHistory</code> and <code>browserHistory</code> are two kinds of common React-Router <code>Histories</code> implementations.<br />
+When I was using React-Router v1.0, I read the doc in github and wrote the code like this  </p>
+<div class="highlight"><pre><span class="kr">import</span> <span class="p">{</span> <span class="nx">Router</span><span class="p">}</span> <span class="nx">from</span> <span class="s1">&#39;react-router&#39;</span>
+<span class="nx">ReactDOM</span><span class="p">.</span><span class="nx">render</span> <span class="p">((</span> 
+ <span class="o">&lt;</span><span class="nx">Router</span><span class="p">}</span> <span class="o">/&gt;</span>
+   <span class="p">...</span>
+ <span class="o">&lt;</span><span class="err">/Router&gt; </span>
+<span class="p">),</span> <span class="nb">document</span><span class="p">.</span><span class="nx">body</span><span class="p">);</span>
+</pre></div>
+
+
+<p>I found something like <code>#/home/k=ckuvupr</code>. What the hell is this?<br />
+I went back to the doc and changed the code with <code>browserHistory</code>, with the doc, I knew the default is <code>hashHistory</code>, 
+which will make a <code>#</code> -- hash.</p>
+<div class="highlight"><pre><span class="kr">import</span> <span class="p">{</span> <span class="nx">browserHistory</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">&#39;react-router&#39;</span>
+<span class="nx">ReactDOM</span><span class="p">.</span><span class="nx">render</span> <span class="p">((</span> 
+ <span class="o">&lt;</span><span class="nx">Router</span> <span class="nx">history</span><span class="o">=</span><span class="p">{</span><span class="nx">browserHistory</span><span class="p">}</span> <span class="o">/&gt;</span>
+   <span class="p">...</span>
+ <span class="o">&lt;</span><span class="err">/Router&gt; </span>
+<span class="p">),</span> <span class="nb">document</span><span class="p">.</span><span class="nx">body</span><span class="p">);</span>
+</pre></div>
+
+
+<p>However, it would not effect in v1.0, it's the way in v2.0. So I didn't see anything changed. And just for a while, 
+I forgot to deal with this, and went to write other codes.  </p>
+<p>Today when I c&amp;p this chunk of code to my new project, using some new tools. The build tool automatically install
+react-router v2.0 for me. While the hash tag is gone, and url looks like the <strong>real</strong> url.
+But it cause another problem, that is when the url is like the <strong>real</strong> url, it means that I should set the server side route to <code>* -&gt; index.html</code> rather than <code>/ -&gt; index.html</code>.<br />
+Otherwise, it will get a 404 error when the url <code>/home</code> is re-flushed. And the problem will not raise while using <code>hashHistory</code>, because the url is like <code>/#/home</code> and it is still <code>/</code>, the string after hash tag is not in the route rule.
+<a href="https://github.com/reactjs/react-router/blob/master/docs/guides/Histories.md">Docs about them.</a>  </p>
+<p>I havn't find the correct way to set the server side route, because I am using a <code>webpack-dev-server</code>-like tool, I don't know how to change the route.<br />
+So I go back to use the ugly <code>hashHistory</code>.</p>
+<p>It seems a waste of time, my fault is reading doc but not paid attention to version, but I still hate the doc because the difference between v1.0 and v2.0 is not heightlighted.</p></div>
         <hr />
     </div>
 		
+
+ 
+        
+
+ 
+
+    <div class='article'>
+        <a href="/think/alipay-lottery.html"><h2>Why Alipay lottery failed</h2></a>
+        <div class= "well small"> 2016-02-08 02-13-37
+
+by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
+ 
+
+
+ </div>
+        <div class="summary"><p>some naive thinking about why alipay failed to get applause in 2016 CCTV Spring Festival Gala</p> <a class="btn btn-info xsmall" href="/think/alipay-lottery.html">read more</a></div>
+    </div>	
+				
 
  
         
@@ -234,24 +264,6 @@ by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
 
  </div>
         <div class="summary"><p>two different ways of assert exception.</p> <a class="btn btn-info xsmall" href="/learning/compare_assert_exception.html">read more</a></div>
-    </div>	
-				
-
- 
-        
-
- 
-
-    <div class='article'>
-        <a href="/learning/python_pro.html"><h2>Write Python like a Pro</h2></a>
-        <div class= "well small"> 2015-12-21 17-26-57
-
-by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
- 
-
-
- </div>
-        <div class="summary"><p>Something I know about how to write Python code</p> <a class="btn btn-info xsmall" href="/learning/python_pro.html">read more</a></div>
     </div>	
 				
 <div class="pagination">
