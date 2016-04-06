@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Kamushin's blog</title><link>/</link><description></description><atom:link href="/feeds/kamushin.rss.xml" rel="self"></atom:link><lastBuildDate>Wed, 06 Apr 2016 20:39:27 +0800</lastBuildDate><item><title>Alter dataSource in Spring By AOP And Annotation</title><link>/debug/aop_proxy.html</link><description>&lt;p&gt;Here is an article of how to use AOP and Annotation mechanism to alter dataSource elegantly.&lt;br /&gt;
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Kamushin's blog</title><link>/</link><description></description><atom:link href="/feeds/kamushin.rss.xml" rel="self"></atom:link><lastBuildDate>Wed, 06 Apr 2016 20:42:11 +0800</lastBuildDate><item><title>Alter dataSource in Spring By AOP And Annotation</title><link>/debug/aop_proxy.html</link><description>&lt;p&gt;Here is an article of how to use AOP and Annotation mechanism to alter dataSource elegantly.&lt;br /&gt;
 First, I want make sure that everyone knows how to build multiple dataSource. Please check this article &lt;a href="https://spring.io/blog/2007/01/23/dynamic-datasource-routing/"&gt;Dynamic-DataSource-Routing&lt;/a&gt;&lt;br /&gt;
 After this, we will have a &lt;code&gt;DataSourceHolder&lt;/code&gt; class, in the case above, it is called &lt;code&gt;CustomerContextHolder&lt;/code&gt;.&lt;br /&gt;
 Let's remove the customer logic and make &lt;code&gt;Holder&lt;/code&gt; purer.  &lt;/p&gt;
@@ -179,12 +179,14 @@ Here is my final solution.&lt;/p&gt;
 
 
 &lt;h3&gt;Summary&lt;/h3&gt;
-&lt;p&gt;In this case, I learnt
-- how to use AOP and annotation
-- there is a mechanism called proxy used by Spring
-- there are two implements of proxy mechanism, they are different
-- how to use reflection in Java&lt;/p&gt;
-&lt;p&gt;I hope it would help u.&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Kamushin</dc:creator><pubDate>Wed, 06 Apr 2016 20:39:27 +0800</pubDate><guid>tag:,2016-04-06:debug/aop_proxy.html</guid><category>aop java</category></item><item><title>hashHistory and browserHistory in React-Router</title><link>/learning/react_route.html</link><description>&lt;p&gt;&lt;code&gt;hashHistory&lt;/code&gt; and &lt;code&gt;browserHistory&lt;/code&gt; are two kinds of common React-Router &lt;code&gt;Histories&lt;/code&gt; implementations.&lt;br /&gt;
+&lt;p&gt;In this case, I learnt&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;how to use AOP and annotation&lt;/li&gt;
+&lt;li&gt;there is a mechanism called proxy used by Spring&lt;/li&gt;
+&lt;li&gt;there are two implements of proxy mechanism, they are different&lt;/li&gt;
+&lt;li&gt;how to use reflection in Java&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;I hope it would help u.&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Kamushin</dc:creator><pubDate>Wed, 06 Apr 2016 20:42:11 +0800</pubDate><guid>tag:,2016-04-06:debug/aop_proxy.html</guid><category>aop java</category></item><item><title>hashHistory and browserHistory in React-Router</title><link>/learning/react_route.html</link><description>&lt;p&gt;&lt;code&gt;hashHistory&lt;/code&gt; and &lt;code&gt;browserHistory&lt;/code&gt; are two kinds of common React-Router &lt;code&gt;Histories&lt;/code&gt; implementations.&lt;br /&gt;
 When I was using React-Router v1.0, I read the doc in github and wrote the code like this  &lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="kr"&gt;import&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt; &lt;span class="nx"&gt;Router&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt; &lt;span class="nx"&gt;from&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;react-router&amp;#39;&lt;/span&gt;
 &lt;span class="nx"&gt;ReactDOM&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;render&lt;/span&gt; &lt;span class="p"&gt;((&lt;/span&gt; 
