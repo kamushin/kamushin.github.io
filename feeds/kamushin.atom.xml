@@ -1,5 +1,190 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Kamushin's blog</title><link href="/" rel="alternate"></link><link href="/feeds/kamushin.atom.xml" rel="self"></link><id>/</id><updated>2016-03-17T23:09:38+08:00</updated><entry><title>hashHistory and browserHistory in React-Router</title><link href="/learning/react_route.html" rel="alternate"></link><updated>2016-03-17T23:09:38+08:00</updated><author><name>Kamushin</name></author><id>tag:,2016-03-17:learning/react_route.html</id><summary type="html">&lt;p&gt;&lt;code&gt;hashHistory&lt;/code&gt; and &lt;code&gt;browserHistory&lt;/code&gt; are two kinds of common React-Router &lt;code&gt;Histories&lt;/code&gt; implementations.&lt;br /&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Kamushin's blog</title><link href="/" rel="alternate"></link><link href="/feeds/kamushin.atom.xml" rel="self"></link><id>/</id><updated>2016-04-06T20:39:27+08:00</updated><entry><title>Alter dataSource in Spring By AOP And Annotation</title><link href="/debug/aop_proxy.html" rel="alternate"></link><updated>2016-04-06T20:39:27+08:00</updated><author><name>Kamushin</name></author><id>tag:,2016-04-06:debug/aop_proxy.html</id><summary type="html">&lt;p&gt;Here is an article of how to use AOP and Annotation mechanism to alter dataSource elegantly.&lt;br /&gt;
+First, I want make sure that everyone knows how to build multiple dataSource. Please check this article &lt;a href="https://spring.io/blog/2007/01/23/dynamic-datasource-routing/"&gt;Dynamic-DataSource-Routing&lt;/a&gt;&lt;br /&gt;
+After this, we will have a &lt;code&gt;DataSourceHolder&lt;/code&gt; class, in the case above, it is called &lt;code&gt;CustomerContextHolder&lt;/code&gt;.&lt;br /&gt;
+Let's remove the customer logic and make &lt;code&gt;Holder&lt;/code&gt; purer.  &lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="kd"&gt;public&lt;/span&gt; &lt;span class="kd"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;DataSourceHolder&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;
+
+    &lt;span class="kd"&gt;private&lt;/span&gt; &lt;span class="kd"&gt;static&lt;/span&gt; &lt;span class="kd"&gt;final&lt;/span&gt; &lt;span class="n"&gt;ThreadLocal&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="n"&gt;String&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;contextHolder&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="k"&gt;new&lt;/span&gt; &lt;span class="n"&gt;ThreadLocal&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="n"&gt;String&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;();&lt;/span&gt;
+
+    &lt;span class="kd"&gt;public&lt;/span&gt; &lt;span class="kd"&gt;static&lt;/span&gt; &lt;span class="n"&gt;String&lt;/span&gt; &lt;span class="nf"&gt;getCurrentDataSource&lt;/span&gt;&lt;span class="o"&gt;()&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;
+        &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;String&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="n"&gt;contextHolder&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;get&lt;/span&gt;&lt;span class="o"&gt;();&lt;/span&gt;
+    &lt;span class="o"&gt;}&lt;/span&gt;   
+
+    &lt;span class="kd"&gt;public&lt;/span&gt; &lt;span class="kd"&gt;static&lt;/span&gt; &lt;span class="kt"&gt;void&lt;/span&gt; &lt;span class="nf"&gt;setDataSource&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;String&lt;/span&gt; &lt;span class="n"&gt;dataSource&lt;/span&gt;&lt;span class="o"&gt;){&lt;/span&gt;
+        &lt;span class="n"&gt;contextHolder&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;set&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;dataSource&lt;/span&gt;&lt;span class="o"&gt;);&lt;/span&gt;
+    &lt;span class="o"&gt;}&lt;/span&gt;
+
+    &lt;span class="kd"&gt;public&lt;/span&gt; &lt;span class="kd"&gt;static&lt;/span&gt; &lt;span class="kt"&gt;void&lt;/span&gt; &lt;span class="nf"&gt;setDefaultDataSource&lt;/span&gt;&lt;span class="o"&gt;(){&lt;/span&gt;
+        &lt;span class="n"&gt;contextHolder&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;set&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="kc"&gt;null&lt;/span&gt;&lt;span class="o"&gt;);&lt;/span&gt;
+    &lt;span class="o"&gt;}&lt;/span&gt;
+
+    &lt;span class="kd"&gt;public&lt;/span&gt; &lt;span class="kd"&gt;static&lt;/span&gt; &lt;span class="kt"&gt;void&lt;/span&gt; &lt;span class="nf"&gt;clearCustomerType&lt;/span&gt;&lt;span class="o"&gt;()&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;
+        &lt;span class="n"&gt;contextHolder&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;remove&lt;/span&gt;&lt;span class="o"&gt;();&lt;/span&gt;   
+    &lt;span class="o"&gt;}&lt;/span&gt;  
+
+&lt;span class="o"&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h3&gt;When should we call &lt;code&gt;setDataSource&lt;/code&gt;&lt;/h3&gt;
+&lt;p&gt;In the project I take charge of, they invoke &lt;code&gt;setDataSource&lt;/code&gt; in each &lt;code&gt;controller&lt;/code&gt;. IMHO, I don't think it's an 
+elegant way. I think &lt;code&gt;dataSource&lt;/code&gt; should be an attribute of a &lt;code&gt;DAO&lt;/code&gt; method or a &lt;code&gt;Service&lt;/code&gt; method. And since
+&lt;code&gt;transactionManager&lt;/code&gt; is a &lt;code&gt;advice&lt;/code&gt; to &lt;code&gt;Service&lt;/code&gt; method in this project, &lt;code&gt;dataSource&lt;/code&gt; must be an attribute of a &lt;code&gt;Service&lt;/code&gt; method.&lt;/p&gt;
+&lt;h3&gt;Use Annotation to describe a Service method&lt;/h3&gt;
+&lt;p&gt;First, we should define a runtime annotation.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;@Target({ElementType.METHOD})
+@Retention(RetentionPolicy.RUNTIME)
+public @interface DataSource {
+    String name() default DataSource.DEFAULT;
+
+    public final static String DEFAULT     = &amp;quot;foo&amp;quot;;
+
+    public final static String BAR           = &amp;quot;bar&amp;quot;;
+
+    public final static String BAZ           = &amp;quot;baz&amp;quot;;
+
+}
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Then, we use the annotation to describe a &lt;code&gt;Service&lt;/code&gt; method.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;    @Override
+    @DataSource(name=DataSource.BAR)
+    public Object getSomething() {
+        return dao.getSomething();
+    }
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h3&gt;Use AOP to invoke setDataSource&lt;/h3&gt;
+&lt;p&gt;First, define a &lt;code&gt;pointcut&lt;/code&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;        &amp;lt;aop:pointcut id=&amp;quot;serviceWithAnnotation&amp;quot;
+    expression=&amp;quot;@annotation(com.yourpackageName.DataSource)&amp;quot; /&amp;gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Second, define a &lt;code&gt;advisor&lt;/code&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;    &amp;lt;aop:advisor advice-ref=&amp;quot;dataSourceExchange&amp;quot; pointcut-ref=&amp;quot;serviceWithAnnotation&amp;quot; order=&amp;quot;1&amp;quot;/&amp;gt;
+    &amp;lt;bean id=&amp;quot;dataSourceExchange&amp;quot; class=&amp;quot;com.yourpackageName.DataSourceExchange&amp;quot;/&amp;gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Now, the AOP mechanism will make sure that some methods of &lt;code&gt;DataSourceExchange&lt;/code&gt; will run if Service method which &lt;code&gt;DataSource&lt;/code&gt; annotation decorated is invoked.&lt;/p&gt;
+&lt;p&gt;Last, define &lt;code&gt;DataSourceExchange&lt;/code&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="kd"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;DataSourceExchange&lt;/span&gt; &lt;span class="kd"&gt;implements&lt;/span&gt; &lt;span class="n"&gt;MethodInterceptor&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;
+
+    &lt;span class="kd"&gt;private&lt;/span&gt; &lt;span class="n"&gt;Logger&lt;/span&gt;             &lt;span class="n"&gt;logger&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;LoggerFactory&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;getLogger&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;DataSourceExchange&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;class&lt;/span&gt;&lt;span class="o"&gt;);&lt;/span&gt;
+
+    &lt;span class="nd"&gt;@Override&lt;/span&gt;
+    &lt;span class="kd"&gt;public&lt;/span&gt; &lt;span class="n"&gt;Object&lt;/span&gt; &lt;span class="nf"&gt;invoke&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;MethodInvocation&lt;/span&gt; &lt;span class="n"&gt;invocation&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="kd"&gt;throws&lt;/span&gt; &lt;span class="n"&gt;Throwable&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;
+        &lt;span class="n"&gt;System&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;out&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;println&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;Method name : &amp;quot;&lt;/span&gt;
+                &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;invocation&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;getMethod&lt;/span&gt;&lt;span class="o"&gt;().&lt;/span&gt;&lt;span class="na"&gt;getName&lt;/span&gt;&lt;span class="o"&gt;());&lt;/span&gt;
+        &lt;span class="n"&gt;System&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;out&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;println&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;Method arguments : &amp;quot;&lt;/span&gt;
+                &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;Arrays&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;toString&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;invocation&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;getArguments&lt;/span&gt;&lt;span class="o"&gt;()));&lt;/span&gt;
+        &lt;span class="n"&gt;DataSource&lt;/span&gt; &lt;span class="n"&gt;dataSource&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="k"&gt;this&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;getDataSource&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;invocation&lt;/span&gt;&lt;span class="o"&gt;);&lt;/span&gt;
+        &lt;span class="k"&gt;if&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;dataSource&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="kc"&gt;null&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;
+            &lt;span class="n"&gt;logger&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;error&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;dataSource in invocation is null&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;);&lt;/span&gt;
+        &lt;span class="o"&gt;}&lt;/span&gt;
+        &lt;span class="n"&gt;String&lt;/span&gt; &lt;span class="n"&gt;dbnameString&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;dataSource&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;name&lt;/span&gt;&lt;span class="o"&gt;();&lt;/span&gt;
+        &lt;span class="n"&gt;Object&lt;/span&gt; &lt;span class="n"&gt;result&lt;/span&gt;&lt;span class="o"&gt;;&lt;/span&gt;
+        &lt;span class="k"&gt;try&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;
+            &lt;span class="n"&gt;DataSourceHolder&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;setDataSource&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;dbnameString&lt;/span&gt;&lt;span class="o"&gt;);&lt;/span&gt;
+            &lt;span class="n"&gt;result&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;invocation&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;proceed&lt;/span&gt;&lt;span class="o"&gt;();&lt;/span&gt;
+        &lt;span class="o"&gt;}&lt;/span&gt; &lt;span class="k"&gt;finally&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;
+            &lt;span class="n"&gt;DataSourceHolder&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;setDefaultDataSource&lt;/span&gt;&lt;span class="o"&gt;();&lt;/span&gt;
+        &lt;span class="o"&gt;}&lt;/span&gt;
+        &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;result&lt;/span&gt;&lt;span class="o"&gt;;&lt;/span&gt;
+    &lt;span class="o"&gt;}&lt;/span&gt;
+
+    &lt;span class="kd"&gt;private&lt;/span&gt; &lt;span class="n"&gt;DataSource&lt;/span&gt; &lt;span class="nf"&gt;getDataSource&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;MethodInvocation&lt;/span&gt; &lt;span class="n"&gt;invocation&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="kd"&gt;throws&lt;/span&gt; &lt;span class="n"&gt;Throwable&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;
+  &lt;span class="c1"&gt;//TODO&lt;/span&gt;
+  &lt;span class="o"&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;The hardest part in this bunch of code is how should us impl the &lt;code&gt;getDataSource&lt;/code&gt; method.
+I spent several hours of this method.
+First, I've seen some code online, which tell me it's quite simple to do this. Just like the code below&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;    &lt;span class="kd"&gt;private&lt;/span&gt; &lt;span class="n"&gt;DataSource&lt;/span&gt; &lt;span class="nf"&gt;getDataSource&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;MethodInvocation&lt;/span&gt; &lt;span class="n"&gt;invocation&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="kd"&gt;throws&lt;/span&gt; &lt;span class="n"&gt;Throwable&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;
+        &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;invocation&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;getMethod&lt;/span&gt;&lt;span class="o"&gt;().&lt;/span&gt;&lt;span class="na"&gt;getAnnotation&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;DataSource&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;class&lt;/span&gt;&lt;span class="o"&gt;);&lt;/span&gt;
+  &lt;span class="o"&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;But it won't work, because &lt;code&gt;invocation.getMethod()&lt;/code&gt; will not return the method you defined above, it will
+return a &lt;code&gt;proxy&lt;/code&gt; method. It's a mechanism called &lt;code&gt;Proxy&lt;/code&gt; in Spring framework.&lt;br /&gt;
+So we should find out the real method.&lt;br /&gt;
+Again I searched stackoverflow.com, some answers tell me &lt;code&gt;AnnotationUtils.findAnnotation&lt;/code&gt; will be useful to me.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;    &lt;span class="kd"&gt;private&lt;/span&gt; &lt;span class="n"&gt;DataSource&lt;/span&gt; &lt;span class="nf"&gt;getDataSource&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;MethodInvocation&lt;/span&gt; &lt;span class="n"&gt;invocation&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="kd"&gt;throws&lt;/span&gt; &lt;span class="n"&gt;Throwable&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;
+        &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;AnnotationUtils&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;findAnnotation&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;invocation&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;getMethod&lt;/span&gt;&lt;span class="o"&gt;(),&lt;/span&gt; &lt;span class="n"&gt;DataSource&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;class&lt;/span&gt;&lt;span class="o"&gt;);&lt;/span&gt;
+  &lt;span class="o"&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;&lt;code&gt;AnnotationUtils.findAnnotation&lt;/code&gt; will recursively find the super class of the proxy method, to find the annotation decorated on the real method you defined above.&lt;br /&gt;
+But it's &lt;strong&gt;not&lt;/strong&gt; the complete answer. &lt;br /&gt;
+Let's see the source code of &lt;code&gt;AnnotationUtils.findAnnotation&lt;/code&gt;  &lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;    /**
+     * Get a single {@link Annotation} of &lt;span class="nt"&gt;&amp;lt;code&amp;gt;&lt;/span&gt;annotationType&lt;span class="nt"&gt;&amp;lt;/code&amp;gt;&lt;/span&gt; from the supplied {@link Method},
+     * traversing its super methods if no annotation can be found on the given method itself.
+     * &lt;span class="nt"&gt;&amp;lt;p&amp;gt;&lt;/span&gt;Annotations on methods are not inherited by default, so we need to handle this explicitly.
+     * @param method the method to look for annotations on
+     * @param annotationType the annotation class to look for
+     * @return the annotation found, or &lt;span class="nt"&gt;&amp;lt;code&amp;gt;&lt;/span&gt;null&lt;span class="nt"&gt;&amp;lt;/code&amp;gt;&lt;/span&gt; if none found
+     */
+    public static &lt;span class="nt"&gt;&amp;lt;A&lt;/span&gt; &lt;span class="err"&gt;extends&lt;/span&gt; &lt;span class="err"&gt;Annotation&lt;/span&gt;&lt;span class="nt"&gt;&amp;gt;&lt;/span&gt; A findAnnotation(Method method, Class&lt;span class="nt"&gt;&amp;lt;A&amp;gt;&lt;/span&gt; annotationType) {
+        A annotation = getAnnotation(method, annotationType);
+        Class&lt;span class="cp"&gt;&amp;lt;?&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt; &lt;span class="nx"&gt;cl&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;method&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;getDeclaringClass&lt;/span&gt;&lt;span class="p"&gt;();&lt;/span&gt;
+        &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;annotation&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="k"&gt;null&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+            &lt;span class="nx"&gt;annotation&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;searchOnInterfaces&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;method&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;annotationType&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;cl&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;getInterfaces&lt;/span&gt;&lt;span class="p"&gt;());&lt;/span&gt;
+        &lt;span class="p"&gt;}&lt;/span&gt;
+        &lt;span class="k"&gt;while&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;annotation&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="k"&gt;null&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+            &lt;span class="nx"&gt;cl&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;cl&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;getSuperclass&lt;/span&gt;&lt;span class="p"&gt;();&lt;/span&gt;
+            &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;cl&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="k"&gt;null&lt;/span&gt; &lt;span class="o"&gt;||&lt;/span&gt; &lt;span class="nx"&gt;cl&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="nx"&gt;Object&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;class&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+                &lt;span class="k"&gt;break&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+            &lt;span class="p"&gt;}&lt;/span&gt;
+            &lt;span class="k"&gt;try&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+                &lt;span class="nx"&gt;Method&lt;/span&gt; &lt;span class="nx"&gt;equivalentMethod&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;cl&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;getDeclaredMethod&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;method&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;getName&lt;/span&gt;&lt;span class="p"&gt;(),&lt;/span&gt; &lt;span class="nx"&gt;method&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;getParameterTypes&lt;/span&gt;&lt;span class="p"&gt;());&lt;/span&gt;
+                &lt;span class="nx"&gt;annotation&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;getAnnotation&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;equivalentMethod&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;annotationType&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+                &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;annotation&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="k"&gt;null&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+                    &lt;span class="nx"&gt;annotation&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;searchOnInterfaces&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;method&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;annotationType&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;cl&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;getInterfaces&lt;/span&gt;&lt;span class="p"&gt;());&lt;/span&gt;
+                &lt;span class="p"&gt;}&lt;/span&gt;
+            &lt;span class="p"&gt;}&lt;/span&gt;
+            &lt;span class="k"&gt;catch&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;NoSuchMethodException&lt;/span&gt; &lt;span class="nx"&gt;ex&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+                &lt;span class="c1"&gt;// We&amp;#39;re done...&lt;/span&gt;
+            &lt;span class="p"&gt;}&lt;/span&gt;
+        &lt;span class="p"&gt;}&lt;/span&gt;
+        &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="nx"&gt;annotation&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+    &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Here we have a precondition to let &lt;code&gt;AnnotationUtils.findAnnotation&lt;/code&gt; works, that is the &lt;code&gt;Proxy&lt;/code&gt; mechanism is implemented by &lt;code&gt;inherit&lt;/code&gt;.
+There are two ways of &lt;code&gt;proxy&lt;/code&gt; in Spring. &lt;a href="http://stackoverflow.com/questions/10664182/what-is-the-difference-between-jdk-dynamic-proxy-and-cglib"&gt;What is the difference between JDK dynamic proxy and CGLib&lt;/a&gt;. &lt;code&gt;CGLib&lt;/code&gt; is implemented by &lt;code&gt;inherit&lt;/code&gt; but &lt;code&gt;JDK dynamic proxy&lt;/code&gt; is not.&lt;br /&gt;
+So &lt;code&gt;AnnotationUtils.findAnnotation&lt;/code&gt; won't work for &lt;code&gt;JDK dynamic proxy&lt;/code&gt;. We should write some more code to deal with this situation.
+Here is my final solution.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;    private DataSource getDataSource(MethodInvocation invocation) throws Throwable {
+        DataSource dataSource = AnnotationUtils.findAnnotation(invocation.getMethod(), DataSource.class);
+        if(dataSource != null) {
+            return dataSource; // if use CGlib proxy
+        }
+
+        Method proxyedMethod = invocation.getMethod(); // or use jdk proxy
+        Method realMethod = invocation.getThis().getClass().getDeclaredMethod(proxyedMethod.getName(), proxyedMethod.getParameterTypes());
+        dataSource =  AnnotationUtils.findAnnotation(realMethod, DataSource.class);
+        return dataSource;
+    }
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h3&gt;Summary&lt;/h3&gt;
+&lt;p&gt;In this case, I learnt
+- how to use AOP and annotation
+- there is a mechanism called proxy used by Spring
+- there are two implements of proxy mechanism, they are different
+- how to use reflection in Java&lt;/p&gt;
+&lt;p&gt;I hope it would help u.&lt;/p&gt;</summary><category term="aop java"></category></entry><entry><title>hashHistory and browserHistory in React-Router</title><link href="/learning/react_route.html" rel="alternate"></link><updated>2016-03-17T23:09:38+08:00</updated><author><name>Kamushin</name></author><id>tag:,2016-03-17:learning/react_route.html</id><summary type="html">&lt;p&gt;&lt;code&gt;hashHistory&lt;/code&gt; and &lt;code&gt;browserHistory&lt;/code&gt; are two kinds of common React-Router &lt;code&gt;Histories&lt;/code&gt; implementations.&lt;br /&gt;
 When I was using React-Router v1.0, I read the doc in github and wrote the code like this  &lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="kr"&gt;import&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt; &lt;span class="nx"&gt;Router&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt; &lt;span class="nx"&gt;from&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;react-router&amp;#39;&lt;/span&gt;
 &lt;span class="nx"&gt;ReactDOM&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;render&lt;/span&gt; &lt;span class="p"&gt;((&lt;/span&gt; 
