@@ -58,8 +58,8 @@
 
     <div class='article'>
         <div class="content-title">
-            <a href="/debug/aop_proxy.html"><h1>Alter dataSource in Spring By AOP And Annotation</h1></a>
-2016-04-06 20-42-11
+            <a href="/learning/mysql_limit_1.html"><h1>MySQL 首行查询陷阱</h1></a>
+2016-04-08 00-00-26
 
 by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
  
@@ -68,197 +68,39 @@ by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
  
         </div>
         
-        <div><p>Here is an article of how to use AOP and Annotation mechanism to alter dataSource elegantly.<br />
-First, I want make sure that everyone knows how to build multiple dataSource. Please check this article <a href="https://spring.io/blog/2007/01/23/dynamic-datasource-routing/">Dynamic-DataSource-Routing</a><br />
-After this, we will have a <code>DataSourceHolder</code> class, in the case above, it is called <code>CustomerContextHolder</code>.<br />
-Let's remove the customer logic and make <code>Holder</code> purer.  </p>
-<div class="highlight"><pre><span class="kd">public</span> <span class="kd">class</span> <span class="nc">DataSourceHolder</span> <span class="o">{</span>
-
-    <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">ThreadLocal</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">contextHolder</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ThreadLocal</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;();</span>
-
-    <span class="kd">public</span> <span class="kd">static</span> <span class="n">String</span> <span class="nf">getCurrentDataSource</span><span class="o">()</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="o">(</span><span class="n">String</span><span class="o">)</span> <span class="n">contextHolder</span><span class="o">.</span><span class="na">get</span><span class="o">();</span>
-    <span class="o">}</span>   
-
-    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">setDataSource</span><span class="o">(</span><span class="n">String</span> <span class="n">dataSource</span><span class="o">){</span>
-        <span class="n">contextHolder</span><span class="o">.</span><span class="na">set</span><span class="o">(</span><span class="n">dataSource</span><span class="o">);</span>
-    <span class="o">}</span>
-
-    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">setDefaultDataSource</span><span class="o">(){</span>
-        <span class="n">contextHolder</span><span class="o">.</span><span class="na">set</span><span class="o">(</span><span class="kc">null</span><span class="o">);</span>
-    <span class="o">}</span>
-
-    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">clearCustomerType</span><span class="o">()</span> <span class="o">{</span>
-        <span class="n">contextHolder</span><span class="o">.</span><span class="na">remove</span><span class="o">();</span>   
-    <span class="o">}</span>  
-
-<span class="o">}</span>
-</pre></div>
-
-
-<h3>When should we call <code>setDataSource</code></h3>
-<p>In the project I take charge of, they invoke <code>setDataSource</code> in each <code>controller</code>. IMHO, I don't think it's an 
-elegant way. I think <code>dataSource</code> should be an attribute of a <code>DAO</code> method or a <code>Service</code> method. And since
-<code>transactionManager</code> is a <code>advice</code> to <code>Service</code> method in this project, <code>dataSource</code> must be an attribute of a <code>Service</code> method.</p>
-<h3>Use Annotation to describe a Service method</h3>
-<p>First, we should define a runtime annotation.</p>
-<div class="highlight"><pre>@Target({ElementType.METHOD})
-@Retention(RetentionPolicy.RUNTIME)
-public @interface DataSource {
-    String name() default DataSource.DEFAULT;
-
-    public final static String DEFAULT     = &quot;foo&quot;;
-
-    public final static String BAR           = &quot;bar&quot;;
-
-    public final static String BAZ           = &quot;baz&quot;;
-
-}
-</pre></div>
-
-
-<p>Then, we use the annotation to describe a <code>Service</code> method.</p>
-<div class="highlight"><pre>    @Override
-    @DataSource(name=DataSource.BAR)
-    public Object getSomething() {
-        return dao.getSomething();
-    }
-</pre></div>
-
-
-<h3>Use AOP to invoke setDataSource</h3>
-<p>First, define a <code>pointcut</code>.</p>
-<div class="highlight"><pre>        &lt;aop:pointcut id=&quot;serviceWithAnnotation&quot;
-    expression=&quot;@annotation(com.yourpackageName.DataSource)&quot; /&gt;
-</pre></div>
-
-
-<p>Second, define a <code>advisor</code>.</p>
-<div class="highlight"><pre>    &lt;aop:advisor advice-ref=&quot;dataSourceExchange&quot; pointcut-ref=&quot;serviceWithAnnotation&quot; order=&quot;1&quot;/&gt;
-    &lt;bean id=&quot;dataSourceExchange&quot; class=&quot;com.yourpackageName.DataSourceExchange&quot;/&gt;
-</pre></div>
-
-
-<p>Now, the AOP mechanism will make sure that some methods of <code>DataSourceExchange</code> will run if Service method which <code>DataSource</code> annotation decorated is invoked.</p>
-<p>Last, define <code>DataSourceExchange</code>.</p>
-<div class="highlight"><pre><span class="kd">class</span> <span class="nc">DataSourceExchange</span> <span class="kd">implements</span> <span class="n">MethodInterceptor</span> <span class="o">{</span>
-
-    <span class="kd">private</span> <span class="n">Logger</span>             <span class="n">logger</span> <span class="o">=</span> <span class="n">LoggerFactory</span><span class="o">.</span><span class="na">getLogger</span><span class="o">(</span><span class="n">DataSourceExchange</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
-
-    <span class="nd">@Override</span>
-    <span class="kd">public</span> <span class="n">Object</span> <span class="nf">invoke</span><span class="o">(</span><span class="n">MethodInvocation</span> <span class="n">invocation</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">Throwable</span> <span class="o">{</span>
-        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&quot;Method name : &quot;</span>
-                <span class="o">+</span> <span class="n">invocation</span><span class="o">.</span><span class="na">getMethod</span><span class="o">().</span><span class="na">getName</span><span class="o">());</span>
-        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&quot;Method arguments : &quot;</span>
-                <span class="o">+</span> <span class="n">Arrays</span><span class="o">.</span><span class="na">toString</span><span class="o">(</span><span class="n">invocation</span><span class="o">.</span><span class="na">getArguments</span><span class="o">()));</span>
-        <span class="n">DataSource</span> <span class="n">dataSource</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="na">getDataSource</span><span class="o">(</span><span class="n">invocation</span><span class="o">);</span>
-        <span class="k">if</span><span class="o">(</span><span class="n">dataSource</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
-            <span class="n">logger</span><span class="o">.</span><span class="na">error</span><span class="o">(</span><span class="s">&quot;dataSource in invocation is null&quot;</span><span class="o">);</span>
-        <span class="o">}</span>
-        <span class="n">String</span> <span class="n">dbnameString</span> <span class="o">=</span> <span class="n">dataSource</span><span class="o">.</span><span class="na">name</span><span class="o">();</span>
-        <span class="n">Object</span> <span class="n">result</span><span class="o">;</span>
-        <span class="k">try</span> <span class="o">{</span>
-            <span class="n">DataSourceHolder</span><span class="o">.</span><span class="na">setDataSource</span><span class="o">(</span><span class="n">dbnameString</span><span class="o">);</span>
-            <span class="n">result</span> <span class="o">=</span> <span class="n">invocation</span><span class="o">.</span><span class="na">proceed</span><span class="o">();</span>
-        <span class="o">}</span> <span class="k">finally</span> <span class="o">{</span>
-            <span class="n">DataSourceHolder</span><span class="o">.</span><span class="na">setDefaultDataSource</span><span class="o">();</span>
-        <span class="o">}</span>
-        <span class="k">return</span> <span class="n">result</span><span class="o">;</span>
-    <span class="o">}</span>
-
-    <span class="kd">private</span> <span class="n">DataSource</span> <span class="nf">getDataSource</span><span class="o">(</span><span class="n">MethodInvocation</span> <span class="n">invocation</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">Throwable</span> <span class="o">{</span>
-  <span class="c1">//TODO</span>
-  <span class="o">}</span>
-</pre></div>
-
-
-<p>The hardest part in this bunch of code is how should us impl the <code>getDataSource</code> method.
-I spent several hours of this method.
-First, I've seen some code online, which tell me it's quite simple to do this. Just like the code below</p>
-<div class="highlight"><pre>    <span class="kd">private</span> <span class="n">DataSource</span> <span class="nf">getDataSource</span><span class="o">(</span><span class="n">MethodInvocation</span> <span class="n">invocation</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">Throwable</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="n">invocation</span><span class="o">.</span><span class="na">getMethod</span><span class="o">().</span><span class="na">getAnnotation</span><span class="o">(</span><span class="n">DataSource</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
-  <span class="o">}</span>
-</pre></div>
-
-
-<p>But it won't work, because <code>invocation.getMethod()</code> will not return the method you defined above, it will
-return a <code>proxy</code> method. It's a mechanism called <code>Proxy</code> in Spring framework.<br />
-So we should find out the real method.<br />
-Again I searched stackoverflow.com, some answers tell me <code>AnnotationUtils.findAnnotation</code> will be useful to me.</p>
-<div class="highlight"><pre>    <span class="kd">private</span> <span class="n">DataSource</span> <span class="nf">getDataSource</span><span class="o">(</span><span class="n">MethodInvocation</span> <span class="n">invocation</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">Throwable</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="n">AnnotationUtils</span><span class="o">.</span><span class="na">findAnnotation</span><span class="o">(</span><span class="n">invocation</span><span class="o">.</span><span class="na">getMethod</span><span class="o">(),</span> <span class="n">DataSource</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
-  <span class="o">}</span>
-</pre></div>
-
-
-<p><code>AnnotationUtils.findAnnotation</code> will recursively find the super class of the proxy method, to find the annotation decorated on the real method you defined above.<br />
-But it's <strong>not</strong> the complete answer. <br />
-Let's see the source code of <code>AnnotationUtils.findAnnotation</code>  </p>
-<div class="highlight"><pre>    /**
-     * Get a single {@link Annotation} of <span class="nt">&lt;code&gt;</span>annotationType<span class="nt">&lt;/code&gt;</span> from the supplied {@link Method},
-     * traversing its super methods if no annotation can be found on the given method itself.
-     * <span class="nt">&lt;p&gt;</span>Annotations on methods are not inherited by default, so we need to handle this explicitly.
-     * @param method the method to look for annotations on
-     * @param annotationType the annotation class to look for
-     * @return the annotation found, or <span class="nt">&lt;code&gt;</span>null<span class="nt">&lt;/code&gt;</span> if none found
-     */
-    public static <span class="nt">&lt;A</span> <span class="err">extends</span> <span class="err">Annotation</span><span class="nt">&gt;</span> A findAnnotation(Method method, Class<span class="nt">&lt;A&gt;</span> annotationType) {
-        A annotation = getAnnotation(method, annotationType);
-        Class<span class="cp">&lt;?</span><span class="o">&gt;</span> <span class="nx">cl</span> <span class="o">=</span> <span class="nx">method</span><span class="o">.</span><span class="nx">getDeclaringClass</span><span class="p">();</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">annotation</span> <span class="o">==</span> <span class="k">null</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">annotation</span> <span class="o">=</span> <span class="nx">searchOnInterfaces</span><span class="p">(</span><span class="nx">method</span><span class="p">,</span> <span class="nx">annotationType</span><span class="p">,</span> <span class="nx">cl</span><span class="o">.</span><span class="nx">getInterfaces</span><span class="p">());</span>
-        <span class="p">}</span>
-        <span class="k">while</span> <span class="p">(</span><span class="nx">annotation</span> <span class="o">==</span> <span class="k">null</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">cl</span> <span class="o">=</span> <span class="nx">cl</span><span class="o">.</span><span class="nx">getSuperclass</span><span class="p">();</span>
-            <span class="k">if</span> <span class="p">(</span><span class="nx">cl</span> <span class="o">==</span> <span class="k">null</span> <span class="o">||</span> <span class="nx">cl</span> <span class="o">==</span> <span class="nx">Object</span><span class="o">.</span><span class="nx">class</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">break</span><span class="p">;</span>
-            <span class="p">}</span>
-            <span class="k">try</span> <span class="p">{</span>
-                <span class="nx">Method</span> <span class="nx">equivalentMethod</span> <span class="o">=</span> <span class="nx">cl</span><span class="o">.</span><span class="nx">getDeclaredMethod</span><span class="p">(</span><span class="nx">method</span><span class="o">.</span><span class="nx">getName</span><span class="p">(),</span> <span class="nx">method</span><span class="o">.</span><span class="nx">getParameterTypes</span><span class="p">());</span>
-                <span class="nx">annotation</span> <span class="o">=</span> <span class="nx">getAnnotation</span><span class="p">(</span><span class="nx">equivalentMethod</span><span class="p">,</span> <span class="nx">annotationType</span><span class="p">);</span>
-                <span class="k">if</span> <span class="p">(</span><span class="nx">annotation</span> <span class="o">==</span> <span class="k">null</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="nx">annotation</span> <span class="o">=</span> <span class="nx">searchOnInterfaces</span><span class="p">(</span><span class="nx">method</span><span class="p">,</span> <span class="nx">annotationType</span><span class="p">,</span> <span class="nx">cl</span><span class="o">.</span><span class="nx">getInterfaces</span><span class="p">());</span>
-                <span class="p">}</span>
-            <span class="p">}</span>
-            <span class="k">catch</span> <span class="p">(</span><span class="nx">NoSuchMethodException</span> <span class="nx">ex</span><span class="p">)</span> <span class="p">{</span>
-                <span class="c1">// We&#39;re done...</span>
-            <span class="p">}</span>
-        <span class="p">}</span>
-        <span class="k">return</span> <span class="nx">annotation</span><span class="p">;</span>
-    <span class="p">}</span>
-</pre></div>
-
-
-<p>Here we have a precondition to let <code>AnnotationUtils.findAnnotation</code> works, that is the <code>Proxy</code> mechanism is implemented by <code>inherit</code>.
-There are two ways of <code>proxy</code> in Spring. <a href="http://stackoverflow.com/questions/10664182/what-is-the-difference-between-jdk-dynamic-proxy-and-cglib">What is the difference between JDK dynamic proxy and CGLib</a>. <code>CGLib</code> is implemented by <code>inherit</code> but <code>JDK dynamic proxy</code> is not.<br />
-So <code>AnnotationUtils.findAnnotation</code> won't work for <code>JDK dynamic proxy</code>. We should write some more code to deal with this situation.
-Here is my final solution.</p>
-<div class="highlight"><pre>    private DataSource getDataSource(MethodInvocation invocation) throws Throwable {
-        DataSource dataSource = AnnotationUtils.findAnnotation(invocation.getMethod(), DataSource.class);
-        if(dataSource != null) {
-            return dataSource; // if use CGlib proxy
-        }
-
-        Method proxyedMethod = invocation.getMethod(); // or use jdk proxy
-        Method realMethod = invocation.getThis().getClass().getDeclaredMethod(proxyedMethod.getName(), proxyedMethod.getParameterTypes());
-        dataSource =  AnnotationUtils.findAnnotation(realMethod, DataSource.class);
-        return dataSource;
-    }
-</pre></div>
-
-
-<h3>Summary</h3>
-<p>In this case, I learnt</p>
-<ul>
-<li>how to use AOP and annotation</li>
-<li>there is a mechanism called proxy used by Spring</li>
-<li>there are two implements of proxy mechanism, they are different</li>
-<li>how to use reflection in Java</li>
-</ul>
-<p>I hope it would help u.</p></div>
+        <div><h3>起因</h3>
+<p>今天在执行一条 query 的时候,发现数据库用了6分钟才返回数据,而这条 query 仅仅是很简单的<code>select * from foo limit 1</code>.  </p>
+<h3>排查</h3>
+<p>foo 这个表里有近1T的数据, 但是这不应该成为返回慢的原因. 有同事发现这条语句只扫描了1行数据, 这是符合我们预期的, 但是为什么扫描一行数据花了6分钟呢?<br />
+接下来我们发现此时数据库上io 压力非常大, 而且脏页比例很高. 问了下同事, 这个表最近在做历史数据迁移, 这时候真相就水落石出了.</p>
+<h3>原理</h3>
+<p>什么叫<strong>脏页</strong>? 在 Mysql 删除一条数据的时候, 并不是直接从数据文件中删除它, 而是先把它标记为 delete, 而后有异步的<code>purge</code>线程进行清理.而还没有被清理的数据所存在的页,
+我们称之为脏页.<br />
+在这个 case 中, 数据库先去数据文件中找1条记录,拿出来一看,发现这条记录是被标记 delete 的, 数据库又只能回去找下一条. 而当脏页比例很高且 io 压力很大的情况下,
+要遍历找出第一条记录前, 很可能有大量的脏记录, 这就是为什么数据库花了6分钟才返回的原因.</p>
+<h3>解决</h3>
+<p>这个问题只有等数据库 purge 线程再工作一段时间,就会自动消失.</p></div>
         <hr />
     </div>
 		
+
+ 
+        
+
+ 
+
+    <div class='article'>
+        <a href="/debug/aop_proxy.html"><h2>Alter dataSource in Spring By AOP And Annotation</h2></a>
+        <div class= "well small"> 2016-04-06 20-42-11
+
+by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
+ 
+
+
+ </div>
+        <div class="summary"><p>About how to use AOP to alter dataSource. And something interesting about proxy in Spring framework.</p> <a class="btn btn-info xsmall" href="/debug/aop_proxy.html">read more</a></div>
+    </div>	
+				
 
  
         
@@ -401,24 +243,6 @@ by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
 
  </div>
         <div class="summary"><p>source code read</p> <a class="btn btn-info xsmall" href="/learning/coroutine_in_Python_and_Js.html">read more</a></div>
-    </div>	
-				
-
- 
-        
-
- 
-
-    <div class='article'>
-        <a href="/learning/python_pro_zh_cn.html"><h2>Python开发经验--从问题入手</h2></a>
-        <div class= "well small"> 2015-12-23 10-49-26
-
-by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
- 
-
-
- </div>
-        <div class="summary"><p>从一系列实际问题出发, 谈 Python 的一些使用知识</p> <a class="btn btn-info xsmall" href="/learning/python_pro_zh_cn.html">read more</a></div>
     </div>	
 				
 <div class="pagination">

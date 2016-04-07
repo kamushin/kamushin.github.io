@@ -58,8 +58,8 @@
 
     <div class='article'>
         <div class="content-title">
-            <a href="/debug/sscursor_in_mysql.html"><h1>SSCursor in MySQL</h1></a>
-2016-01-19 14-55-49
+            <a href="/learning/mysql_limit_1.html"><h1>MySQL 首行查询陷阱</h1></a>
+2016-04-08 00-00-26
 
 by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
  
@@ -68,91 +68,39 @@ by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
  
         </div>
         
-        <div><p>There are four kinds of cursors available in MySQL client side programming. In this article, I am going to
-introduce the difference between <code>Cursor</code> the normal one and <code>SSCursor</code> the server side one and how to use <code>SSCursor</code>.<br />
-First, let's see the definitions of those four cursors in <code>MySQLdb</code> source code.</p>
-<div class="highlight"><pre><span class="k">class</span> <span class="nc">Cursor</span><span class="p">(</span><span class="n">CursorStoreResultMixIn</span><span class="p">,</span> <span class="n">CursorTupleRowsMixIn</span><span class="p">,</span>
-             <span class="n">BaseCursor</span><span class="p">):</span>
-
-    <span class="sd">&quot;&quot;&quot;This is the standard Cursor class that returns rows as tuples</span>
-<span class="sd">    and stores the result set in the client.&quot;&quot;&quot;</span>
-
-
-<span class="k">class</span> <span class="nc">DictCursor</span><span class="p">(</span><span class="n">CursorStoreResultMixIn</span><span class="p">,</span> <span class="n">CursorDictRowsMixIn</span><span class="p">,</span>
-                 <span class="n">BaseCursor</span><span class="p">):</span>
-
-     <span class="sd">&quot;&quot;&quot;This is a Cursor class that returns rows as dictionaries and</span>
-<span class="sd">    stores the result set in the client.&quot;&quot;&quot;</span>
-
-
-<span class="k">class</span> <span class="nc">SSCursor</span><span class="p">(</span><span class="n">CursorUseResultMixIn</span><span class="p">,</span> <span class="n">CursorTupleRowsMixIn</span><span class="p">,</span>
-               <span class="n">BaseCursor</span><span class="p">):</span>
-
-    <span class="sd">&quot;&quot;&quot;This is a Cursor class that returns rows as tuples and stores</span>
-<span class="sd">    the result set in the server.&quot;&quot;&quot;</span>
-
-
-<span class="k">class</span> <span class="nc">SSDictCursor</span><span class="p">(</span><span class="n">CursorUseResultMixIn</span><span class="p">,</span> <span class="n">CursorDictRowsMixIn</span><span class="p">,</span>
-                   <span class="n">BaseCursor</span><span class="p">):</span>
-
-    <span class="sd">&quot;&quot;&quot;This is a Cursor class that returns rows as dictionaries and</span>
-<span class="sd">    stores the result set in the server.&quot;&quot;&quot;</span>
-</pre></div>
-
-
-<p>In fact, there are two orthogonal features of cursors in MySQLdb. <code>CursorDictRowsMixIn/CursorTupleRowsMixIn</code> controls result type and 
-<code>CursorStoreResultMixIn/CursorUseResultMixIn</code> which we will focus on in this article controls the result will be store in server or client.<br />
-With the definitions, we know that <code>SSCursor</code> stores result in the server rather than in the client.</p>
-<h3>server side VS client side</h3>
-<p>Two simple flows show how they works.  </p>
-<ul>
-<li>client side</li>
-</ul>
-<div class="highlight"><pre>  <span class="c"># mysql_store_result</span>
-  <span class="k">while</span><span class="p">(</span><span class="bp">True</span><span class="p">):</span>
-    <span class="n">result</span> <span class="o">=</span> <span class="n">produce_part_result</span><span class="p">()</span> <span class="c"># find part of results that can be filled into a network package</span>
-    <span class="n">fill_network_package</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
-    <span class="n">send_network_package</span>
-</pre></div>
-
-
-<ul>
-<li>server side</li>
-</ul>
-<div class="highlight"><pre>  # mysql_use_result
-  while(True):
-    result = produce_part_result() # find part of results that can be filled into a network package
-
-    wait_until_the_client_invoke_`mysql_fetch_row()`
-
-    fill_network_package(result)
-    send_network_package
-</pre></div>
-
-
-<p>In fact, the MySQL server will not store results in server even if a <code>SSCursor</code> is used, it will produce the part of results before fill them into 
-the network packages. So don't worry the memory use of the server when use <code>SSCursor</code>.</p>
-<h3>how to use SSCursor</h3>
-<div class="highlight"><pre>  <span class="n">cur</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">(</span><span class="n">MySQLdb</span><span class="o">.</span><span class="n">cursors</span><span class="o">.</span><span class="n">SSCursor</span><span class="p">)</span>
-</pre></div>
-
-
-<p>Here is a trap that <code>commit</code> should be invoked after all of the results have been sent to client. Otherwise, 
-<code>2014, "Commands out of sync; you can't run this command now"</code> error will be raised.</p>
-<blockquote>
-<p>If you get Commands out of sync; you can't run this command now in your client code, you are calling client functions in the wrong order.
-This can happen, for example, if you are using mysql_use_result() and try to execute a new query before you have called mysql_free_result(). It can also happen if you try to execute two queries that return data without calling mysql_use_result() or mysql_store_result() in between.</p>
-</blockquote>
-<p><code>commit</code> is also a query, or we can say request, so the program should read all of the results then invoke <code>commit</code>.</p>
-<h3>advantages and disadvantages of using SSCursor</h3>
-<ul>
-<li>Less memory use in the client.</li>
-<li>Get the first row more quickly.</li>
-<li>The whole results sending will be slower.</li>
-</ul></div>
+        <div><h3>起因</h3>
+<p>今天在执行一条 query 的时候,发现数据库用了6分钟才返回数据,而这条 query 仅仅是很简单的<code>select * from foo limit 1</code>.  </p>
+<h3>排查</h3>
+<p>foo 这个表里有近1T的数据, 但是这不应该成为返回慢的原因. 有同事发现这条语句只扫描了1行数据, 这是符合我们预期的, 但是为什么扫描一行数据花了6分钟呢?<br />
+接下来我们发现此时数据库上io 压力非常大, 而且脏页比例很高. 问了下同事, 这个表最近在做历史数据迁移, 这时候真相就水落石出了.</p>
+<h3>原理</h3>
+<p>什么叫<strong>脏页</strong>? 在 Mysql 删除一条数据的时候, 并不是直接从数据文件中删除它, 而是先把它标记为 delete, 而后有异步的<code>purge</code>线程进行清理.而还没有被清理的数据所存在的页,
+我们称之为脏页.<br />
+在这个 case 中, 数据库先去数据文件中找1条记录,拿出来一看,发现这条记录是被标记 delete 的, 数据库又只能回去找下一条. 而当脏页比例很高且 io 压力很大的情况下,
+要遍历找出第一条记录前, 很可能有大量的脏记录, 这就是为什么数据库花了6分钟才返回的原因.</p>
+<h3>解决</h3>
+<p>这个问题只有等数据库 purge 线程再工作一段时间,就会自动消失.</p></div>
         <hr />
     </div>
 		
+
+ 
+        
+
+ 
+
+    <div class='article'>
+        <a href="/debug/sscursor_in_mysql.html"><h2>SSCursor in MySQL</h2></a>
+        <div class= "well small"> 2016-01-19 14-55-49
+
+by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
+ 
+
+
+ </div>
+        <div class="summary"><p>What is and How to use SSCursor in MySQL</p> <a class="btn btn-info xsmall" href="/debug/sscursor_in_mysql.html">read more</a></div>
+    </div>	
+				
 
  
         

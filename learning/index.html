@@ -58,8 +58,8 @@
 
     <div class='article'>
         <div class="content-title">
-            <a href="/learning/react_route.html"><h1>hashHistory and browserHistory in React-Router</h1></a>
-2016-03-17 23-09-38
+            <a href="/learning/mysql_limit_1.html"><h1>MySQL 首行查询陷阱</h1></a>
+2016-04-08 00-00-26
 
 by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
  
@@ -68,40 +68,39 @@ by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
  
         </div>
         
-        <div><p><code>hashHistory</code> and <code>browserHistory</code> are two kinds of common React-Router <code>Histories</code> implementations.<br />
-When I was using React-Router v1.0, I read the doc in github and wrote the code like this  </p>
-<div class="highlight"><pre><span class="kr">import</span> <span class="p">{</span> <span class="nx">Router</span><span class="p">}</span> <span class="nx">from</span> <span class="s1">&#39;react-router&#39;</span>
-<span class="nx">ReactDOM</span><span class="p">.</span><span class="nx">render</span> <span class="p">((</span> 
- <span class="o">&lt;</span><span class="nx">Router</span><span class="o">&gt;</span>
-   <span class="p">...</span>
-<span class="p">),</span> <span class="nb">document</span><span class="p">.</span><span class="nx">body</span><span class="p">);</span>
-</pre></div>
-
-
-<p>I found something in url like <code>#/home/k=ckuvupr</code>. What the hell is this?<br />
-I went back to the doc and changed the code with <code>browserHistory</code>. With the doc, I knew the default implementation is <code>hashHistory</code>, 
-which will make a <code>#</code> -- hash in url.</p>
-<div class="highlight"><pre><span class="kr">import</span> <span class="p">{</span> <span class="nx">browserHistory</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">&#39;react-router&#39;</span>
-<span class="nx">ReactDOM</span><span class="p">.</span><span class="nx">render</span> <span class="p">((</span> 
- <span class="o">&lt;</span><span class="nx">Router</span> <span class="nx">history</span><span class="o">=</span><span class="p">{</span><span class="nx">browserHistory</span><span class="p">}</span> <span class="o">&gt;</span>
-   <span class="p">...</span>
-<span class="p">),</span> <span class="nb">document</span><span class="p">.</span><span class="nx">body</span><span class="p">);</span>
-</pre></div>
-
-
-<p>However, it would not effect in v1.0, it's the way in v2.0. So I didn't see anything changed. And just for a while, 
-I forgot to deal with this, and went to write other codes.  </p>
-<p>Today when I c&amp;p this chunk of code to my new project, using some new tools. The build tool automatically install
-react-router v2.0 for me. While the hash tag is gone, and url looks like the <strong>real</strong> url.
-But it cause another problem, that is when the url is like the <strong>real</strong> url, it means that I should set the server side route to <code>/* -&gt; index.html</code> rather than <code>/ -&gt; index.html</code>.<br />
-Otherwise, it will get a 404 error when the url <code>/home</code> is re-flushed. And the problem will not raise while using <code>hashHistory</code>, because the url is like <code>/#/home</code> and it is still <code>/</code>, the string after hash tag is not in the route rule.
-<a href="https://github.com/reactjs/react-router/blob/master/docs/guides/Histories.md">Docs about them.</a>  </p>
-<p>I havn't find the correct way to set the server side route, because I am using a <code>webpack-dev-server</code>-like tool, I don't know how to change the route.<br />
-So I go back to use the ugly <code>hashHistory</code>.</p>
-<p>It seems a waste of time, my fault is reading doc but not paid attention to version, but I still hate the doc because the difference between v1.0 and v2.0 is not heightlighted.</p></div>
+        <div><h3>起因</h3>
+<p>今天在执行一条 query 的时候,发现数据库用了6分钟才返回数据,而这条 query 仅仅是很简单的<code>select * from foo limit 1</code>.  </p>
+<h3>排查</h3>
+<p>foo 这个表里有近1T的数据, 但是这不应该成为返回慢的原因. 有同事发现这条语句只扫描了1行数据, 这是符合我们预期的, 但是为什么扫描一行数据花了6分钟呢?<br />
+接下来我们发现此时数据库上io 压力非常大, 而且脏页比例很高. 问了下同事, 这个表最近在做历史数据迁移, 这时候真相就水落石出了.</p>
+<h3>原理</h3>
+<p>什么叫<strong>脏页</strong>? 在 Mysql 删除一条数据的时候, 并不是直接从数据文件中删除它, 而是先把它标记为 delete, 而后有异步的<code>purge</code>线程进行清理.而还没有被清理的数据所存在的页,
+我们称之为脏页.<br />
+在这个 case 中, 数据库先去数据文件中找1条记录,拿出来一看,发现这条记录是被标记 delete 的, 数据库又只能回去找下一条. 而当脏页比例很高且 io 压力很大的情况下,
+要遍历找出第一条记录前, 很可能有大量的脏记录, 这就是为什么数据库花了6分钟才返回的原因.</p>
+<h3>解决</h3>
+<p>这个问题只有等数据库 purge 线程再工作一段时间,就会自动消失.</p></div>
         <hr />
     </div>
 		
+
+ 
+        
+
+ 
+
+    <div class='article'>
+        <a href="/learning/react_route.html"><h2>hashHistory and browserHistory in React-Router</h2></a>
+        <div class= "well small"> 2016-03-17 23-09-38
+
+by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
+ 
+
+
+ </div>
+        <div class="summary"><p>something I met about hashHistory and browserHistory</p> <a class="btn btn-info xsmall" href="/learning/react_route.html">read more</a></div>
+    </div>	
+				
 
  
         
@@ -244,24 +243,6 @@ by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
 
  </div>
         <div class="summary"><p>阅读MySQL文档, 总结优化经验</p> <a class="btn btn-info xsmall" href="/learning/mysql_opti.html">read more</a></div>
-    </div>	
-				
-
- 
-        
-
- 
-
-    <div class='article'>
-        <a href="/learning/2015-10-19-2.html"><h2>当我们在谈论异常时我们在谈论什么?</h2></a>
-        <div class= "well small"> 2015-10-19 23-40-31
-
-by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
- 
-
-
- </div>
-        <div class="summary"><p>异常是什么? 语言是如何实现它的?</p> <a class="btn btn-info xsmall" href="/learning/2015-10-19-2.html">read more</a></div>
     </div>	
 				
 <div class="pagination">
