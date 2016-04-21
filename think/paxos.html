@@ -51,27 +51,48 @@
     <div class="row">
 
         <div class="span9">
-<ul>
-    <li><a href="/tag/ag.html">Ag</a></li>
-    <li><a href="/tag/alipay.html">alipay</a></li>
-    <li><a href="/tag/aop-java.html">aop java</a></li>
-    <li><a href="/tag/coroutine.html">coroutine</a></li>
-    <li><a href="/tag/exception.html">exception</a></li>
-    <li><a href="/tag/front-end.html">front-end</a></li>
-    <li><a href="/tag/java.html">Java</a></li>
-    <li><a href="/tag/linux.html">Linux</a></li>
-    <li><a href="/tag/mysql.html">mysql</a></li>
-    <li><a href="/tag/oracle.html">Oracle</a></li>
-    <li><a href="/tag/paxos.html">Paxos</a></li>
-    <li><a href="/tag/pelican.html">Pelican</a></li>
-    <li><a href="/tag/python.html">Python</a></li>
-    <li><a href="/tag/react.html">react</a></li>
-    <li><a href="/tag/reading.html">reading</a></li>
-    <li><a href="/tag/talk.html">talk</a></li>
-    <li><a href="/tag/unittest.html">unittest</a></li>
-    <li><a href="/tag/wang-luo-bian-cheng.html">网络编程</a></li>
-    <li><a href="/tag/za-shi.html">杂事</a></li>
-</ul>
+    <div class='article'>
+        <div class="content-title">
+            <h1>对 Paxos 的一些理解</h1>
+2016-04-21 22-51-29
+
+by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
+ 
+
+
+        </div>
+	
+        <div><p>今天 OB 的同事花了一个多小时讲了 paxos 的原理, 我相信场上听懂50%的人不超过50%. 至少我自己对 basic-paxos 还存在这几点疑问.</p>
+<h3>prepare 阶段是干嘛的</h3>
+<p>multi paxos 是不需要 prepare 的, 而 basic paxos 需要, 为什么多个leader 的时候需要做 prepare 呢?<br />
+prepare 阶段是用来决定当前要进行 accept 的 proposal id 的.  拥有 prepare 阶段后的 accept 阶段可以保证很大概率下多数人可以接受它的请求. 
+如果失去了 prepare 阶段, 并且有多个 leader 在同时提交, 很可能出现<strong>大家都在做持久化,但是都是一群乌合之众,没有一个人是 majority</strong>.
+虽然有了 prepare 阶段后, 依然可能出现全是乌合之众的情况, 但是大大降低了.</p>
+<h3>为什么比2pc 好</h3>
+<p>如果我们简单的把2pc 的 commit 条件设置为多数同意就 commit. 是不是就变得和 paxos 一样了呢?<br />
+2pc 的 commit 条件设置为多数同意, 这就是 zookeeper 的 zab 算法. 它比 paxos 弱的一点是, 当一个 acceptor 在 prepare 阶段接受了一个提议后,
+除非 rollback, 不然不能接受新的更大的提议, 也就是有个锁在上面. 而 paxos 协议是可以打破这把锁的. 打破锁的行为, 可以提高吞吐量和容错率. ( 这点不知道线上验证如何.</p>
+<h3>什么时候持久化</h3>
+<p>在 prepare 和 accept 后都需要持久化, 不过 accept 才是数据持久化.</p>
+<h3>待续</h3>
+<p>今天暂时想通了这么多, 明天继续和同事切磋去.</p></div>
+	
+        <hr>
+
+        <h2>Comments</h2>
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'kamushin'; 
+    var disqus_title = '对 Paxos 的一些理解';
+
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    </div>
         </div>
         
         <div class="span3">

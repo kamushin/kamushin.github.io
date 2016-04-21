@@ -58,8 +58,8 @@
 
     <div class='article'>
         <div class="content-title">
-            <a href="/learning/mysql_limit_1.html"><h1>MySQL 首行查询陷阱</h1></a>
-2016-04-08 00-00-26
+            <a href="/think/paxos.html"><h1>对 Paxos 的一些理解</h1></a>
+2016-04-21 22-51-29
 
 by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
  
@@ -68,21 +68,41 @@ by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
  
         </div>
         
-        <div><h3>起因</h3>
-<p>今天在执行一条 query 的时候,发现数据库用了6分钟才返回数据,而这条 query 仅仅是很简单的<code>select * from foo limit 1</code>.  </p>
-<h3>排查</h3>
-<p>foo 这个表里有近1T的数据, 但是这不应该成为返回慢的原因. 有同事发现这条语句只扫描了1行数据, 这是符合我们预期的, 但是为什么扫描一行数据花了6分钟呢?<br />
-接下来我们发现此时数据库上io 压力非常大, 而且脏页比例很高. 问了下同事, 这个表最近在做历史数据迁移, 这时候真相就水落石出了.</p>
-<h3>原理</h3>
-<p>什么叫<strong>脏页</strong>? 在 Mysql 删除一条数据的时候, 并不是直接从数据文件中删除它, 而是先把它标记为 delete, 而后有异步的<code>purge</code>线程进行清理.而还没有被清理的数据所存在的页,
-我们称之为脏页.<br />
-在这个 case 中, 数据库先去数据文件中找1条记录,拿出来一看,发现这条记录是被标记 delete 的, 数据库又只能回去找下一条. 而当脏页比例很高且 io 压力很大的情况下,
-要遍历找出第一条记录前, 很可能有大量的脏记录, 这就是为什么数据库花了6分钟才返回的原因.</p>
-<h3>解决</h3>
-<p>这个问题只有等数据库 purge 线程再工作一段时间,就会自动消失.</p></div>
+        <div><p>今天 OB 的同事花了一个多小时讲了 paxos 的原理, 我相信场上听懂50%的人不超过50%. 至少我自己对 basic-paxos 还存在这几点疑问.</p>
+<h3>prepare 阶段是干嘛的</h3>
+<p>multi paxos 是不需要 prepare 的, 而 basic paxos 需要, 为什么多个leader 的时候需要做 prepare 呢?<br />
+prepare 阶段是用来决定当前要进行 accept 的 proposal id 的.  拥有 prepare 阶段后的 accept 阶段可以保证很大概率下多数人可以接受它的请求. 
+如果失去了 prepare 阶段, 并且有多个 leader 在同时提交, 很可能出现<strong>大家都在做持久化,但是都是一群乌合之众,没有一个人是 majority</strong>.
+虽然有了 prepare 阶段后, 依然可能出现全是乌合之众的情况, 但是大大降低了.</p>
+<h3>为什么比2pc 好</h3>
+<p>如果我们简单的把2pc 的 commit 条件设置为多数同意就 commit. 是不是就变得和 paxos 一样了呢?<br />
+2pc 的 commit 条件设置为多数同意, 这就是 zookeeper 的 zab 算法. 它比 paxos 弱的一点是, 当一个 acceptor 在 prepare 阶段接受了一个提议后,
+除非 rollback, 不然不能接受新的更大的提议, 也就是有个锁在上面. 而 paxos 协议是可以打破这把锁的. 打破锁的行为, 可以提高吞吐量和容错率. ( 这点不知道线上验证如何.</p>
+<h3>什么时候持久化</h3>
+<p>在 prepare 和 accept 后都需要持久化, 不过 accept 才是数据持久化.</p>
+<h3>待续</h3>
+<p>今天暂时想通了这么多, 明天继续和同事切磋去.</p></div>
         <hr />
     </div>
 		
+
+ 
+        
+
+ 
+
+    <div class='article'>
+        <a href="/learning/mysql_limit_1.html"><h2>MySQL 首行查询陷阱</h2></a>
+        <div class= "well small"> 2016-04-08 00-00-26
+
+by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
+ 
+
+
+ </div>
+        <div class="summary"><p>分析 MySQL 首行查询出现的条件和原理</p> <a class="btn btn-info xsmall" href="/learning/mysql_limit_1.html">read more</a></div>
+    </div>	
+				
 
  
         
@@ -225,24 +245,6 @@ by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
 
  </div>
         <div class="summary"><p>记录和总结2015年的得与失</p> <a class="btn btn-info xsmall" href="/talk/2015_all.html">read more</a></div>
-    </div>	
-				
-
- 
-        
-
- 
-
-    <div class='article'>
-        <a href="/learning/coroutine_in_Python_and_Js.html"><h2>coroutine in Python Tornado and NodeJs</h2></a>
-        <div class= "well small"> 2015-12-30 15-39-07
-
-by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
- 
-
-
- </div>
-        <div class="summary"><p>source code read</p> <a class="btn btn-info xsmall" href="/learning/coroutine_in_Python_and_Js.html">read more</a></div>
     </div>	
 				
 <div class="pagination">
