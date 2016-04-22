@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Kamushin's blog</title><link>/</link><description></description><atom:link href="/feeds/kamushin.rss.xml" rel="self"></atom:link><lastBuildDate>Fri, 22 Apr 2016 09:38:28 +0800</lastBuildDate><item><title>对 Paxos 的一些理解</title><link>/think/paxos.html</link><description>&lt;p&gt;今天 OB 的同事花了一个多小时讲了 paxos 的原理, 我相信场上听懂50%的人不超过50%. 至少我自己对 basic-paxos 还存在这几点疑问.&lt;/p&gt;
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Kamushin's blog</title><link>/</link><description></description><atom:link href="/feeds/kamushin.rss.xml" rel="self"></atom:link><lastBuildDate>Fri, 22 Apr 2016 14:12:26 +0800</lastBuildDate><item><title>对 Paxos 的一些理解</title><link>/think/paxos.html</link><description>&lt;p&gt;今天 OB 的同事花了一个多小时讲了 paxos 的原理, 我相信场上听懂50%的人不超过50%. 至少我自己对 basic-paxos 还存在这几点疑问.&lt;/p&gt;
 &lt;h3&gt;prepare 阶段是干嘛的&lt;/h3&gt;
 &lt;p&gt;multi paxos 是不需要 prepare 的, 而 basic paxos 需要, 为什么多个leader 的时候需要做 prepare 呢?&lt;br /&gt;
 prepare 阶段是用来决定当前要进行 accept 的 proposal id 的.  拥有 prepare 阶段后的 accept 阶段可以保证很大概率下多数人可以接受它的请求. 
@@ -23,6 +23,7 @@ prepare 阶段是用来决定当前要进行 accept 的 proposal id 的.  拥有
 &lt;p&gt;但是故事还没完, p2b 的意思是, proposal 每提出决议,就要访问全部其他节点, 看有没有 value 被批准. 这可太麻烦了. 退化为2pc 了喂!
  所以有了非常拗口的&lt;code&gt;p2c: 如果一个编号为n的提案具有value v，那么存在一个多数派，要么他们中所有人都没有接受（accept）编号小于n 
  的任何提案，要么他们已经接受（accept）的所有编号小于n的提案中编号最大的那个提案具有value v。&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;从这里, 我们得到一个神奇的结论, paxos 是 2pc 的单调递增优化!&lt;/p&gt;
 &lt;h3&gt;为什么比2pc 好&lt;/h3&gt;
 &lt;p&gt;如果我们简单的把2pc 的 commit 条件设置为多数同意就 commit. 是不是就变得和 paxos 一样了呢?&lt;br /&gt;
 2pc 的 commit 条件设置为多数同意, 这就是 zookeeper 的 zab 算法. 它比 paxos 弱的一点是, 当一个 acceptor 在 prepare 阶段接受了一个提议后,
@@ -30,7 +31,7 @@ prepare 阶段是用来决定当前要进行 accept 的 proposal id 的.  拥有
 &lt;h3&gt;什么时候持久化&lt;/h3&gt;
 &lt;p&gt;在 prepare 和 accept 后都需要持久化, 不过 accept 才是数据持久化.&lt;/p&gt;
 &lt;h3&gt;待续&lt;/h3&gt;
-&lt;p&gt;今天暂时想通了这么多, 明天继续和同事切磋去.&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Kamushin</dc:creator><pubDate>Fri, 22 Apr 2016 09:38:28 +0800</pubDate><guid>tag:,2016-04-22:think/paxos.html</guid><category>Paxos</category></item><item><title>MySQL 首行查询陷阱</title><link>/learning/mysql_limit_1.html</link><description>&lt;h3&gt;起因&lt;/h3&gt;
+&lt;p&gt;今天暂时想通了这么多, 明天继续和同事切磋去.&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Kamushin</dc:creator><pubDate>Fri, 22 Apr 2016 14:12:26 +0800</pubDate><guid>tag:,2016-04-22:think/paxos.html</guid><category>Paxos</category></item><item><title>MySQL 首行查询陷阱</title><link>/learning/mysql_limit_1.html</link><description>&lt;h3&gt;起因&lt;/h3&gt;
 &lt;p&gt;今天在执行一条 query 的时候,发现数据库用了6分钟才返回数据,而这条 query 仅仅是很简单的&lt;code&gt;select * from foo limit 1&lt;/code&gt;.  &lt;/p&gt;
 &lt;h3&gt;排查&lt;/h3&gt;
 &lt;p&gt;foo 这个表里有近1T的数据, 但是这不应该成为返回慢的原因. 有同事发现这条语句只扫描了1行数据, 这是符合我们预期的, 但是为什么扫描一行数据花了6分钟呢?&lt;br /&gt;

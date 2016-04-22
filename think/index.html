@@ -59,7 +59,7 @@
     <div class='article'>
         <div class="content-title">
             <a href="/think/paxos.html"><h1>对 Paxos 的一些理解</h1></a>
-2016-04-22 09-38-28
+2016-04-22 14-12-26
 
 by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
  
@@ -92,6 +92,7 @@ prepare 阶段是用来决定当前要进行 accept 的 proposal id 的.  拥有
 <p>但是故事还没完, p2b 的意思是, proposal 每提出决议,就要访问全部其他节点, 看有没有 value 被批准. 这可太麻烦了. 退化为2pc 了喂!
  所以有了非常拗口的<code>p2c: 如果一个编号为n的提案具有value v，那么存在一个多数派，要么他们中所有人都没有接受（accept）编号小于n 
  的任何提案，要么他们已经接受（accept）的所有编号小于n的提案中编号最大的那个提案具有value v。</code></p>
+<p>从这里, 我们得到一个神奇的结论, paxos 是 2pc 的单调递增优化!</p>
 <h3>为什么比2pc 好</h3>
 <p>如果我们简单的把2pc 的 commit 条件设置为多数同意就 commit. 是不是就变得和 paxos 一样了呢?<br />
 2pc 的 commit 条件设置为多数同意, 这就是 zookeeper 的 zab 算法. 它比 paxos 弱的一点是, 当一个 acceptor 在 prepare 阶段接受了一个提议后,
