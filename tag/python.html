@@ -58,8 +58,8 @@
 
     <div class='article'>
         <div class="content-title">
-            <a href="/debug/member_function_in_python.html"><h1>Member functions in Python</h1></a>
-2016-02-03 14-51-01
+            <a href="/learning/python-multiprocessing.html"><h1>Python multiprocessing WHY and HOW</h1></a>
+2016-04-25 14-41-15
 
 by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
  
@@ -68,36 +68,80 @@ by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
  
         </div>
         
-        <div><p><code>self.func</code> is a operation that bind <code>self</code> to the function.</p>
-<div class="highlight"><pre><span class="k">class</span> <span class="nc">A</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">b</span> <span class="o">=</span> <span class="n">B</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">b</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="p">)</span>
+        <div><p>I am working on a Python script which will migrate data from one database to another. In a simple way, I need <code>select</code> from a database and then <code>insert</code> into another.<br />
+In the first version, I designed to use multithreading, just because I am more familiar with it than multiprocessing. But after fewer month, I found several problems in my workaround.  </p>
+<ul>
+<li>can only use one of 24 cpus in case of GIL</li>
+<li>can not handle singal for each thread. I want to use a simple <code>timeout</code> decarator, to set a <code>signal.SIGALRM</code> for a specified function. But for multithreading, the signal will get caught by a random thread.</li>
+</ul>
+<p>So I start to refactor to multiprocessing.</p>
+<h3>multiprocessing</h3>
+<blockquote>
+<p>multiprocessing is a package that supports spawning processes using an API similar to the threading module. </p>
+</blockquote>
+<p>But it's not so elegant and sweet as it described.</p>
+<h4>multiprocessing.pool</h4>
+<div class="highlight"><pre><span class="kn">from</span> <span class="nn">multiprocessing</span> <span class="kn">import</span> <span class="n">Pool</span>
 
-    <span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">print</span> <span class="s">&quot;callback&quot;</span>
+<span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">x</span><span class="o">*</span><span class="n">x</span>
 
-<span class="k">class</span> <span class="nc">B</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cb</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">cb</span> <span class="o">=</span> <span class="n">cb</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">cb</span><span class="p">()</span>
-
-<span class="kn">import</span> <span class="nn">sys</span>
-<span class="n">foo</span> <span class="o">=</span> <span class="n">A</span><span class="p">()</span>
-<span class="k">print</span> <span class="n">sys</span><span class="o">.</span><span class="n">getrefcount</span><span class="p">(</span><span class="n">foo</span><span class="p">)</span> <span class="c"># output: 3</span>
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">Pool</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">func</span><span class="o">=</span><span class="n">f</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]))</span>
 </pre></div>
 
 
-<p>Here are 3 objects ref to <code>foo</code>: </p>
+<p>It looks like a good solution, but we can not set a <code>bound function</code> as a target <code>func</code>. Because <code>bound function</code> can not be serialized in <code>pickle</code>. And <code>multithreading.pool</code> use pickle to serialize object and send to new processes.
+<code>pathos.multiprocessing</code> is a good instead. It uses <code>dill</code> as an instead of <code>pickle</code> to give better serialization.</p>
+<h4>share memory</h4>
+<p>Memory in multithreading is shared naturally. In a multiprocessing environment, there are some wrappers to wrap a sharing object.</p>
 <ul>
-<li><code>foo</code> as a local variable, </li>
-<li>a ref in getrefcount</li>
-<li>a ref in <code>foo.b.cb</code></li>
+<li><code>multiprocessing.Value</code> and <code>multiprocessing.Array</code> is the most simple way to share Objects between two processes. But it can only contain <code>ctype</code> Objects.</li>
+<li><code>multiprocessing.Queue</code> is very useful and use an API similar to <code>Queue.Queue</code></li>
 </ul>
-<p>It's more like <code>self.func</code> is <code>func.self = self</code>, bind <code>self</code> to the function.</p></div>
+<h4>Python and GCC version</h4>
+<p>I didn't know that even the <code>GCC</code> version will affect behavior of my code. On my centos5 os, same Python version with different <code>GCC</code> version will have different behaviors.</p>
+<div class="highlight"><pre><span class="n">Python</span> <span class="mf">2.7</span><span class="o">.</span><span class="mi">2</span> <span class="p">(</span><span class="n">default</span><span class="p">,</span> <span class="n">Jan</span> <span class="mi">10</span> <span class="mi">2012</span><span class="p">,</span> <span class="mi">11</span><span class="p">:</span><span class="mi">17</span><span class="p">:</span><span class="mi">45</span><span class="p">)</span>
+<span class="p">[</span><span class="n">GCC</span> <span class="mf">3.4</span><span class="o">.</span><span class="mi">6</span> <span class="mi">20060404</span> <span class="p">(</span><span class="n">Red</span> <span class="n">Hat</span> <span class="mf">3.4</span><span class="o">.</span><span class="mi">6</span><span class="o">-</span><span class="mi">11</span><span class="p">)]</span> <span class="n">on</span> <span class="n">linux2</span>
+<span class="n">Type</span> <span class="s">&quot;help&quot;</span><span class="p">,</span> <span class="s">&quot;copyright&quot;</span><span class="p">,</span> <span class="s">&quot;credits&quot;</span> <span class="ow">or</span> <span class="s">&quot;license&quot;</span> <span class="k">for</span> <span class="n">more</span> <span class="n">information</span><span class="o">.</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">multiprocessing.queues</span> <span class="kn">import</span> <span class="n">JoinableQueue</span>
+<span class="n">Traceback</span> <span class="p">(</span><span class="n">most</span> <span class="n">recent</span> <span class="n">call</span> <span class="n">last</span><span class="p">):</span>
+  <span class="n">File</span> <span class="s">&quot;&lt;stdin&gt;&quot;</span><span class="p">,</span> <span class="n">line</span> <span class="mi">1</span><span class="p">,</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
+  <span class="n">File</span> <span class="s">&quot;/home/oracle/dbapython/lib/python2.7/multiprocessing/queues.py&quot;</span><span class="p">,</span> <span class="n">line</span> <span class="mi">48</span><span class="p">,</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
+    <span class="kn">from</span> <span class="nn">multiprocessing.synchronize</span> <span class="kn">import</span> <span class="n">Lock</span><span class="p">,</span> <span class="n">BoundedSemaphore</span><span class="p">,</span> <span class="n">Semaphore</span><span class="p">,</span> <span class="n">Condition</span>
+  <span class="n">File</span> <span class="s">&quot;/home/oracle/dbapython/lib/python2.7/multiprocessing/synchronize.py&quot;</span><span class="p">,</span> <span class="n">line</span> <span class="mi">59</span><span class="p">,</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
+    <span class="s">&quot; function, see issue 3770.&quot;</span><span class="p">)</span>
+<span class="ne">ImportError</span><span class="p">:</span> <span class="n">This</span> <span class="n">platform</span> <span class="n">lacks</span> <span class="n">a</span> <span class="n">functioning</span> <span class="n">sem_open</span> <span class="n">implementation</span><span class="p">,</span> <span class="n">therefore</span><span class="p">,</span> <span class="n">the</span> <span class="n">required</span> <span class="n">synchronization</span> <span class="n">primitives</span> <span class="n">needed</span> <span class="n">will</span> <span class="ow">not</span> <span class="n">function</span><span class="p">,</span> <span class="n">see</span> <span class="n">issue</span> <span class="mf">3770.</span>
+
+
+<span class="n">Python</span> <span class="mf">2.7</span><span class="o">.</span><span class="mi">2</span> <span class="p">(</span><span class="n">default</span><span class="p">,</span> <span class="n">Oct</span> <span class="mi">15</span> <span class="mi">2013</span><span class="p">,</span> <span class="mi">13</span><span class="p">:</span><span class="mi">15</span><span class="p">:</span><span class="mi">26</span><span class="p">)</span>
+<span class="p">[</span><span class="n">GCC</span> <span class="mf">4.1</span><span class="o">.</span><span class="mi">2</span> <span class="mi">20080704</span> <span class="p">(</span><span class="n">Red</span> <span class="n">Hat</span> <span class="mf">4.1</span><span class="o">.</span><span class="mi">2</span><span class="o">-</span><span class="mi">46</span><span class="p">)]</span> <span class="n">on</span> <span class="n">linux2</span>
+<span class="n">Type</span> <span class="s">&quot;help&quot;</span><span class="p">,</span> <span class="s">&quot;copyright&quot;</span><span class="p">,</span> <span class="s">&quot;credits&quot;</span> <span class="ow">or</span> <span class="s">&quot;license&quot;</span> <span class="k">for</span> <span class="n">more</span> <span class="n">information</span><span class="o">.</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">multiprocessing.queues</span> <span class="kn">import</span> <span class="n">JoinableQueue</span>
+<span class="o">&gt;&gt;&gt;</span>
+</pre></div></div>
         <hr />
     </div>
 		
+
+ 
+        
+
+ 
+
+    <div class='article'>
+        <a href="/debug/member_function_in_python.html"><h2>Member functions in Python</h2></a>
+        <div class= "well small"> 2016-02-03 14-51-01
+
+by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
+ 
+
+
+ </div>
+        <div class="summary"><p>Pass a self.func as an argument is passing a function and a self object.</p> <a class="btn btn-info xsmall" href="/debug/member_function_in_python.html">read more</a></div>
+    </div>	
+				
 
  
         
