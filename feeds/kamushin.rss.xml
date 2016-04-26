@@ -1,5 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Kamushin's blog</title><link>/</link><description></description><atom:link href="/feeds/kamushin.rss.xml" rel="self"></atom:link><lastBuildDate>Mon, 25 Apr 2016 14:41:15 +0800</lastBuildDate><item><title>Python multiprocessing WHY and HOW</title><link>/learning/python-multiprocessing.html</link><description>&lt;p&gt;I am working on a Python script which will migrate data from one database to another. In a simple way, I need &lt;code&gt;select&lt;/code&gt; from a database and then &lt;code&gt;insert&lt;/code&gt; into another.&lt;br /&gt;
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Kamushin's blog</title><link>/</link><description></description><atom:link href="/feeds/kamushin.rss.xml" rel="self"></atom:link><lastBuildDate>Wed, 27 Apr 2016 00:50:28 +0800</lastBuildDate><item><title>What do the top 1% of software engineers do that the other 99% do not</title><link>/think/What-do-the-top-1%-of-software-engineers-do-that-the-other-99%-do-not.html</link><description>&lt;p&gt;&lt;a href="https://www.quora.com/What-do-the-top-1-of-software-engineers-do-that-the-other-99-do-not"&gt;What do the top 1% of software engineers do that the other 99% do not&lt;/a&gt;&lt;br /&gt;
+After reading some answers, I decide to reflect and list what I did or did not in the past working year.&lt;/p&gt;
+&lt;h4&gt;Invest in learning and building tools&lt;/h4&gt;
+&lt;p&gt;I give myself A on this measure. I used variuos of tools, tiny tool like ssh tunnel to save my life to ssh to remote servers, complex tools like docker to build and depoly my project.&lt;br /&gt;
+All these tools is discovered by myself, not pushed by my boss or mentor. Instead, I recommanded some tools to my mentor and friends, for example,  iTerm2, oh-my-zsh, etc.&lt;/p&gt;
+&lt;h4&gt;Give credit where credit is due&lt;/h4&gt;
+&lt;p&gt;This rule is not very clear to me. Maybe the author think a top coder should also be a nice guy.&lt;/p&gt;
+&lt;h4&gt;Impatience. Rather than wanting to spend time in meetings, top engineers write code, and spend time writing code rather than talking about it.&lt;/h4&gt;
+&lt;p&gt;I hate meeting. But I can't say I spend much time on writing code. Sometimes I can't deep into coding. After writing piece of code, I would open IM app to see messages.&lt;/p&gt;
+&lt;h4&gt;Total stack comprehension.&lt;/h4&gt;
+&lt;p&gt;WOW! It's very high level skill, I think. It's hard for someone to break through his stack, it's harder than full stack. A back-end programmer can easily learn how to use &lt;code&gt;ajax&lt;/code&gt; but it's very hard to learn about &lt;code&gt;JVM&lt;/code&gt; or the compiler he use.&lt;/p&gt;
+&lt;h4&gt;they solve the problem rather than doing what's asked.&lt;/h4&gt;
+&lt;p&gt;Totally agree with this, and that's what I want to improve in the next year. Do more things, do the right thing, and be responsible to the project.&lt;/p&gt;
+&lt;h4&gt;they choose the right level of abstraction for the task&lt;/h4&gt;
+&lt;p&gt;It's not a primer skill. Know how to abstract is good, but know how to choose the right level is great. It's really depends on the teammates.&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Kamushin</dc:creator><pubDate>Wed, 27 Apr 2016 00:50:28 +0800</pubDate><guid>tag:,2016-04-27:think/What-do-the-top-1%-of-software-engineers-do-that-the-other-99%-do-not.html</guid><category>thinking</category></item><item><title>Python multiprocessing WHY and HOW</title><link>/learning/python-multiprocessing.html</link><description>&lt;p&gt;I am working on a Python script which will migrate data from one database to another. In a simple way, I need &lt;code&gt;select&lt;/code&gt; from a database and then &lt;code&gt;insert&lt;/code&gt; into another.&lt;br /&gt;
 In the first version, I designed to use multithreading, just because I am more familiar with it than multiprocessing. But after fewer month, I found several problems in my workaround.  &lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;can only use one of 24 cpus in case of GIL&lt;/li&gt;
