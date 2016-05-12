@@ -52,59 +52,40 @@
     <div class="row">
 
         <div class="span9">
+        
+
+        
+
+ 
+
     <div class='article'>
-        <div class="content-title">
-            <h1>Some tricks when using cx_Oracle</h1>
-2015-11-27 16-01-57
+        <a href="/learning/test.html"><h2>开始学习陈硕的网络编程课程</h2></a>
+        <div class= "well small"> 2015-10-19 21-37-24
 
 by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
  
 
 
-        </div>
-	
-        <div><p>cx_Oracle is a Python module that enables access to Oracle databases.<br />
-However, users may have confusion due to some fetures of this module.</p>
-<h4>Thread safe</h4>
-<p>The default setting of cx_Oracle is not thread-safe.  <br />
-So if user have multiple threads, make sure that specifying <code>threaded=True</code> when creating the connection.   </p>
-<p><code>conn = cx_Oracle.connect(user + '/' + passwd + "@" + host + "/" + db, threaded=True)</code>   </p>
-<p>Otherwise, the program will crash with error message like    </p>
-<p><code>ORA-24550: signal received: [si_signo=11] [si_errno=0] [si_code=2] [si_addr=0000000000000000]</code>  </p>
-<h4>Fetch LOB column</h4>
-<blockquote>
-<p>Internally, Oracle uses LOB locators which are allocated based on the cursor array size. Thus, it is important that the data in the LOB object be manipulated before another internal fetch takes place. The safest way to do this is to use the cursor as an iterator. In particular, do not use the fetchall() method. The exception “LOB variable no longer valid after subsequent fetch” will be raised if an attempt to access a LOB variable after a subsequent fetch is detected.</p>
-</blockquote>
-<p>Use curosr as an iterator rather than use <code>fetchall()</code> method.</p>
-<div class="highlight"><pre>self._cursor.execute(sql, *args)
-def fix_lob(row):
-    def convert(col):
-        if isinstance(col, cx_Oracle.LOB):
-            return str(col)
-        else:
-            return col
+ </div>
+        <div class="summary"><p>很久前就关注了陈硕的这门课，等着他结课后一次性看完，截止到现在他已经更新了40多节了，
+就要结束了，所以开始刷这门课。</p> <a class="btn btn-info xsmall" href="/learning/test.html">read more</a></div>
+    </div>	
+				
+<div class="pagination">
+<ul>
+    <li class="prev"><a href="/author/kamushin3.html">&larr; Previous</a></li>
 
-    return [convert(c) for c in row]
+    <li class=""><a href="/author/kamushin.html">1</a></li>
+    <li class=""><a href="/author/kamushin2.html">2</a></li>
+    <li class=""><a href="/author/kamushin3.html">3</a></li>
+    <li class="active"><a href="/author/kamushin4.html">4</a></li>
 
-return [fix_lob(r) for r in self._cursor]
-</pre></div></div>
-	
-        <hr>
+    <li class="next disabled"><a href="#">&rarr; Next</a></li>
 
-        <h2>Comments</h2>
-<div id="disqus_thread"></div>
-<script type="text/javascript">
-    var disqus_shortname = 'kamushin'; 
-    var disqus_title = 'Some tricks when using cx_Oracle';
-
-    (function() {
-        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
-        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-    })();
-</script>
-<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-    </div>
+</ul>
+</div>
+ 
+  
         </div>
         
         <div class="span3">
