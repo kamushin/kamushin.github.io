@@ -52,23 +52,17 @@
     <div class="row">
 
         <div class="span9">
-        
-
-        
-
-
     <div class='article'>
         <div class="content-title">
-            <a href="/debug/python.html"><h1>Python 调试方法</h1></a>
+            <h1>Python 调试方法</h1>
 2016-05-21 15-45-00
 
 by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
  
 
 
- 
         </div>
-        
+	
         <div><h3>背景</h3>
 <p>这几天一直在查一个线上程序 hang 住的问题. 这个程序总是在运行50分钟后 hang 住, 通过以下的一些调试手段,发现是打日志的时候因为 buffer 满被 block 了.
 Python 日志是默认打到 stderr 的, 无论日志级别. 而我这个程序是被另一个程序调起的, 父进程没有接收子进程的 stderr, 导致了 buffer 被打满.
@@ -115,190 +109,23 @@ Python 日志是默认打到 stderr 的, 无论日志级别. 而我这个程序�
 <p>基本原理是给<code>SIGUSR1</code>信号加上一个handler, handler 执行时会把当前的变量加载到一个交互式窗口, 然后开启交互式console, 接下来就像打开一个 REPL 一样了, 可以查看当前的变量值, 可以改变变量值, 可以调用函数看看结果是什么, 查看完后<code>^d</code>离开, 就可以让程序继续执行下去. <br />
 在加好 handler 后, 我们可以用<code>os.kill(pid, signal.SIGUSR1)</code>的方式, 调起 handler, 进行调试.<br />
 值得注意的是, 由于和console 的交互需要 stdout 的支持, 而父子进程默认是不共享 stdout 的,所以当要调试子进程的时候, 需要重定向子进程的 stdout 到父进程的 stdout, 这个很简单,就不贴代码了.</p></div>
-        <hr />
+	
+        <hr>
+
+        <h2>Comments</h2>
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'kamushin'; 
+    var disqus_title = 'Python 调试方法';
+
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
     </div>
-		
-
- 
-        
-
- 
-
-    <div class='article'>
-        <a href="/debug/logger_in_python.html"><h2>Loggers in Python</h2></a>
-        <div class= "well small"> 2016-05-21 15-14-04
-
-by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
- 
-
-
- </div>
-        <div class="summary"><ol>
-<li>Loggers will be stored in manager in Python. Handlers will cause resource leak if not removed.</li>
-</ol> <a class="btn btn-info xsmall" href="/debug/logger_in_python.html">read more</a></div>
-    </div>	
-				
-
- 
-        
-
- 
-
-    <div class='article'>
-        <a href="/misc/about.html"><h2>About Me</h2></a>
-        <div class= "well small"> 2016-05-13 00-15-33
-
-by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
- 
-
-
- </div>
-        <div class="summary"> <a class="btn btn-info xsmall" href="/misc/about.html">read more</a></div>
-    </div>	
-				
-
- 
-        
-
- 
-
-    <div class='article'>
-        <a href="/think/What-do-the-top-1%-of-software-engineers-do-that-the-other-99%-do-not.html"><h2>What do the top 1% of software engineers do that the other 99% do not</h2></a>
-        <div class= "well small"> 2016-04-27 00-50-28
-
-by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
- 
-
-
- </div>
-        <div class="summary"><p>Reflect on the past working year by some measure on quora.</p> <a class="btn btn-info xsmall" href="/think/What-do-the-top-1%-of-software-engineers-do-that-the-other-99%-do-not.html">read more</a></div>
-    </div>	
-				
-
- 
-        
-
- 
-
-    <div class='article'>
-        <a href="/learning/python-multiprocessing.html"><h2>Python multiprocessing WHY and HOW</h2></a>
-        <div class= "well small"> 2016-04-25 14-41-15
-
-by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
- 
-
-
- </div>
-        <div class="summary"><p>Some thinking and traps in refactor multithreading Python to multiprocessing.</p> <a class="btn btn-info xsmall" href="/learning/python-multiprocessing.html">read more</a></div>
-    </div>	
-				
-
- 
-        
-
- 
-
-    <div class='article'>
-        <a href="/think/paxos.html"><h2>对 Paxos 的一些理解</h2></a>
-        <div class= "well small"> 2016-04-22 14-12-26
-
-by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
- 
-
-
- </div>
-        <div class="summary"><ol>
-<li>prepare 阶段是干嘛的 1. 为什么比2pc 好 2. 什么时候持久化</li>
-</ol> <a class="btn btn-info xsmall" href="/think/paxos.html">read more</a></div>
-    </div>	
-				
-
- 
-        
-
- 
-
-    <div class='article'>
-        <a href="/learning/mysql_limit_1.html"><h2>MySQL 首行查询陷阱</h2></a>
-        <div class= "well small"> 2016-04-08 00-00-26
-
-by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
- 
-
-
- </div>
-        <div class="summary"><p>分析 MySQL 首行查询出现的条件和原理</p> <a class="btn btn-info xsmall" href="/learning/mysql_limit_1.html">read more</a></div>
-    </div>	
-				
-
- 
-        
-
- 
-
-    <div class='article'>
-        <a href="/debug/aop_proxy.html"><h2>Alter dataSource in Spring By AOP And Annotation</h2></a>
-        <div class= "well small"> 2016-04-06 20-42-11
-
-by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
- 
-
-
- </div>
-        <div class="summary"><p>About how to use AOP to alter dataSource. And something interesting about proxy in Spring framework.</p> <a class="btn btn-info xsmall" href="/debug/aop_proxy.html">read more</a></div>
-    </div>	
-				
-
- 
-        
-
- 
-
-    <div class='article'>
-        <a href="/learning/react_route.html"><h2>hashHistory and browserHistory in React-Router</h2></a>
-        <div class= "well small"> 2016-03-17 23-09-38
-
-by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
- 
-
-
- </div>
-        <div class="summary"><p>something I met about hashHistory and browserHistory</p> <a class="btn btn-info xsmall" href="/learning/react_route.html">read more</a></div>
-    </div>	
-				
-
- 
-        
-
- 
-
-    <div class='article'>
-        <a href="/think/alipay-lottery.html"><h2>Why Alipay lottery failed</h2></a>
-        <div class= "well small"> 2016-02-08 02-13-37
-
-by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
- 
-
-
- </div>
-        <div class="summary"><p>some naive thinking about why alipay failed to get applause in 2016 CCTV Spring Festival Gala</p> <a class="btn btn-info xsmall" href="/think/alipay-lottery.html">read more</a></div>
-    </div>	
-				
-<div class="pagination">
-<ul>
-    <li class="prev disabled"><a href="#">&larr; Previous</a></li>
-
-    <li class="active"><a href="/author/kamushin.html">1</a></li>
-    <li class=""><a href="/author/kamushin2.html">2</a></li>
-    <li class=""><a href="/author/kamushin3.html">3</a></li>
-    <li class=""><a href="/author/kamushin4.html">4</a></li>
-
-    <li class="next"><a href="/author/kamushin2.html">Next &rarr;</a></li>
-
-</ul>
-</div>
- 
-  
         </div>
         
         <div class="span3">
