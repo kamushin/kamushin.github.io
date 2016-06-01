@@ -54,8 +54,8 @@
         <div class="span9">
     <div class='article'>
         <div class="content-title">
-            <h1>Pelican上增加评论和自动删除文章的一些坑</h1>
-2015-10-19 21-37-24
+            <h1>Kamushin's blog</h1>
+2016-06-02 01-00-41
 
 by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
  
@@ -63,15 +63,117 @@ by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
 
         </div>
 	
-        <div><h3>增加评论功能</h3>
-<p>这个网上有很多描述，主要是去disqus注册下，然后设置下配置文件<a href="http://querbalken.net/howto-setup-comments-with-disqus-in-pelican-en.html">example</a>坑主要在于Pelican的默认主题是没有disqus的模板的，所以虽然看到了对disqus的请求，却看不到评论区。需要自己下个比较全的主题。</p>
-<h3>自动删除文件</h3>
-<p>在content里删除了md文件，重新<code>make html</code>后在output中依然会看到那个md文件生成的html文件。</p>
-<p>一个方法是加入配置<code>DELETE_OUTPUT_DIRECTORY = True</code>来每次清空output，但是这带来了两个问题:</p>
-<ul>
-<li>自动日期没了 目前无法解决</li>
-<li>版本控制没了，可以通过加入<code>OUTPUT_RETENTION = [".hg", ".git", ".bzr"]</code>来解决</li>
-</ul></div>
+        <div>
+
+<div class="navbar">
+    <div class="navbar-inner">
+    <div class="container">
+
+         <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+             <span class="icon-bar"></span>
+             <span class="icon-bar"></span>
+             <span class="icon-bar"></span>
+         </a>
+
+        <a class="brand" href="/">Kamushin's blog</a>
+
+        <div class="nav-collapse">
+        <ul class="nav">
+            <li><a href="/misc/about.html">ABOUT</a></li>
+            
+        </ul>
+        </div>
+        
+    </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="content">
+    <div class="row">
+
+        <div class="span9">
+    <h1>Authors on Kamushin's blog</h1>
+
+    <ul>        <li><a href="/author/kamushin.html">Kamushin</a> (34)</li>
+    </ul>
+        </div>
+        
+        <div class="span3">
+
+            <div class="well" style="padding: 8px 0; background-color: #FBFBFB;">
+            <ul class="nav nav-list">
+                <li class="nav-header"> 
+                Site
+                </li>
+            
+                <li><a href="/archives.html">Archives</a>
+                <li><a href="/tag/index.html">Tags</a>
+
+
+
+
+            </ul>
+            </div>
+
+
+            <div class="well" style="padding: 8px 0; background-color: #FBFBFB;">
+            <ul class="nav nav-list">
+                <li class="nav-header"> 
+                Categories
+                </li>
+                
+                <li><a href="/debug/index.html">debug</a></li>
+                <li><a href="/learning/index.html">learning</a></li>
+                <li><a href="/misc/index.html">misc</a></li>
+                <li><a href="/nix/index.html">*nix</a></li>
+                <li><a href="/talk/index.html">talk</a></li>
+                <li><a href="/think/index.html">think</a></li>
+                <li><a href="/tool/index.html">tool</a></li>
+                   
+            </ul>
+            </div>
+
+
+            <div class="well" style="padding: 8px 0; background-color: #FBFBFB;">
+            <ul class="nav nav-list">
+                <li class="nav-header"> 
+                Links
+                </li>
+            
+                <li><a href="http://liaojie.me/">liaojie</a></li>
+                <li><a href="http://www.lulinux.com/">撸人</a></li>
+                <li><a href="http://www.yinyien.com/">ian</a></li>
+                <li><a href="http://ixindoo.com/">ixindoo</a></li>
+            </ul>
+            </div>
+
+
+            <div class="social">
+            <div class="well" style="padding: 8px 0; background-color: #FBFBFB;">
+            <ul class="nav nav-list">
+                <li class="nav-header"> 
+                Social
+                </li>
+           
+                <li><a href="https://github.com/kamushin">Github</a></li>
+                <li><a href="http://segmentfault.com/u/kamushin">SegmentFault</a></li>
+            </ul>
+            </div>
+            </div>
+
+        </div>  
+    </div>     </div> 
+<footer>
+<br />
+<p><a href="">Kamushin's blog</a> &copy; Kamushin 2016</p>
+</footer>
+
+</div> <!-- /container -->
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+<script src="/theme/bootstrap-collapse.js"></script>
+ 
+</div>
 	
         <hr>
 
@@ -79,7 +181,7 @@ by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
 <div id="disqus_thread"></div>
 <script type="text/javascript">
     var disqus_shortname = 'kamushin'; 
-    var disqus_title = 'Pelican上增加评论和自动删除文章的一些坑';
+    var disqus_title = 'Kamushin's blog';
 
     (function() {
         var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
@@ -115,11 +217,26 @@ by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
                 Categories
                 </li>
                 
+                <li><a href="/author/index.html">author</a></li>
+                <li><a href="/basic/index.html">basic</a></li>
+                <li><a href="/bootstrap2/index.html">bootstrap2</a></li>
+                <li><a href="/content/index.html">content</a></li>
                 <li><a href="/debug/index.html">debug</a></li>
+                <li><a href="/foo/index.html">foo</a></li>
                 <li><a href="/learning/index.html">learning</a></li>
                 <li><a href="/misc/index.html">misc</a></li>
+                <li><a href="/mnmlist/index.html">mnmlist</a></li>
+                <li><a href="/networkprogramming/index.html">networkprogramming</a></li>
+                <li><a href="/new-bootstrap2/index.html">new-bootstrap2</a></li>
                 <li><a href="/nix/index.html">*nix</a></li>
+                <li><a href="/nmnlist/index.html">nmnlist</a></li>
+                <li><a href="/output/index.html">output</a></li>
+                <li><a href="/pelican-themes/index.html">pelican-themes</a></li>
+                <li><a href="/sneakyidea/index.html">sneakyidea</a></li>
+                <li><a href="/tag/index.html">tag</a></li>
                 <li><a href="/talk/index.html">talk</a></li>
+                <li><a href="/tech/index.html">tech</a></li>
+                <li><a href="/templates/index.html">templates</a></li>
                 <li><a href="/think/index.html">think</a></li>
                 <li><a href="/tool/index.html">tool</a></li>
                    
