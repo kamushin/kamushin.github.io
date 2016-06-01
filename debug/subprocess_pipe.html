@@ -55,7 +55,7 @@
     <div class='article'>
         <div class="content-title">
             <h1>Python subprocess包中的父子进程沟通</h1>
-2016-06-02 00-29-18
+2016-06-02 01-19-24
 
 by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
  
@@ -65,13 +65,15 @@ by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
 	
         <div><h3>前言</h3>
 <p>前段时间是5.27蚂蚁技术日，听了康朵分享的关于创新的一些特质，记录一下，权且是自勉。  </p>
-<p>创新需要以下几点能力：
-- <strong>学习能力</strong> 没有学习能力，别说创新，跟上大环境都难
-- <strong>解构能力</strong> 没有解构能力，无法把复杂问题分解为已知问题去解决
-- <strong>系统性思维</strong> 这点我觉得很难做到，是内功
-- <strong>交朋友能力</strong> 主要指认识大牛
-- <strong>化繁为简</strong> 这个和解构差不多吧
-- <strong>对美的追求</strong> 很多烂设计，如果对美有要求，根本不会让它出现。这点我深有体会。那种接到一个需求就做，从来不考虑怎么去更完美的实现的人，肯定是给团队挖坑最多的人。</p>
+<p>创新需要以下几点能力：</p>
+<ul>
+<li><strong>学习能力</strong> 没有学习能力，别说创新，跟上大环境都难</li>
+<li><strong>解构能力</strong> 没有解构能力，无法把复杂问题分解为已知问题去解决</li>
+<li><strong>系统性思维</strong> 这点我觉得很难做到，是内功</li>
+<li><strong>交朋友能力</strong> 主要指认识大牛</li>
+<li><strong>化繁为简</strong> 这个和解构差不多吧</li>
+<li><strong>对美的追求</strong> 很多烂设计，如果对美有要求，根本不会让它出现。这点我深有体会。那种接到一个需求就做，从来不考虑怎么去更完美的实现的人，肯定是给团队挖坑最多的人。</li>
+</ul>
 <h3>引言</h3>
 <p>10多天前，我写了篇文章谈如何调试一个hang住的Python程序，最后发现程序是因为打日志把buffer打满了，而产生了阻塞。</p>
 <blockquote>
