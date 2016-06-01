@@ -59,8 +59,8 @@
 
     <div class='article'>
         <div class="content-title">
-            <a href="/tool/fxg_new.html"><h1>New fxg for me</h1></a>
-2015-12-09 09-39-29
+            <a href="/tool/2015-10-20.html"><h1>Pip 无网络环境安装包</h1></a>
+2016-05-28 13-54-36
 
 by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
  
@@ -69,53 +69,13 @@ by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
  
         </div>
         
-        <div><p><a href="http://kamushin.github.io/tool/fxg.html">previos article about fxg</a></p>
-<p><code>fxg</code> means <code>find</code> and <code>xargs</code> then <code>grep</code>. It has a insufferable performace, so <br />
-I use <code>ag</code> to instead, after forking some tools made by <a href="https://github.com/lilydjwg/search-and-view">lilydjwg</a>
-The tool chain is used for finding pattern in files and opening file by vim.
-I rewrite a simple version of <code>vv</code>.</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
- 2
- 3
- 4
- 5
- 6
- 7
- 8
- 9
-10
-11
-12</pre></div></td><td class="code"><div class="highlight"><pre><span class="c">#!/usr/bin/env python</span>
-<span class="kn">import</span> <span class="nn">sys</span>
-<span class="kn">from</span> <span class="nn">subprocess</span> <span class="kn">import</span> <span class="n">call</span>
-<span class="n">line_number</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
-<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s">&#39;/tmp/fxg.log&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-    <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">readlines</span><span class="p">()):</span>
-        <span class="k">if</span> <span class="n">index</span> <span class="o">==</span> <span class="n">line_number</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="n">args</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;:&#39;</span><span class="p">)</span>
-            <span class="n">filename</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\t</span><span class="s">&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
-            <span class="n">file_line</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-            <span class="k">print</span> <span class="n">filename</span> <span class="o">+</span> <span class="s">&quot;:&quot;</span> <span class="o">+</span> <span class="n">file_line</span>
-            <span class="n">call</span><span class="p">([</span><span class="s">&quot;vim&quot;</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span>  <span class="s">&quot;+&quot;</span> <span class="o">+</span> <span class="n">file_line</span><span class="p">])</span>
-</pre></div>
-</td></tr></table>
-
-<p>Insert of writing regex pattern to match the complex colored output, I call ag the second time to gen a un-colored output to log file.
-And I also add a <code>-G</code> for file pattern.</p>
-<div class="highlight"><pre>fxg () {
-    ag -s -G $1 --column --nogroup --color $2 | nl &amp;&amp; ag -s -G $1 --column --nogroup $2 | nl &gt; /tmp/fxg.log
-}
-</pre></div>
-
-
-<h3>Update: 15-12-9</h3>
-<p><code>Ag</code> on my MacOSX has an unstable sorting result. It makes the twice call of <code>Ag</code> return different order.<br />
-So I add <code>sort</code> to this command. 
-<code>-0</code> or <code>-print0</code> will take <code>space</code> in filename as a special character.</p>
-<div class="highlight"><pre>fxg () {
-    ag -s -G $1 --column --nogroup --color -0 $2 | sort | nl &amp;&amp; ag -s -G $1 --column --nogroup -0 $2 | sort | nl &gt; /tmp/fxg.log
-}
-</pre></div></div>
+        <div><p>在内网部署 Python 的时候, 因为不能用连接到 <code>pip</code> 源所以仅仅靠 requirement.txt 是不够的.<br />
+我们需要 wheel 这个工具帮我们把需要的依赖先打成本地包.<br />
+<code>pip wheel --wheel-dir=/tmp/wheelhouse tornado</code><br />
+这样 tornado 的依赖包就全在 wheelhouse 里了 <br />
+我们面对一个更悲剧的情况, 线上连 <code>pip</code> 都没, 那么只能先在线下先给装好包.<br />
+<code>pip install --use-wheel --no-index --find-links=/tmp/wheelhouse -t  /tmp/wheelhouse/code tornado</code><br />
+这样包就全在 code 里了, 可以直接复制到线上. <strong>要注意编译环境一致和 so 库</strong>   </p></div>
         <hr />
     </div>
 		
@@ -126,44 +86,8 @@ So I add <code>sort</code> to this command.
  
 
     <div class='article'>
-        <a href="/tool/webpack_and_browser-sync.html"><h2>Use webpack together with browser-sync</h2></a>
-        <div class= "well small"> 2015-10-28 16-56-48
-
-by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
- 
-
-
- </div>
-        <div class="summary"><p>Webpack is a module bundler. Browsersync makes your browser testing workflow faster by synchronising URLs, interactions and code changes across multiple devices.</p> <a class="btn btn-info xsmall" href="/tool/webpack_and_browser-sync.html">read more</a></div>
-    </div>	
-				
-
- 
-        
-
- 
-
-    <div class='article'>
-        <a href="/tool/2015-10-20.html"><h2>Pip 无网络环境安装包</h2></a>
-        <div class= "well small"> 2015-10-20 22-28-48
-
-by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
- 
-
-
- </div>
-        <div class="summary"><p>在内网环境部署 Python 包, 抽取依赖</p> <a class="btn btn-info xsmall" href="/tool/2015-10-20.html">read more</a></div>
-    </div>	
-				
-
- 
-        
-
- 
-
-    <div class='article'>
         <a href="/tool/fxg.html"><h2>用正则来解决grep时行过长的问题</h2></a>
-        <div class= "well small"> 2015-10-19 21-37-24
+        <div class= "well small"> 2016-05-28 13-54-36
 
 by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
  
@@ -171,6 +95,42 @@ by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
 
  </div>
         <div class="summary"><p>grep输出内容过长，行过长</p> <a class="btn btn-info xsmall" href="/tool/fxg.html">read more</a></div>
+    </div>	
+				
+
+ 
+        
+
+ 
+
+    <div class='article'>
+        <a href="/tool/fxg_new.html"><h2>New fxg for me</h2></a>
+        <div class= "well small"> 2016-05-28 13-54-36
+
+by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
+ 
+
+
+ </div>
+        <div class="summary"><p>find then grep has a insufferable performace, and I use ag to instead.</p> <a class="btn btn-info xsmall" href="/tool/fxg_new.html">read more</a></div>
+    </div>	
+				
+
+ 
+        
+
+ 
+
+    <div class='article'>
+        <a href="/tool/webpack_and_browser-sync.html"><h2>Use webpack together with browser-sync</h2></a>
+        <div class= "well small"> 2016-05-28 13-54-36
+
+by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
+ 
+
+
+ </div>
+        <div class="summary"><p>Webpack is a module bundler. Browsersync makes your browser testing workflow faster by synchronising URLs, interactions and code changes across multiple devices.</p> <a class="btn btn-info xsmall" href="/tool/webpack_and_browser-sync.html">read more</a></div>
     </div>	
 				
 <div class="pagination">
@@ -254,7 +214,7 @@ by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
     </div>     </div> 
 <footer>
 <br />
-<p><a href="">Kamushin's blog</a> &copy; Kamushin 2015</p>
+<p><a href="">Kamushin's blog</a> &copy; Kamushin 2016</p>
 </footer>
 
 </div> <!-- /container -->

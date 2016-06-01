@@ -52,29 +52,59 @@
     <div class="row">
 
         <div class="span9">
+    <div class='article'>
+        <div class="content-title">
+            <h1>MySQL auto_increment 的坑</h1>
+2016-06-02 00-40-14
+
+by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
+ 
+
+
+        </div>
+	
+        <div><h3>Auto-Increment</h3>
 <ul>
-    <li><a href="/tag/.html"></a></li>
-    <li><a href="/tag/ag.html">Ag</a></li>
-    <li><a href="/tag/alipay.html">alipay</a></li>
-    <li><a href="/tag/aop-java.html">aop java</a></li>
-    <li><a href="/tag/coroutine.html">coroutine</a></li>
-    <li><a href="/tag/exception.html">exception</a></li>
-    <li><a href="/tag/front-end.html">front-end</a></li>
-    <li><a href="/tag/java.html">Java</a></li>
-    <li><a href="/tag/linux.html">Linux</a></li>
-    <li><a href="/tag/mysql.html">MySQL</a></li>
-    <li><a href="/tag/oracle.html">Oracle</a></li>
-    <li><a href="/tag/paxos.html">Paxos</a></li>
-    <li><a href="/tag/pelican.html">Pelican</a></li>
-    <li><a href="/tag/python.html">Python</a></li>
-    <li><a href="/tag/react.html">react</a></li>
-    <li><a href="/tag/reading.html">reading</a></li>
-    <li><a href="/tag/talk.html">talk</a></li>
-    <li><a href="/tag/thinking.html">thinking</a></li>
-    <li><a href="/tag/unittest.html">unittest</a></li>
-    <li><a href="/tag/wang-luo-bian-cheng.html">网络编程</a></li>
-    <li><a href="/tag/za-shi.html">杂事</a></li>
+<li>内存中有一个计数器auto-increment counter来记录行值。在服务器启动后的第一个sql进来的时候，这个计数器被初始化select max(col) from t for update.如果表是空的，就用1开始，这个值也是可以设定的。</li>
+<li>如果在计数器被初始化前， SHOW TABLE STATUS，那么计数器会被初始化，这个语句所在的事务持有独占锁，直到事务结束。</li>
+<li>插入的时候，如果值大于当前最大值+步长，那么counter也跟着跳变。</li>
+<li>如果值是NULL或者0，那么会被置为最大值+步长 </li>
+<li>如果值是负或者大于整数范围，未定义行为</li>
+<li>Auto-Increment Locking是表锁，但是在语句结束的时候释放，而不是事务结束。</li>
+<li>A server restart also cancels the effect of the AUTO_INCREMENT = N table option in CREATE TABLE and ALTER TABLE statements, which you can use with InnoDB tables to set the initial counter value or alter the current counter value.</li>
+<li>因为是语句锁，所以rollback后，是会产生gap的</li>
 </ul>
+<h3>Configurable InnoDB Auto-Increment Locking</h3>
+<p>表级锁可以保证顺序性，但是并发性能差。所以加入优化，如果当前insert数量可预测，而且也没用别的语句持有Auto-Increment Locking表锁，那么这个insert不会持有表锁，而是在语句结束的时候，持mutex来修改counter。</p>
+<ul>
+<li><code>innodb_autoinc_lock_mode = 0</code> 全部用传统的表锁</li>
+<li><code>innodb_autoinc_lock_mode = 1</code> 简单插入用mutex，但是如果当前已经有语句持有表锁，那简单插入也得等着了。对于语句级别的复制是安全的。</li>
+<li><code>innodb_autoinc_lock_mode = 2</code>  所有语句都用mutex。会导致交叉增加。</li>
+</ul>
+<p>对于这个参数的设定，考虑到主备同步，还要和主备复制的参数一起考虑
+- 对于语句级别的复制，开 <code>innodb_autoinc_lock_mode=2</code> 会导致主备不一致。
+- row级别的复制，则不要紧。 
+- 对于mixed来说1，2模式下，计数器简单的增加插入数量，不管有多少是特殊值。</p>
+<p>简单插入，simple insert指的是mysql可以自己判断出插入条数的sql，其他为bulk insert。<br />
+故障就是因为开了1，一个insert select这种bulk insert，导致持有表锁。<br />
+以上</p></div>
+	
+        <hr>
+
+        <h2>Comments</h2>
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'kamushin'; 
+    var disqus_title = 'MySQL auto_increment 的坑';
+
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    </div>
         </div>
         
         <div class="span3">

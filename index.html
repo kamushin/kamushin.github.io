@@ -59,8 +59,8 @@
 
     <div class='article'>
         <div class="content-title">
-            <a href="/debug/python.html"><h1>Python 调试方法</h1></a>
-2016-05-21 15-45-00
+            <a href="/learning/mysql_autoinc.html"><h1>MySQL auto_increment 的坑</h1></a>
+2016-06-02 00-40-14
 
 by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
  
@@ -69,52 +69,31 @@ by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
  
         </div>
         
-        <div><h3>背景</h3>
-<p>这几天一直在查一个线上程序 hang 住的问题. 这个程序总是在运行50分钟后 hang 住, 通过以下的一些调试手段,发现是打日志的时候因为 buffer 满被 block 了.
-Python 日志是默认打到 stderr 的, 无论日志级别. 而我这个程序是被另一个程序调起的, 父进程没有接收子进程的 stderr, 导致了 buffer 被打满.
-在调试的过程中, 用到了以下几种 Python 调试手段, 于是记录以下.</p>
-<h3>GDB</h3>
-<p>GDB是一个广为人知的调试器, 而且线上可用, 非常赞. 但是默认配置的 GDB 并不能打印 Python 当前调用栈. 我们需要对其做些配置. <br />
-首先进行gdb的安装, 需要gdb7以上版本<br />
-<code>sudo yum install gdb python-debuginfo</code> <br />
-然后下载这份 gdb 配置文件<code>http://svn.python.org/projects/python/trunk/Misc/gdbinit</code> 到 <code>~/.gdbinit</code><br />
-对于一个线上已经hang住的程序来说, 可以用<code>gdb -p pid</code>的形式进行 attach, 打印出当前调用栈.<br />
-一般来说, 必须是带<code>debug symbol</code>的Python 编译版本才能打印出足够多的信息, 但是线上的 Python 版本往往是不带<code>debug symbol</code> 的, 于是我们要修改下上述的配置文件</p>
-<div class="highlight"><pre><span class="x">    &lt;&lt;&lt;&lt;         if </span><span class="p">$</span><span class="nv">pc</span><span class="x"> &gt; PyEval_EvalFrameEx &amp;&amp; </span><span class="p">$</span><span class="nv">pc</span><span class="x"> &lt; PyEval_EvalCodeEx</span>
-<span class="x">    &gt;&gt;&gt;&gt;         if </span><span class="p">$</span><span class="nv">pc</span><span class="x"> &gt; PyEval_EvalFrameEx &amp;&amp; </span><span class="p">$</span><span class="nv">pc</span><span class="x"> &lt; PyEval_EvalCodeEx &amp;&amp; </span><span class="p">$</span><span class="nv">fp</span><span class="x"> != 0</span>
-</pre></div>
-
-
-<p>对<code>~/.gdbinit</code> 进行上述修改, 即可成功打印出当前 hang住进程的调用栈.<br />
-具体到我这次遇到的问题, 在打出调用栈后发现是卡死在 log 模块的 emit 上, 于是 strace 下看到果然是卡死在 write 的系统调用上, 顺利找到了原因.<br />
-更多的用法可以看https://wiki.python.org/moin/DebuggingWithGdb, 不过大部分的用法依然需要<code>debug symbol</code>, 按照 wiki 来,不一定可以顺利实现.</p>
-<h3>PDB</h3>
-<p>PDB是 Python 自带的一个调试模块. 可以以<code>python -m pdf xxx.py</code> 的形式, 以调试模式启动一个 Python 进程.
-虽然似乎不能 attach 到已运行的进程上, 但是提供了一个简单快速的调试方式.</p>
-<h3>Singal AND InteractiveConsole</h3>
-<p>上述的方式都是不需要侵入代码的, 这里再提供一种侵入代码的方式.</p>
-<div class="highlight"><pre><span class="kn">import</span> <span class="nn">code</span><span class="o">,</span> <span class="nn">traceback</span><span class="o">,</span> <span class="nn">signal</span>
-
-<span class="k">def</span> <span class="nf">debug</span><span class="p">(</span><span class="n">sig</span><span class="p">,</span> <span class="n">frame</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Interrupt running process, and provide a python prompt for</span>
-<span class="sd">    interactive debugging.&quot;&quot;&quot;</span>
-    <span class="n">d</span><span class="o">=</span><span class="p">{</span><span class="s">&#39;_frame&#39;</span><span class="p">:</span><span class="n">frame</span><span class="p">}</span>         <span class="c"># Allow access to frame object.</span>
-    <span class="n">d</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">frame</span><span class="o">.</span><span class="n">f_globals</span><span class="p">)</span>  <span class="c"># Unless shadowed by global</span>
-    <span class="n">d</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">frame</span><span class="o">.</span><span class="n">f_locals</span><span class="p">)</span>
-
-    <span class="n">i</span> <span class="o">=</span> <span class="n">code</span><span class="o">.</span><span class="n">InteractiveConsole</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
-    <span class="n">message</span>  <span class="o">=</span> <span class="s">&quot;Signal received : entering python shell.</span><span class="se">\n</span><span class="s">Traceback:</span><span class="se">\n</span><span class="s">&quot;</span>
-    <span class="n">message</span> <span class="o">+=</span> <span class="s">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">traceback</span><span class="o">.</span><span class="n">format_stack</span><span class="p">(</span><span class="n">frame</span><span class="p">))</span>
-    <span class="n">i</span><span class="o">.</span><span class="n">interact</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
-
-<span class="k">def</span> <span class="nf">listen</span><span class="p">():</span>
-    <span class="n">signal</span><span class="o">.</span><span class="n">signal</span><span class="p">(</span><span class="n">signal</span><span class="o">.</span><span class="n">SIGUSR1</span><span class="p">,</span> <span class="n">debug</span><span class="p">)</span>  <span class="c"># Register handler</span>
-</pre></div>
-
-
-<p>基本原理是给<code>SIGUSR1</code>信号加上一个handler, handler 执行时会把当前的变量加载到一个交互式窗口, 然后开启交互式console, 接下来就像打开一个 REPL 一样了, 可以查看当前的变量值, 可以改变变量值, 可以调用函数看看结果是什么, 查看完后<code>^d</code>离开, 就可以让程序继续执行下去. <br />
-在加好 handler 后, 我们可以用<code>os.kill(pid, signal.SIGUSR1)</code>的方式, 调起 handler, 进行调试.<br />
-值得注意的是, 由于和console 的交互需要 stdout 的支持, 而父子进程默认是不共享 stdout 的,所以当要调试子进程的时候, 需要重定向子进程的 stdout 到父进程的 stdout, 这个很简单,就不贴代码了.</p></div>
+        <div><h3>Auto-Increment</h3>
+<ul>
+<li>内存中有一个计数器auto-increment counter来记录行值。在服务器启动后的第一个sql进来的时候，这个计数器被初始化select max(col) from t for update.如果表是空的，就用1开始，这个值也是可以设定的。</li>
+<li>如果在计数器被初始化前， SHOW TABLE STATUS，那么计数器会被初始化，这个语句所在的事务持有独占锁，直到事务结束。</li>
+<li>插入的时候，如果值大于当前最大值+步长，那么counter也跟着跳变。</li>
+<li>如果值是NULL或者0，那么会被置为最大值+步长 </li>
+<li>如果值是负或者大于整数范围，未定义行为</li>
+<li>Auto-Increment Locking是表锁，但是在语句结束的时候释放，而不是事务结束。</li>
+<li>A server restart also cancels the effect of the AUTO_INCREMENT = N table option in CREATE TABLE and ALTER TABLE statements, which you can use with InnoDB tables to set the initial counter value or alter the current counter value.</li>
+<li>因为是语句锁，所以rollback后，是会产生gap的</li>
+</ul>
+<h3>Configurable InnoDB Auto-Increment Locking</h3>
+<p>表级锁可以保证顺序性，但是并发性能差。所以加入优化，如果当前insert数量可预测，而且也没用别的语句持有Auto-Increment Locking表锁，那么这个insert不会持有表锁，而是在语句结束的时候，持mutex来修改counter。</p>
+<ul>
+<li><code>innodb_autoinc_lock_mode = 0</code> 全部用传统的表锁</li>
+<li><code>innodb_autoinc_lock_mode = 1</code> 简单插入用mutex，但是如果当前已经有语句持有表锁，那简单插入也得等着了。对于语句级别的复制是安全的。</li>
+<li><code>innodb_autoinc_lock_mode = 2</code>  所有语句都用mutex。会导致交叉增加。</li>
+</ul>
+<p>对于这个参数的设定，考虑到主备同步，还要和主备复制的参数一起考虑
+- 对于语句级别的复制，开 <code>innodb_autoinc_lock_mode=2</code> 会导致主备不一致。
+- row级别的复制，则不要紧。 
+- 对于mixed来说1，2模式下，计数器简单的增加插入数量，不管有多少是特殊值。</p>
+<p>简单插入，simple insert指的是mysql可以自己判断出插入条数的sql，其他为bulk insert。<br />
+故障就是因为开了1，一个insert select这种bulk insert，导致持有表锁。<br />
+以上</p></div>
         <hr />
     </div>
 		
@@ -125,17 +104,15 @@ Python 日志是默认打到 stderr 的, 无论日志级别. 而我这个程序�
  
 
     <div class='article'>
-        <a href="/debug/logger_in_python.html"><h2>Loggers in Python</h2></a>
-        <div class= "well small"> 2016-05-21 15-14-04
+        <a href="/debug/subprocess_pipe.html"><h2>Python subprocess包中的父子进程沟通</h2></a>
+        <div class= "well small"> 2016-06-02 00-29-18
 
 by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
  
 
 
  </div>
-        <div class="summary"><ol>
-<li>Loggers will be stored in manager in Python. Handlers will cause resource leak if not removed.</li>
-</ol> <a class="btn btn-info xsmall" href="/debug/logger_in_python.html">read more</a></div>
+        <div class="summary"><p>Python subprocess包中父子进程如何沟通， 使用不当又会有什么后果。</p> <a class="btn btn-info xsmall" href="/debug/subprocess_pipe.html">read more</a></div>
     </div>	
 				
 
@@ -145,15 +122,15 @@ by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
  
 
     <div class='article'>
-        <a href="/misc/about.html"><h2>About Me</h2></a>
-        <div class= "well small"> 2016-05-13 00-15-33
+        <a href="/learning/2015-10-19-2.html"><h2>当我们在谈论异常时我们在谈论什么?</h2></a>
+        <div class= "well small"> 2016-05-28 13-54-36
 
 by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
  
 
 
  </div>
-        <div class="summary"> <a class="btn btn-info xsmall" href="/misc/about.html">read more</a></div>
+        <div class="summary"><p>异常是什么? 语言是如何实现它的?</p> <a class="btn btn-info xsmall" href="/learning/2015-10-19-2.html">read more</a></div>
     </div>	
 				
 
@@ -163,15 +140,15 @@ by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
  
 
     <div class='article'>
-        <a href="/think/What-do-the-top-1%-of-software-engineers-do-that-the-other-99%-do-not.html"><h2>What do the top 1% of software engineers do that the other 99% do not</h2></a>
-        <div class= "well small"> 2016-04-27 00-50-28
+        <a href="/tool/2015-10-20.html"><h2>Pip 无网络环境安装包</h2></a>
+        <div class= "well small"> 2016-05-28 13-54-36
 
 by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
  
 
 
  </div>
-        <div class="summary"><p>Reflect on the past working year by some measure on quora.</p> <a class="btn btn-info xsmall" href="/think/What-do-the-top-1%-of-software-engineers-do-that-the-other-99%-do-not.html">read more</a></div>
+        <div class="summary"><p>在内网环境部署 Python 包, 抽取依赖</p> <a class="btn btn-info xsmall" href="/tool/2015-10-20.html">read more</a></div>
     </div>	
 				
 
@@ -181,15 +158,15 @@ by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
  
 
     <div class='article'>
-        <a href="/learning/python-multiprocessing.html"><h2>Python multiprocessing WHY and HOW</h2></a>
-        <div class= "well small"> 2016-04-25 14-41-15
+        <a href="/talk/2015_all.html"><h2>2015年终总结</h2></a>
+        <div class= "well small"> 2016-05-28 13-54-36
 
 by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
  
 
 
  </div>
-        <div class="summary"><p>Some thinking and traps in refactor multithreading Python to multiprocessing.</p> <a class="btn btn-info xsmall" href="/learning/python-multiprocessing.html">read more</a></div>
+        <div class="summary"><p>记录和总结2015年的得与失</p> <a class="btn btn-info xsmall" href="/talk/2015_all.html">read more</a></div>
     </div>	
 				
 
@@ -199,17 +176,15 @@ by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
  
 
     <div class='article'>
-        <a href="/think/paxos.html"><h2>对 Paxos 的一些理解</h2></a>
-        <div class= "well small"> 2016-04-22 14-12-26
+        <a href="/learning/ArchitectureOfDatabaseSystem.html"><h2>notes of ArchitectureOfDatabaseSystem</h2></a>
+        <div class= "well small"> 2016-05-28 13-54-36
 
 by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
  
 
 
  </div>
-        <div class="summary"><ol>
-<li>prepare 阶段是干嘛的 1. 为什么比2pc 好 2. 什么时候持久化</li>
-</ol> <a class="btn btn-info xsmall" href="/think/paxos.html">read more</a></div>
+        <div class="summary"><p>reading notes of ArchitectureOfDatabaseSystem</p> <a class="btn btn-info xsmall" href="/learning/ArchitectureOfDatabaseSystem.html">read more</a></div>
     </div>	
 				
 
@@ -219,15 +194,15 @@ by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
  
 
     <div class='article'>
-        <a href="/learning/mysql_limit_1.html"><h2>MySQL 首行查询陷阱</h2></a>
-        <div class= "well small"> 2016-04-08 00-00-26
+        <a href="/nix/Change_caplocks.html"><h2>把Capslock重定向为Ctrl</h2></a>
+        <div class= "well small"> 2016-05-28 13-54-36
 
 by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
  
 
 
  </div>
-        <div class="summary"><p>分析 MySQL 首行查询出现的条件和原理</p> <a class="btn btn-info xsmall" href="/learning/mysql_limit_1.html">read more</a></div>
+        <div class="summary"><p>以前的脚本莫名其妙的在新系统上不能用了，换个好点的脚本</p> <a class="btn btn-info xsmall" href="/nix/Change_caplocks.html">read more</a></div>
     </div>	
 				
 
@@ -237,15 +212,16 @@ by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
  
 
     <div class='article'>
-        <a href="/debug/aop_proxy.html"><h2>Alter dataSource in Spring By AOP And Annotation</h2></a>
-        <div class= "well small"> 2016-04-06 20-42-11
+        <a href="/nix/Chrome_be_hijacked.html"><h2>Mac上遇到了一个Chrome和Safari被劫持的问题</h2></a>
+        <div class= "well small"> 2016-05-28 13-54-36
 
 by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
  
 
 
  </div>
-        <div class="summary"><p>About how to use AOP to alter dataSource. And something interesting about proxy in Spring framework.</p> <a class="btn btn-info xsmall" href="/debug/aop_proxy.html">read more</a></div>
+        <div class="summary"><p>大概是因为下载了恶意的软件, 导致Chrome和Safari打开各种网站都出现广告. 检查过DNS
+也更改过DNS, 无效. 目前没找到原因, 只能将就这用FireFox和Chromium, 这俩货没被劫持</p> <a class="btn btn-info xsmall" href="/nix/Chrome_be_hijacked.html">read more</a></div>
     </div>	
 				
 
@@ -255,15 +231,15 @@ by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
  
 
     <div class='article'>
-        <a href="/learning/react_route.html"><h2>hashHistory and browserHistory in React-Router</h2></a>
-        <div class= "well small"> 2016-03-17 23-09-38
+        <a href="/debug/Do-not-use-lob.html"><h2>Do not use LOB in Oracle(OLTP) -- record an optimization experience</h2></a>
+        <div class= "well small"> 2016-05-28 13-54-36
 
 by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
  
 
 
  </div>
-        <div class="summary"><p>something I met about hashHistory and browserHistory</p> <a class="btn btn-info xsmall" href="/learning/react_route.html">read more</a></div>
+        <div class="summary"><p>LOB in Oracle and cx_Oracle</p> <a class="btn btn-info xsmall" href="/debug/Do-not-use-lob.html">read more</a></div>
     </div>	
 				
 
@@ -273,15 +249,23 @@ by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
  
 
     <div class='article'>
-        <a href="/think/alipay-lottery.html"><h2>Why Alipay lottery failed</h2></a>
-        <div class= "well small"> 2016-02-08 02-13-37
+        <a href="/nix/Pelican.html"><h2>Pelican上增加评论和自动删除文章的一些坑</h2></a>
+        <div class= "well small"> 2016-05-28 13-54-36
 
 by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
  
 
 
  </div>
-        <div class="summary"><p>some naive thinking about why alipay failed to get applause in 2016 CCTV Spring Festival Gala</p> <a class="btn btn-info xsmall" href="/think/alipay-lottery.html">read more</a></div>
+        <div class="summary"><h3>增加评论功能</h3>
+<p>这个网上有很多描述，主要是去disqus注册下，然后设置下配置文件<a href="http://querbalken.net/howto-setup-comments-with-disqus-in-pelican-en.html">example</a>坑主要在于Pelican的默认主题是没有disqus的模板的，所以虽然看到了对disqus的请求，却看不到评论区。需要自己下个比较全的主题。</p>
+<h3>自动删除文件</h3>
+<p>在content里删除了md文件，重新<code>make html</code>后在output中依然会看到那个md文件生成的html文件。</p>
+<p>一个方法是加入配置<code>DELETE_OUTPUT_DIRECTORY = True</code>来每次清空output，但是这带来了两个问题:</p>
+<ul>
+<li>自动日期没了 目前无法解决</li>
+<li>版本控制没了，可以通过加入<code>OUTPUT_RETENTION = [".hg", ".git", ".bzr"]</code>来解决</li>
+</ul> <a class="btn btn-info xsmall" href="/nix/Pelican.html">read more</a></div>
     </div>	
 				
 <div class="pagination">

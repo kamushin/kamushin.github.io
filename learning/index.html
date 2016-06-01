@@ -59,8 +59,8 @@
 
     <div class='article'>
         <div class="content-title">
-            <a href="/learning/python-multiprocessing.html"><h1>Python multiprocessing WHY and HOW</h1></a>
-2016-04-25 14-41-15
+            <a href="/learning/mysql_autoinc.html"><h1>MySQL auto_increment 的坑</h1></a>
+2016-06-02 00-40-14
 
 by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
  
@@ -69,59 +69,31 @@ by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
  
         </div>
         
-        <div><p>I am working on a Python script which will migrate data from one database to another. In a simple way, I need <code>select</code> from a database and then <code>insert</code> into another.<br />
-In the first version, I designed to use multithreading, just because I am more familiar with it than multiprocessing. But after fewer month, I found several problems in my workaround.  </p>
+        <div><h3>Auto-Increment</h3>
 <ul>
-<li>can only use one of 24 cpus in case of GIL</li>
-<li>can not handle singal for each thread. I want to use a simple <code>timeout</code> decarator, to set a <code>signal.SIGALRM</code> for a specified function. But for multithreading, the signal will get caught by a random thread.</li>
+<li>内存中有一个计数器auto-increment counter来记录行值。在服务器启动后的第一个sql进来的时候，这个计数器被初始化select max(col) from t for update.如果表是空的，就用1开始，这个值也是可以设定的。</li>
+<li>如果在计数器被初始化前， SHOW TABLE STATUS，那么计数器会被初始化，这个语句所在的事务持有独占锁，直到事务结束。</li>
+<li>插入的时候，如果值大于当前最大值+步长，那么counter也跟着跳变。</li>
+<li>如果值是NULL或者0，那么会被置为最大值+步长 </li>
+<li>如果值是负或者大于整数范围，未定义行为</li>
+<li>Auto-Increment Locking是表锁，但是在语句结束的时候释放，而不是事务结束。</li>
+<li>A server restart also cancels the effect of the AUTO_INCREMENT = N table option in CREATE TABLE and ALTER TABLE statements, which you can use with InnoDB tables to set the initial counter value or alter the current counter value.</li>
+<li>因为是语句锁，所以rollback后，是会产生gap的</li>
 </ul>
-<p>So I start to refactor to multiprocessing.</p>
-<h3>multiprocessing</h3>
-<blockquote>
-<p>multiprocessing is a package that supports spawning processes using an API similar to the threading module. </p>
-</blockquote>
-<p>But it's not so elegant and sweet as it described.</p>
-<h4>multiprocessing.pool</h4>
-<div class="highlight"><pre><span class="kn">from</span> <span class="nn">multiprocessing</span> <span class="kn">import</span> <span class="n">Pool</span>
-
-<span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">x</span><span class="o">*</span><span class="n">x</span>
-
-<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span><span class="p">:</span>
-    <span class="n">p</span> <span class="o">=</span> <span class="n">Pool</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
-    <span class="k">print</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">func</span><span class="o">=</span><span class="n">f</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]))</span>
-</pre></div>
-
-
-<p>It looks like a good solution, but we can not set a <code>bound function</code> as a target <code>func</code>. Because <code>bound function</code> can not be serialized in <code>pickle</code>. And <code>multithreading.pool</code> use pickle to serialize object and send to new processes.
-<code>pathos.multiprocessing</code> is a good instead. It uses <code>dill</code> as an instead of <code>pickle</code> to give better serialization.</p>
-<h4>share memory</h4>
-<p>Memory in multithreading is shared naturally. In a multiprocessing environment, there are some wrappers to wrap a sharing object.</p>
+<h3>Configurable InnoDB Auto-Increment Locking</h3>
+<p>表级锁可以保证顺序性，但是并发性能差。所以加入优化，如果当前insert数量可预测，而且也没用别的语句持有Auto-Increment Locking表锁，那么这个insert不会持有表锁，而是在语句结束的时候，持mutex来修改counter。</p>
 <ul>
-<li><code>multiprocessing.Value</code> and <code>multiprocessing.Array</code> is the most simple way to share Objects between two processes. But it can only contain <code>ctype</code> Objects.</li>
-<li><code>multiprocessing.Queue</code> is very useful and use an API similar to <code>Queue.Queue</code></li>
+<li><code>innodb_autoinc_lock_mode = 0</code> 全部用传统的表锁</li>
+<li><code>innodb_autoinc_lock_mode = 1</code> 简单插入用mutex，但是如果当前已经有语句持有表锁，那简单插入也得等着了。对于语句级别的复制是安全的。</li>
+<li><code>innodb_autoinc_lock_mode = 2</code>  所有语句都用mutex。会导致交叉增加。</li>
 </ul>
-<h4>Python and GCC version</h4>
-<p>I didn't know that even the <code>GCC</code> version will affect behavior of my code. On my centos5 os, same Python version with different <code>GCC</code> version will have different behaviors.</p>
-<div class="highlight"><pre><span class="n">Python</span> <span class="mf">2.7</span><span class="o">.</span><span class="mi">2</span> <span class="p">(</span><span class="n">default</span><span class="p">,</span> <span class="n">Jan</span> <span class="mi">10</span> <span class="mi">2012</span><span class="p">,</span> <span class="mi">11</span><span class="p">:</span><span class="mi">17</span><span class="p">:</span><span class="mi">45</span><span class="p">)</span>
-<span class="p">[</span><span class="n">GCC</span> <span class="mf">3.4</span><span class="o">.</span><span class="mi">6</span> <span class="mi">20060404</span> <span class="p">(</span><span class="n">Red</span> <span class="n">Hat</span> <span class="mf">3.4</span><span class="o">.</span><span class="mi">6</span><span class="o">-</span><span class="mi">11</span><span class="p">)]</span> <span class="n">on</span> <span class="n">linux2</span>
-<span class="n">Type</span> <span class="s">&quot;help&quot;</span><span class="p">,</span> <span class="s">&quot;copyright&quot;</span><span class="p">,</span> <span class="s">&quot;credits&quot;</span> <span class="ow">or</span> <span class="s">&quot;license&quot;</span> <span class="k">for</span> <span class="n">more</span> <span class="n">information</span><span class="o">.</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">multiprocessing.queues</span> <span class="kn">import</span> <span class="n">JoinableQueue</span>
-<span class="n">Traceback</span> <span class="p">(</span><span class="n">most</span> <span class="n">recent</span> <span class="n">call</span> <span class="n">last</span><span class="p">):</span>
-  <span class="n">File</span> <span class="s">&quot;&lt;stdin&gt;&quot;</span><span class="p">,</span> <span class="n">line</span> <span class="mi">1</span><span class="p">,</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
-  <span class="n">File</span> <span class="s">&quot;/home/oracle/dbapython/lib/python2.7/multiprocessing/queues.py&quot;</span><span class="p">,</span> <span class="n">line</span> <span class="mi">48</span><span class="p">,</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
-    <span class="kn">from</span> <span class="nn">multiprocessing.synchronize</span> <span class="kn">import</span> <span class="n">Lock</span><span class="p">,</span> <span class="n">BoundedSemaphore</span><span class="p">,</span> <span class="n">Semaphore</span><span class="p">,</span> <span class="n">Condition</span>
-  <span class="n">File</span> <span class="s">&quot;/home/oracle/dbapython/lib/python2.7/multiprocessing/synchronize.py&quot;</span><span class="p">,</span> <span class="n">line</span> <span class="mi">59</span><span class="p">,</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
-    <span class="s">&quot; function, see issue 3770.&quot;</span><span class="p">)</span>
-<span class="ne">ImportError</span><span class="p">:</span> <span class="n">This</span> <span class="n">platform</span> <span class="n">lacks</span> <span class="n">a</span> <span class="n">functioning</span> <span class="n">sem_open</span> <span class="n">implementation</span><span class="p">,</span> <span class="n">therefore</span><span class="p">,</span> <span class="n">the</span> <span class="n">required</span> <span class="n">synchronization</span> <span class="n">primitives</span> <span class="n">needed</span> <span class="n">will</span> <span class="ow">not</span> <span class="n">function</span><span class="p">,</span> <span class="n">see</span> <span class="n">issue</span> <span class="mf">3770.</span>
-
-
-<span class="n">Python</span> <span class="mf">2.7</span><span class="o">.</span><span class="mi">2</span> <span class="p">(</span><span class="n">default</span><span class="p">,</span> <span class="n">Oct</span> <span class="mi">15</span> <span class="mi">2013</span><span class="p">,</span> <span class="mi">13</span><span class="p">:</span><span class="mi">15</span><span class="p">:</span><span class="mi">26</span><span class="p">)</span>
-<span class="p">[</span><span class="n">GCC</span> <span class="mf">4.1</span><span class="o">.</span><span class="mi">2</span> <span class="mi">20080704</span> <span class="p">(</span><span class="n">Red</span> <span class="n">Hat</span> <span class="mf">4.1</span><span class="o">.</span><span class="mi">2</span><span class="o">-</span><span class="mi">46</span><span class="p">)]</span> <span class="n">on</span> <span class="n">linux2</span>
-<span class="n">Type</span> <span class="s">&quot;help&quot;</span><span class="p">,</span> <span class="s">&quot;copyright&quot;</span><span class="p">,</span> <span class="s">&quot;credits&quot;</span> <span class="ow">or</span> <span class="s">&quot;license&quot;</span> <span class="k">for</span> <span class="n">more</span> <span class="n">information</span><span class="o">.</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">multiprocessing.queues</span> <span class="kn">import</span> <span class="n">JoinableQueue</span>
-<span class="o">&gt;&gt;&gt;</span>
-</pre></div></div>
+<p>对于这个参数的设定，考虑到主备同步，还要和主备复制的参数一起考虑
+- 对于语句级别的复制，开 <code>innodb_autoinc_lock_mode=2</code> 会导致主备不一致。
+- row级别的复制，则不要紧。 
+- 对于mixed来说1，2模式下，计数器简单的增加插入数量，不管有多少是特殊值。</p>
+<p>简单插入，simple insert指的是mysql可以自己判断出插入条数的sql，其他为bulk insert。<br />
+故障就是因为开了1，一个insert select这种bulk insert，导致持有表锁。<br />
+以上</p></div>
         <hr />
     </div>
 		
@@ -132,33 +104,15 @@ In the first version, I designed to use multithreading, just because I am more f
  
 
     <div class='article'>
-        <a href="/learning/mysql_limit_1.html"><h2>MySQL 首行查询陷阱</h2></a>
-        <div class= "well small"> 2016-04-08 00-00-26
+        <a href="/learning/2015-10-19-2.html"><h2>当我们在谈论异常时我们在谈论什么?</h2></a>
+        <div class= "well small"> 2016-05-28 13-54-36
 
 by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
  
 
 
  </div>
-        <div class="summary"><p>分析 MySQL 首行查询出现的条件和原理</p> <a class="btn btn-info xsmall" href="/learning/mysql_limit_1.html">read more</a></div>
-    </div>	
-				
-
- 
-        
-
- 
-
-    <div class='article'>
-        <a href="/learning/react_route.html"><h2>hashHistory and browserHistory in React-Router</h2></a>
-        <div class= "well small"> 2016-03-17 23-09-38
-
-by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
- 
-
-
- </div>
-        <div class="summary"><p>something I met about hashHistory and browserHistory</p> <a class="btn btn-info xsmall" href="/learning/react_route.html">read more</a></div>
+        <div class="summary"><p>异常是什么? 语言是如何实现它的?</p> <a class="btn btn-info xsmall" href="/learning/2015-10-19-2.html">read more</a></div>
     </div>	
 				
 
@@ -169,7 +123,7 @@ by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
 
     <div class='article'>
         <a href="/learning/ArchitectureOfDatabaseSystem.html"><h2>notes of ArchitectureOfDatabaseSystem</h2></a>
-        <div class= "well small"> 2016-02-07 00-40-21
+        <div class= "well small"> 2016-05-28 13-54-36
 
 by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
  
@@ -186,44 +140,8 @@ by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
  
 
     <div class='article'>
-        <a href="/learning/coroutine_in_Python_and_Js.html"><h2>coroutine in Python Tornado and NodeJs</h2></a>
-        <div class= "well small"> 2015-12-30 15-39-07
-
-by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
- 
-
-
- </div>
-        <div class="summary"><p>source code read</p> <a class="btn btn-info xsmall" href="/learning/coroutine_in_Python_and_Js.html">read more</a></div>
-    </div>	
-				
-
- 
-        
-
- 
-
-    <div class='article'>
-        <a href="/learning/python_pro_zh_cn.html"><h2>Python开发经验--从问题入手</h2></a>
-        <div class= "well small"> 2015-12-23 10-49-26
-
-by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
- 
-
-
- </div>
-        <div class="summary"><p>从一系列实际问题出发, 谈 Python 的一些使用知识</p> <a class="btn btn-info xsmall" href="/learning/python_pro_zh_cn.html">read more</a></div>
-    </div>	
-				
-
- 
-        
-
- 
-
-    <div class='article'>
         <a href="/learning/compare_assert_exception.html"><h2>Compare assert exception in should(JavaScript) and unittest(Python)</h2></a>
-        <div class= "well small"> 2015-12-22 15-16-23
+        <div class= "well small"> 2016-05-28 13-54-36
 
 by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
  
@@ -240,15 +158,15 @@ by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
  
 
     <div class='article'>
-        <a href="/learning/python_pro.html"><h2>Write Python like a Pro</h2></a>
-        <div class= "well small"> 2015-12-21 17-26-57
+        <a href="/learning/coroutine_in_Python_and_Js.html"><h2>coroutine in Python Tornado and NodeJs</h2></a>
+        <div class= "well small"> 2016-05-28 13-54-36
 
 by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
  
 
 
  </div>
-        <div class="summary"><p>Something I know about how to write Python code</p> <a class="btn btn-info xsmall" href="/learning/python_pro.html">read more</a></div>
+        <div class="summary"><p>source code read</p> <a class="btn btn-info xsmall" href="/learning/coroutine_in_Python_and_Js.html">read more</a></div>
     </div>	
 				
 
@@ -259,7 +177,7 @@ by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
 
     <div class='article'>
         <a href="/learning/java-arrayList.html"><h2>Difference between ArrayList and Arrays.asList() in Java</h2></a>
-        <div class= "well small"> 2015-12-01 14-17-02
+        <div class= "well small"> 2016-05-28 13-54-36
 
 by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
  
@@ -276,8 +194,62 @@ by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
  
 
     <div class='article'>
+        <a href="/learning/mysql_limit_1.html"><h2>MySQL 首行查询陷阱</h2></a>
+        <div class= "well small"> 2016-05-28 13-54-36
+
+by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
+ 
+
+
+ </div>
+        <div class="summary"><p>分析 MySQL 首行查询出现的条件和原理</p> <a class="btn btn-info xsmall" href="/learning/mysql_limit_1.html">read more</a></div>
+    </div>	
+				
+
+ 
+        
+
+ 
+
+    <div class='article'>
+        <a href="/learning/mysql_opti.html"><h2>MySQL 优化学习之路</h2></a>
+        <div class= "well small"> 2016-05-28 13-54-36
+
+by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
+ 
+
+
+ </div>
+        <div class="summary"><p>阅读MySQL文档, 总结优化经验</p> <a class="btn btn-info xsmall" href="/learning/mysql_opti.html">read more</a></div>
+    </div>	
+				
+
+ 
+        
+
+ 
+
+    <div class='article'>
+        <a href="/learning/python-multiprocessing.html"><h2>Python multiprocessing WHY and HOW</h2></a>
+        <div class= "well small"> 2016-05-28 13-54-36
+
+by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
+ 
+
+
+ </div>
+        <div class="summary"><p>Some thinking and traps in refactor multithreading Python to multiprocessing.</p> <a class="btn btn-info xsmall" href="/learning/python-multiprocessing.html">read more</a></div>
+    </div>	
+				
+
+ 
+        
+
+ 
+
+    <div class='article'>
         <a href="/learning/python_oracle.html"><h2>Some tricks when using cx_Oracle</h2></a>
-        <div class= "well small"> 2015-11-27 16-01-57
+        <div class= "well small"> 2016-05-28 13-54-36
 
 by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
  
