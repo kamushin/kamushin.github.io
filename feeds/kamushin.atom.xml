@@ -1,5 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Kamushin's blog</title><link href="/" rel="alternate"></link><link href="/feeds/kamushin.atom.xml" rel="self"></link><id>/</id><updated>2016-06-02T01:19:24+08:00</updated><entry><title>Python subprocess包中的父子进程沟通</title><link href="/debug/subprocess_pipe.html" rel="alternate"></link><updated>2016-06-02T01:19:24+08:00</updated><author><name>Kamushin</name></author><id>tag:,2016-06-02:debug/subprocess_pipe.html</id><summary type="html">&lt;h3&gt;前言&lt;/h3&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Kamushin's blog</title><link href="/" rel="alternate"></link><link href="/feeds/kamushin.atom.xml" rel="self"></link><id>/</id><updated>2016-07-26T16:02:25+08:00</updated><entry><title>记一次网络问题的排查</title><link href="/debug/dnat_debug.html" rel="alternate"></link><updated>2016-07-26T16:02:25+08:00</updated><author><name>Kamushin</name></author><id>tag:,2016-07-26:debug/dnat_debug.html</id><summary type="html">&lt;p&gt;昨天遇到了一个端口转发导致VIP失效的问题，今天记录下当时的排查思路。  &lt;/p&gt;
+&lt;p&gt;因为要做升级，所以我删除了dokcer老容器，并启动新容器。之后访问VIP, 也就是LVS中的VIP，发现原先可以访问的站点不能访问了。  &lt;/p&gt;
+&lt;p&gt;以上是故障表现，下面是具体排查过程  &lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;docker logs containerId&lt;/code&gt; 检查docker 中的应用是成功启动的，排除应用无法启动的问题&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;curl localhost:80&lt;/code&gt; 因为容器是以&lt;code&gt;-p 80:80&lt;/code&gt;的方式启动的，所以接下来我尝试在物理机上访问自己的80端口，发现可以成功访问应用，排除了&lt;code&gt;forward&lt;/code&gt;没设置的问题&lt;/li&gt;
+&lt;li&gt;接下来，我祭出了瑞士军刀&lt;code&gt;nc -l 80&lt;/code&gt;, 然后在外部以VIP的方式访问，发现无法访问。 这时候怀疑是 &lt;code&gt;iptables&lt;/code&gt; 的问题&lt;/li&gt;
+&lt;li&gt;先做下备份，&lt;code&gt;service iptables save&lt;/code&gt;, 然后关掉&lt;code&gt;service iptables stop&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;再起&lt;code&gt;nc -l 80&lt;/code&gt;, 发现很快nc进程就结束了，&lt;code&gt;trace nc -l 80&lt;/code&gt; 找出来源包IP，发现是&lt;code&gt;LVS&lt;/code&gt;的心跳包。至此VIP恢复访问&lt;/li&gt;
+&lt;li&gt;接下来就是要找iptables里谁在搞鬼了。&lt;code&gt;iptables -L&lt;/code&gt;, 因为怀疑是docker在搞鬼，所以把展示出和docker有关的都删了，但是问题没有解决&lt;/li&gt;
+&lt;li&gt;上面我犯了一个错误，那就是以为&lt;code&gt;iptables -L&lt;/code&gt;展示的是所有的规则，但其实只展示了&lt;code&gt;filter&lt;/code&gt;, 和转发有关的nat需要&lt;code&gt;iptables -t nat -L&lt;/code&gt;来展示&lt;/li&gt;
+&lt;li&gt;把&lt;code&gt;iptables -t nat -L&lt;/code&gt;中和docker有关的删掉。问题解决。问题原因是docker删除容器后没有把转发规则删除。&lt;/li&gt;
+&lt;li&gt;又重现了下这个问题，应该是docker的问题，删除实例没有把转发规则和proxy干掉。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;这次排查，用到了几个工具，都是之前的积累，所以排查显得顺畅多了。主要时间花在了对iptables的不熟悉。&lt;/p&gt;</summary><category term="network"></category></entry><entry><title>Python subprocess包中的父子进程沟通</title><link href="/debug/subprocess_pipe.html" rel="alternate"></link><updated>2016-06-02T01:19:24+08:00</updated><author><name>Kamushin</name></author><id>tag:,2016-06-02:debug/subprocess_pipe.html</id><summary type="html">&lt;h3&gt;前言&lt;/h3&gt;
 &lt;p&gt;前段时间是5.27蚂蚁技术日，听了康朵分享的关于创新的一些特质，记录一下，权且是自勉。  &lt;/p&gt;
 &lt;p&gt;创新需要以下几点能力：&lt;/p&gt;
 &lt;ul&gt;

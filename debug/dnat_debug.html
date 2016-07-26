@@ -52,23 +52,17 @@
     <div class="row">
 
         <div class="span9">
-        
-
-        
-
-
     <div class='article'>
         <div class="content-title">
-            <a href="/debug/dnat_debug.html"><h1>记一次网络问题的排查</h1></a>
+            <h1>记一次网络问题的排查</h1>
 2016-07-26 16-02-25
 
 by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
  
 
 
- 
         </div>
-        
+	
         <div><p>昨天遇到了一个端口转发导致VIP失效的问题，今天记录下当时的排查思路。  </p>
 <p>因为要做升级，所以我删除了dokcer老容器，并启动新容器。之后访问VIP, 也就是LVS中的VIP，发现原先可以访问的站点不能访问了。  </p>
 <p>以上是故障表现，下面是具体排查过程  </p>
@@ -84,190 +78,23 @@ by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
 <li>又重现了下这个问题，应该是docker的问题，删除实例没有把转发规则和proxy干掉。</li>
 </ul>
 <p>这次排查，用到了几个工具，都是之前的积累，所以排查显得顺畅多了。主要时间花在了对iptables的不熟悉。</p></div>
-        <hr />
+	
+        <hr>
+
+        <h2>Comments</h2>
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'kamushin'; 
+    var disqus_title = '记一次网络问题的排查';
+
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
     </div>
-		
-
- 
-        
-
- 
-
-    <div class='article'>
-        <a href="/debug/subprocess_pipe.html"><h2>Python subprocess包中的父子进程沟通</h2></a>
-        <div class= "well small"> 2016-06-02 01-19-24
-
-by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
- 
-
-
- </div>
-        <div class="summary"><p>Python subprocess包中父子进程如何沟通， 使用不当又会有什么后果。</p> <a class="btn btn-info xsmall" href="/debug/subprocess_pipe.html">read more</a></div>
-    </div>	
-				
-
- 
-        
-
- 
-
-    <div class='article'>
-        <a href="/learning/mysql_autoinc.html"><h2>MySQL auto_increment 的坑</h2></a>
-        <div class= "well small"> 2016-06-02 00-40-14
-
-by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
- 
-
-
- </div>
-        <div class="summary"><p>这破玩意去年8月就出过故障，今年又出了，贴下去年8月我总结的东西吧，没有干货，完全是mysql文档对应的一些总结</p> <a class="btn btn-info xsmall" href="/learning/mysql_autoinc.html">read more</a></div>
-    </div>	
-				
-
- 
-        
-
- 
-
-    <div class='article'>
-        <a href="/debug/python.html"><h2>Python 调试方法</h2></a>
-        <div class= "well small"> 2016-05-21 15-45-00
-
-by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
- 
-
-
- </div>
-        <div class="summary"><p>在解决一个线上程序 hang 住的过程中, 研究了几种 Python 调试方法, 总结下各自的优缺点.</p> <a class="btn btn-info xsmall" href="/debug/python.html">read more</a></div>
-    </div>	
-				
-
- 
-        
-
- 
-
-    <div class='article'>
-        <a href="/debug/logger_in_python.html"><h2>Loggers in Python</h2></a>
-        <div class= "well small"> 2016-05-21 15-14-04
-
-by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
- 
-
-
- </div>
-        <div class="summary"><ol>
-<li>Loggers will be stored in manager in Python. Handlers will cause resource leak if not removed.</li>
-</ol> <a class="btn btn-info xsmall" href="/debug/logger_in_python.html">read more</a></div>
-    </div>	
-				
-
- 
-        
-
- 
-
-    <div class='article'>
-        <a href="/misc/about.html"><h2>About Me</h2></a>
-        <div class= "well small"> 2016-05-13 00-15-33
-
-by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
- 
-
-
- </div>
-        <div class="summary"> <a class="btn btn-info xsmall" href="/misc/about.html">read more</a></div>
-    </div>	
-				
-
- 
-        
-
- 
-
-    <div class='article'>
-        <a href="/think/What-do-the-top-1%-of-software-engineers-do-that-the-other-99%-do-not.html"><h2>What do the top 1% of software engineers do that the other 99% do not</h2></a>
-        <div class= "well small"> 2016-04-27 00-50-28
-
-by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
- 
-
-
- </div>
-        <div class="summary"><p>Reflect on the past working year by some measure on quora.</p> <a class="btn btn-info xsmall" href="/think/What-do-the-top-1%-of-software-engineers-do-that-the-other-99%-do-not.html">read more</a></div>
-    </div>	
-				
-
- 
-        
-
- 
-
-    <div class='article'>
-        <a href="/learning/python-multiprocessing.html"><h2>Python multiprocessing WHY and HOW</h2></a>
-        <div class= "well small"> 2016-04-25 14-41-15
-
-by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
- 
-
-
- </div>
-        <div class="summary"><p>Some thinking and traps in refactor multithreading Python to multiprocessing.</p> <a class="btn btn-info xsmall" href="/learning/python-multiprocessing.html">read more</a></div>
-    </div>	
-				
-
- 
-        
-
- 
-
-    <div class='article'>
-        <a href="/think/paxos.html"><h2>对 Paxos 的一些理解</h2></a>
-        <div class= "well small"> 2016-04-22 14-12-26
-
-by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
- 
-
-
- </div>
-        <div class="summary"><ol>
-<li>prepare 阶段是干嘛的 1. 为什么比2pc 好 2. 什么时候持久化</li>
-</ol> <a class="btn btn-info xsmall" href="/think/paxos.html">read more</a></div>
-    </div>	
-				
-
- 
-        
-
- 
-
-    <div class='article'>
-        <a href="/learning/mysql_limit_1.html"><h2>MySQL 首行查询陷阱</h2></a>
-        <div class= "well small"> 2016-04-08 00-00-26
-
-by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
- 
-
-
- </div>
-        <div class="summary"><p>分析 MySQL 首行查询出现的条件和原理</p> <a class="btn btn-info xsmall" href="/learning/mysql_limit_1.html">read more</a></div>
-    </div>	
-				
-<div class="pagination">
-<ul>
-    <li class="prev disabled"><a href="#">&larr; Previous</a></li>
-
-    <li class="active"><a href="/author/kamushin.html">1</a></li>
-    <li class=""><a href="/author/kamushin2.html">2</a></li>
-    <li class=""><a href="/author/kamushin3.html">3</a></li>
-    <li class=""><a href="/author/kamushin4.html">4</a></li>
-
-    <li class="next"><a href="/author/kamushin2.html">Next &rarr;</a></li>
-
-</ul>
-</div>
- 
-  
         </div>
         
         <div class="span3">
