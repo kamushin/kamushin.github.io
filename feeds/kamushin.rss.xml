@@ -1,5 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Kamushin's blog</title><link>/</link><description></description><atom:link href="/feeds/kamushin.rss.xml" rel="self"></atom:link><lastBuildDate>Tue, 26 Jul 2016 16:02:25 +0800</lastBuildDate><item><title>记一次网络问题的排查</title><link>/debug/dnat_debug.html</link><description>&lt;p&gt;昨天遇到了一个端口转发导致VIP失效的问题，今天记录下当时的排查思路。  &lt;/p&gt;
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Kamushin's blog</title><link>/</link><description></description><atom:link href="/feeds/kamushin.rss.xml" rel="self"></atom:link><lastBuildDate>Thu, 28 Jul 2016 20:21:40 +0800</lastBuildDate><item><title>搭建一个jupyter站点做数据分析吧</title><link>/learning/jupyter.html</link><description>&lt;h3&gt;jupyter&lt;/h3&gt;
+&lt;p&gt;&lt;code&gt;jupyter&lt;/code&gt; 是一个非常适合做数据分析的工作台。为了可以使得&lt;code&gt;jupyter&lt;/code&gt;可以运行在服务器上访问生产环境的数据，今天我要在服务器上搭建一个&lt;code&gt;jupyter&lt;/code&gt;站点。&lt;/p&gt;
+&lt;h3&gt;容器&lt;/h3&gt;
+&lt;p&gt;为了不和线上的其他应用起冲突，我决定把它装在一个docker中。
+这里没有踩到什么坑。&lt;/p&gt;
+&lt;h3&gt;Nginx&lt;/h3&gt;
+&lt;p&gt;为了提供可靠的域名转发服务，我会用Nginx根据域名转发到docker上绑定的Port。&lt;br /&gt;
+这里有个细节需要注意，因为&lt;code&gt;jupyter&lt;/code&gt;用到了&lt;code&gt;websocket&lt;/code&gt;技术，所以在nginx的配置上略有不同。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;        &lt;span class="nt"&gt;location&lt;/span&gt; &lt;span class="o"&gt;~*&lt;/span&gt; &lt;span class="o"&gt;/(&lt;/span&gt;&lt;span class="nt"&gt;api&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="nt"&gt;kernels&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="cp"&gt;[&lt;/span&gt;&lt;span class="p"&gt;^&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="cp"&gt;]&lt;/span&gt;&lt;span class="o"&gt;+/(&lt;/span&gt;&lt;span class="nt"&gt;channels&lt;/span&gt;&lt;span class="o"&gt;|&lt;/span&gt;&lt;span class="nt"&gt;iopub&lt;/span&gt;&lt;span class="o"&gt;|&lt;/span&gt;&lt;span class="nt"&gt;shell&lt;/span&gt;&lt;span class="o"&gt;|&lt;/span&gt;&lt;span class="nt"&gt;stdin&lt;/span&gt;&lt;span class="o"&gt;)|&lt;/span&gt;&lt;span class="nt"&gt;terminals&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="nt"&gt;websocket&lt;/span&gt;&lt;span class="o"&gt;)/?&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+            &lt;span class="n"&gt;proxy_pass&lt;/span&gt; &lt;span class="n"&gt;http&lt;/span&gt;&lt;span class="o"&gt;://&lt;/span&gt;&lt;span class="m"&gt;127&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;&lt;span class="m"&gt;8003&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+
+            &lt;span class="n"&gt;proxy_set_header&lt;/span&gt; &lt;span class="n"&gt;X&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;Real&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;IP&lt;/span&gt; &lt;span class="err"&gt;$&lt;/span&gt;&lt;span class="n"&gt;remote_addr&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+            &lt;span class="n"&gt;proxy_set_header&lt;/span&gt; &lt;span class="n"&gt;Host&lt;/span&gt; &lt;span class="err"&gt;$&lt;/span&gt;&lt;span class="n"&gt;host&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+            &lt;span class="n"&gt;proxy_set_header&lt;/span&gt; &lt;span class="n"&gt;X&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;Forwarded&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;For&lt;/span&gt; &lt;span class="err"&gt;$&lt;/span&gt;&lt;span class="n"&gt;proxy_add_x_forwarded_for&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+            &lt;span class="err"&gt;#&lt;/span&gt; &lt;span class="n"&gt;WebSocket&lt;/span&gt; &lt;span class="n"&gt;support&lt;/span&gt;
+            &lt;span class="n"&gt;proxy_http_version&lt;/span&gt; &lt;span class="m"&gt;1&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+            &lt;span class="n"&gt;proxy_set_header&lt;/span&gt; &lt;span class="n"&gt;Upgrade&lt;/span&gt; &lt;span class="err"&gt;$&lt;/span&gt;&lt;span class="n"&gt;http_upgrade&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+            &lt;span class="n"&gt;proxy_set_header&lt;/span&gt; &lt;span class="n"&gt;Connection&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;upgrade&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+
+        &lt;span class="p"&gt;}&lt;/span&gt;
+
+        &lt;span class="err"&gt;#&lt;/span&gt; &lt;span class="err"&gt;对于满足以上格式的请求，是一个&lt;/span&gt;&lt;span class="nt"&gt;ws&lt;/span&gt;&lt;span class="err"&gt;请求，需要加上最后&lt;/span&gt;&lt;span class="nt"&gt;3&lt;/span&gt;&lt;span class="err"&gt;行。&lt;/span&gt;
+        &lt;span class="err"&gt;#&lt;/span&gt; &lt;span class="err"&gt;另外，至少需要&lt;/span&gt; &lt;span class="nt"&gt;nginx&lt;/span&gt; &lt;span class="nt"&gt;1&lt;/span&gt;&lt;span class="nc"&gt;.1.4&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h3&gt;安全&lt;/h3&gt;
+&lt;p&gt;我们当然不能让谁都能访问我们的工作台啦，果断加上密码 参考http://jupyter-notebook.readthedocs.io/en/latest/public_server.html&lt;/p&gt;
+&lt;h3&gt;愉快的开始数据分析吧&lt;/h3&gt;
+&lt;p&gt;装上&lt;code&gt;pandas&lt;/code&gt;, &lt;code&gt;matplotlib&lt;/code&gt; 愉快的开始数据分析吧。&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Kamushin</dc:creator><pubDate>Thu, 28 Jul 2016 20:21:40 +0800</pubDate><guid>tag:,2016-07-28:learning/jupyter.html</guid><category>jupyter</category></item><item><title>记一次网络问题的排查</title><link>/debug/dnat_debug.html</link><description>&lt;p&gt;昨天遇到了一个端口转发导致VIP失效的问题，今天记录下当时的排查思路。  &lt;/p&gt;
 &lt;p&gt;因为要做升级，所以我删除了dokcer老容器，并启动新容器。之后访问VIP, 也就是LVS中的VIP，发现原先可以访问的站点不能访问了。  &lt;/p&gt;
 &lt;p&gt;以上是故障表现，下面是具体排查过程  &lt;/p&gt;
 &lt;ul&gt;

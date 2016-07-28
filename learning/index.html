@@ -59,8 +59,8 @@
 
     <div class='article'>
         <div class="content-title">
-            <a href="/learning/mysql_autoinc.html"><h1>MySQL auto_increment 的坑</h1></a>
-2016-06-02 00-40-14
+            <a href="/learning/jupyter.html"><h1>搭建一个jupyter站点做数据分析吧</h1></a>
+2016-07-28 20-21-40
 
 by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
  
@@ -69,34 +69,57 @@ by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
  
         </div>
         
-        <div><h3>Auto-Increment</h3>
-<ul>
-<li>内存中有一个计数器auto-increment counter来记录行值。在服务器启动后的第一个sql进来的时候，这个计数器被初始化select max(col) from t for update.如果表是空的，就用1开始，这个值也是可以设定的。</li>
-<li>如果在计数器被初始化前， SHOW TABLE STATUS，那么计数器会被初始化，这个语句所在的事务持有独占锁，直到事务结束。</li>
-<li>插入的时候，如果值大于当前最大值+步长，那么counter也跟着跳变。</li>
-<li>如果值是NULL或者0，那么会被置为最大值+步长 </li>
-<li>如果值是负或者大于整数范围，未定义行为</li>
-<li>Auto-Increment Locking是表锁，但是在语句结束的时候释放，而不是事务结束。</li>
-<li>A server restart also cancels the effect of the AUTO_INCREMENT = N table option in CREATE TABLE and ALTER TABLE statements, which you can use with InnoDB tables to set the initial counter value or alter the current counter value.</li>
-<li>因为是语句锁，所以rollback后，是会产生gap的</li>
-</ul>
-<h3>Configurable InnoDB Auto-Increment Locking</h3>
-<p>表级锁可以保证顺序性，但是并发性能差。所以加入优化，如果当前insert数量可预测，而且也没用别的语句持有Auto-Increment Locking表锁，那么这个insert不会持有表锁，而是在语句结束的时候，持mutex来修改counter。</p>
-<ul>
-<li><code>innodb_autoinc_lock_mode = 0</code> 全部用传统的表锁</li>
-<li><code>innodb_autoinc_lock_mode = 1</code> 简单插入用mutex，但是如果当前已经有语句持有表锁，那简单插入也得等着了。对于语句级别的复制是安全的。</li>
-<li><code>innodb_autoinc_lock_mode = 2</code>  所有语句都用mutex。会导致交叉增加。</li>
-</ul>
-<p>对于这个参数的设定，考虑到主备同步，还要和主备复制的参数一起考虑
-- 对于语句级别的复制，开 <code>innodb_autoinc_lock_mode=2</code> 会导致主备不一致。
-- row级别的复制，则不要紧。 
-- 对于mixed来说1，2模式下，计数器简单的增加插入数量，不管有多少是特殊值。</p>
-<p>简单插入，simple insert指的是mysql可以自己判断出插入条数的sql，其他为bulk insert。<br />
-故障就是因为开了1，一个insert select这种bulk insert，导致持有表锁。<br />
-以上</p></div>
+        <div><h3>jupyter</h3>
+<p><code>jupyter</code> 是一个非常适合做数据分析的工作台。为了可以使得<code>jupyter</code>可以运行在服务器上访问生产环境的数据，今天我要在服务器上搭建一个<code>jupyter</code>站点。</p>
+<h3>容器</h3>
+<p>为了不和线上的其他应用起冲突，我决定把它装在一个docker中。
+这里没有踩到什么坑。</p>
+<h3>Nginx</h3>
+<p>为了提供可靠的域名转发服务，我会用Nginx根据域名转发到docker上绑定的Port。<br />
+这里有个细节需要注意，因为<code>jupyter</code>用到了<code>websocket</code>技术，所以在nginx的配置上略有不同。</p>
+<div class="highlight"><pre>        <span class="nt">location</span> <span class="o">~*</span> <span class="o">/(</span><span class="nt">api</span><span class="o">/</span><span class="nt">kernels</span><span class="o">/</span><span class="cp">[</span><span class="p">^</span><span class="o">/</span><span class="cp">]</span><span class="o">+/(</span><span class="nt">channels</span><span class="o">|</span><span class="nt">iopub</span><span class="o">|</span><span class="nt">shell</span><span class="o">|</span><span class="nt">stdin</span><span class="o">)|</span><span class="nt">terminals</span><span class="o">/</span><span class="nt">websocket</span><span class="o">)/?</span> <span class="p">{</span>
+            <span class="n">proxy_pass</span> <span class="n">http</span><span class="o">://</span><span class="m">127</span><span class="o">.</span><span class="m">0</span><span class="o">.</span><span class="m">0</span><span class="o">.</span><span class="m">1</span><span class="o">:</span><span class="m">8003</span><span class="p">;</span>
+
+            <span class="n">proxy_set_header</span> <span class="n">X</span><span class="o">-</span><span class="n">Real</span><span class="o">-</span><span class="n">IP</span> <span class="err">$</span><span class="n">remote_addr</span><span class="p">;</span>
+            <span class="n">proxy_set_header</span> <span class="n">Host</span> <span class="err">$</span><span class="n">host</span><span class="p">;</span>
+            <span class="n">proxy_set_header</span> <span class="n">X</span><span class="o">-</span><span class="n">Forwarded</span><span class="o">-</span><span class="n">For</span> <span class="err">$</span><span class="n">proxy_add_x_forwarded_for</span><span class="p">;</span>
+            <span class="err">#</span> <span class="n">WebSocket</span> <span class="n">support</span>
+            <span class="n">proxy_http_version</span> <span class="m">1</span><span class="o">.</span><span class="m">1</span><span class="p">;</span>
+            <span class="n">proxy_set_header</span> <span class="n">Upgrade</span> <span class="err">$</span><span class="n">http_upgrade</span><span class="p">;</span>
+            <span class="n">proxy_set_header</span> <span class="n">Connection</span> <span class="s2">&quot;upgrade&quot;</span><span class="p">;</span>
+
+        <span class="p">}</span>
+
+        <span class="err">#</span> <span class="err">对于满足以上格式的请求，是一个</span><span class="nt">ws</span><span class="err">请求，需要加上最后</span><span class="nt">3</span><span class="err">行。</span>
+        <span class="err">#</span> <span class="err">另外，至少需要</span> <span class="nt">nginx</span> <span class="nt">1</span><span class="nc">.1.4</span>
+</pre></div>
+
+
+<h3>安全</h3>
+<p>我们当然不能让谁都能访问我们的工作台啦，果断加上密码 参考http://jupyter-notebook.readthedocs.io/en/latest/public_server.html</p>
+<h3>愉快的开始数据分析吧</h3>
+<p>装上<code>pandas</code>, <code>matplotlib</code> 愉快的开始数据分析吧。</p></div>
         <hr />
     </div>
 		
+
+ 
+        
+
+ 
+
+    <div class='article'>
+        <a href="/learning/mysql_autoinc.html"><h2>MySQL auto_increment 的坑</h2></a>
+        <div class= "well small"> 2016-06-02 00-40-14
+
+by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
+ 
+
+
+ </div>
+        <div class="summary"><p>这破玩意去年8月就出过故障，今年又出了，贴下去年8月我总结的东西吧，没有干货，完全是mysql文档对应的一些总结</p> <a class="btn btn-info xsmall" href="/learning/mysql_autoinc.html">read more</a></div>
+    </div>	
+				
 
  
         
@@ -239,24 +262,6 @@ by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
 
  </div>
         <div class="summary"><p>Something I know about how to write Python code</p> <a class="btn btn-info xsmall" href="/learning/python_pro.html">read more</a></div>
-    </div>	
-				
-
- 
-        
-
- 
-
-    <div class='article'>
-        <a href="/learning/java-arrayList.html"><h2>Difference between ArrayList and Arrays.asList() in Java</h2></a>
-        <div class= "well small"> 2015-12-01 14-17-02
-
-by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
- 
-
-
- </div>
-        <div class="summary"><p>ArrayList is resizeable-array, while Arrays.asList() is a "view" onto the primitives array so it's fixed-size array.</p> <a class="btn btn-info xsmall" href="/learning/java-arrayList.html">read more</a></div>
     </div>	
 				
 <div class="pagination">
