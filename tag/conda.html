@@ -56,146 +56,30 @@
 
         
 
- 
 
     <div class='article'>
-        <a href="/learning/2015-10-19-2.html"><h2>当我们在谈论异常时我们在谈论什么?</h2></a>
-        <div class= "well small"> 2015-10-19 23-40-31
+        <div class="content-title">
+            <a href="/tool/conda.html"><h1>推荐一个更好的Python 环境和包管理工具</h1></a>
+2016-07-29 17-15-38
 
 by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
  
 
 
- </div>
-        <div class="summary"><p>异常是什么? 语言是如何实现它的?</p> <a class="btn btn-info xsmall" href="/learning/2015-10-19-2.html">read more</a></div>
-    </div>	
-				
-
  
+        </div>
         
-
- 
-
-    <div class='article'>
-        <a href="/nix/Change_caplocks.html"><h2>把Capslock重定向为Ctrl</h2></a>
-        <div class= "well small"> 2015-10-19 23-16-22
-
-by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
- 
-
-
- </div>
-        <div class="summary"><p>以前的脚本莫名其妙的在新系统上不能用了，换个好点的脚本</p> <a class="btn btn-info xsmall" href="/nix/Change_caplocks.html">read more</a></div>
-    </div>	
-				
-
- 
-        
-
- 
-
-    <div class='article'>
-        <a href="/nix/Chrome_be_hijacked.html"><h2>Mac上遇到了一个Chrome和Safari被劫持的问题</h2></a>
-        <div class= "well small"> 2015-10-19 21-37-24
-
-by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
- 
-
-
- </div>
-        <div class="summary"><p>大概是因为下载了恶意的软件, 导致Chrome和Safari打开各种网站都出现广告. 检查过DNS
-也更改过DNS, 无效. 目前没找到原因, 只能将就这用FireFox和Chromium, 这俩货没被劫持</p> <a class="btn btn-info xsmall" href="/nix/Chrome_be_hijacked.html">read more</a></div>
-    </div>	
-				
-
- 
-        
-
- 
-
-    <div class='article'>
-        <a href="/nix/Pelican.html"><h2>Pelican上增加评论和自动删除文章的一些坑</h2></a>
-        <div class= "well small"> 2015-10-19 21-37-24
-
-by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
- 
-
-
- </div>
-        <div class="summary"><h3>增加评论功能</h3>
-<p>这个网上有很多描述，主要是去disqus注册下，然后设置下配置文件<a href="http://querbalken.net/howto-setup-comments-with-disqus-in-pelican-en.html">example</a>坑主要在于Pelican的默认主题是没有disqus的模板的，所以虽然看到了对disqus的请求，却看不到评论区。需要自己下个比较全的主题。</p>
-<h3>自动删除文件</h3>
-<p>在content里删除了md文件，重新<code>make html</code>后在output中依然会看到那个md文件生成的html文件。</p>
-<p>一个方法是加入配置<code>DELETE_OUTPUT_DIRECTORY = True</code>来每次清空output，但是这带来了两个问题:</p>
-<ul>
-<li>自动日期没了 目前无法解决</li>
-<li>版本控制没了，可以通过加入<code>OUTPUT_RETENTION = [".hg", ".git", ".bzr"]</code>来解决</li>
-</ul> <a class="btn btn-info xsmall" href="/nix/Pelican.html">read more</a></div>
-    </div>	
-				
-
- 
-        
-
- 
-
-    <div class='article'>
-        <a href="/tool/fxg.html"><h2>用正则来解决grep时行过长的问题</h2></a>
-        <div class= "well small"> 2015-10-19 21-37-24
-
-by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
- 
-
-
- </div>
-        <div class="summary"><p>grep输出内容过长，行过长</p> <a class="btn btn-info xsmall" href="/tool/fxg.html">read more</a></div>
-    </div>	
-				
-
- 
-        
-
- 
-
-    <div class='article'>
-        <a href="/learning/tcp-self-connect.html"><h2>TCP自连接</h2></a>
-        <div class= "well small"> 2015-10-19 21-37-24
-
-by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
- 
-
-
- </div>
-        <div class="summary"><p>TCP自连接特性</p> <a class="btn btn-info xsmall" href="/learning/tcp-self-connect.html">read more</a></div>
-    </div>	
-				
-
- 
-        
-
- 
-
-    <div class='article'>
-        <a href="/learning/test.html"><h2>开始学习陈硕的网络编程课程</h2></a>
-        <div class= "well small"> 2015-10-19 21-37-24
-
-by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
- 
-
-
- </div>
-        <div class="summary"><p>很久前就关注了陈硕的这门课，等着他结课后一次性看完，截止到现在他已经更新了40多节了，
-就要结束了，所以开始刷这门课。</p> <a class="btn btn-info xsmall" href="/learning/test.html">read more</a></div>
-    </div>	
-				
+        <div><p>今天在吐槽<code>cx_Oracle</code>包装起来麻烦，要先装oracle的客户端，然后配置环境变量。同事推荐了这个包管理工具给我。
+实测非常靠谱. 简直是比<code>npm</code>还舒服的体验, 当然是随口一说的，不过至少在oracle的包的安装上，比<code>npm</code>的要简单。 <br />
+再用清华的源加个速，<code>https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/free/</code>。 </p></div>
+        <hr />
+    </div>
+		
 <div class="pagination">
 <ul>
-    <li class="prev"><a href="/author/kamushin3.html">&larr; Previous</a></li>
+    <li class="prev disabled"><a href="#">&larr; Previous</a></li>
 
-    <li class=""><a href="/author/kamushin.html">1</a></li>
-    <li class=""><a href="/author/kamushin2.html">2</a></li>
-    <li class=""><a href="/author/kamushin3.html">3</a></li>
-    <li class="active"><a href="/author/kamushin4.html">4</a></li>
+    <li class="active"><a href="/tag/conda.html">1</a></li>
 
     <li class="next disabled"><a href="#">&rarr; Next</a></li>
 

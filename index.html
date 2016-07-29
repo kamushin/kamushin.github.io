@@ -59,8 +59,8 @@
 
     <div class='article'>
         <div class="content-title">
-            <a href="/learning/jupyter.html"><h1>搭建一个jupyter站点做数据分析吧</h1></a>
-2016-07-28 20-21-40
+            <a href="/tool/conda.html"><h1>推荐一个更好的Python 环境和包管理工具</h1></a>
+2016-07-29 17-15-38
 
 by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
  
@@ -69,39 +69,30 @@ by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
  
         </div>
         
-        <div><h3>jupyter</h3>
-<p><code>jupyter</code> 是一个非常适合做数据分析的工作台。为了可以使得<code>jupyter</code>可以运行在服务器上访问生产环境的数据，今天我要在服务器上搭建一个<code>jupyter</code>站点。</p>
-<h3>容器</h3>
-<p>为了不和线上的其他应用起冲突，我决定把它装在一个docker中。
-这里没有踩到什么坑。</p>
-<h3>Nginx</h3>
-<p>为了提供可靠的域名转发服务，我会用Nginx根据域名转发到docker上绑定的Port。<br />
-这里有个细节需要注意，因为<code>jupyter</code>用到了<code>websocket</code>技术，所以在nginx的配置上略有不同。</p>
-<div class="highlight"><pre>        <span class="nt">location</span> <span class="o">~*</span> <span class="o">/(</span><span class="nt">api</span><span class="o">/</span><span class="nt">kernels</span><span class="o">/</span><span class="cp">[</span><span class="p">^</span><span class="o">/</span><span class="cp">]</span><span class="o">+/(</span><span class="nt">channels</span><span class="o">|</span><span class="nt">iopub</span><span class="o">|</span><span class="nt">shell</span><span class="o">|</span><span class="nt">stdin</span><span class="o">)|</span><span class="nt">terminals</span><span class="o">/</span><span class="nt">websocket</span><span class="o">)/?</span> <span class="p">{</span>
-            <span class="n">proxy_pass</span> <span class="n">http</span><span class="o">://</span><span class="m">127</span><span class="o">.</span><span class="m">0</span><span class="o">.</span><span class="m">0</span><span class="o">.</span><span class="m">1</span><span class="o">:</span><span class="m">8003</span><span class="p">;</span>
-
-            <span class="n">proxy_set_header</span> <span class="n">X</span><span class="o">-</span><span class="n">Real</span><span class="o">-</span><span class="n">IP</span> <span class="err">$</span><span class="n">remote_addr</span><span class="p">;</span>
-            <span class="n">proxy_set_header</span> <span class="n">Host</span> <span class="err">$</span><span class="n">host</span><span class="p">;</span>
-            <span class="n">proxy_set_header</span> <span class="n">X</span><span class="o">-</span><span class="n">Forwarded</span><span class="o">-</span><span class="n">For</span> <span class="err">$</span><span class="n">proxy_add_x_forwarded_for</span><span class="p">;</span>
-            <span class="err">#</span> <span class="n">WebSocket</span> <span class="n">support</span>
-            <span class="n">proxy_http_version</span> <span class="m">1</span><span class="o">.</span><span class="m">1</span><span class="p">;</span>
-            <span class="n">proxy_set_header</span> <span class="n">Upgrade</span> <span class="err">$</span><span class="n">http_upgrade</span><span class="p">;</span>
-            <span class="n">proxy_set_header</span> <span class="n">Connection</span> <span class="s2">&quot;upgrade&quot;</span><span class="p">;</span>
-
-        <span class="p">}</span>
-
-        <span class="err">#</span> <span class="err">对于满足以上格式的请求，是一个</span><span class="nt">ws</span><span class="err">请求，需要加上最后</span><span class="nt">3</span><span class="err">行。</span>
-        <span class="err">#</span> <span class="err">另外，至少需要</span> <span class="nt">nginx</span> <span class="nt">1</span><span class="nc">.1.4</span>
-</pre></div>
-
-
-<h3>安全</h3>
-<p>我们当然不能让谁都能访问我们的工作台啦，果断加上密码 参考http://jupyter-notebook.readthedocs.io/en/latest/public_server.html</p>
-<h3>愉快的开始数据分析吧</h3>
-<p>装上<code>pandas</code>, <code>matplotlib</code> 愉快的开始数据分析吧。</p></div>
+        <div><p>今天在吐槽<code>cx_Oracle</code>包装起来麻烦，要先装oracle的客户端，然后配置环境变量。同事推荐了这个包管理工具给我。
+实测非常靠谱. 简直是比<code>npm</code>还舒服的体验, 当然是随口一说的，不过至少在oracle的包的安装上，比<code>npm</code>的要简单。 <br />
+再用清华的源加个速，<code>https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/free/</code>。 </p></div>
         <hr />
     </div>
 		
+
+ 
+        
+
+ 
+
+    <div class='article'>
+        <a href="/learning/jupyter.html"><h2>搭建一个jupyter站点做数据分析吧</h2></a>
+        <div class= "well small"> 2016-07-28 20-21-40
+
+by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
+ 
+
+
+ </div>
+        <div class="summary"><p>关于一个在nginx后的jupyter站点的小日记.</p> <a class="btn btn-info xsmall" href="/learning/jupyter.html">read more</a></div>
+    </div>	
+				
 
  
         
@@ -246,26 +237,6 @@ by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
 
  </div>
         <div class="summary"><p>Some thinking and traps in refactor multithreading Python to multiprocessing.</p> <a class="btn btn-info xsmall" href="/learning/python-multiprocessing.html">read more</a></div>
-    </div>	
-				
-
- 
-        
-
- 
-
-    <div class='article'>
-        <a href="/think/paxos.html"><h2>对 Paxos 的一些理解</h2></a>
-        <div class= "well small"> 2016-04-22 14-12-26
-
-by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
- 
-
-
- </div>
-        <div class="summary"><ol>
-<li>prepare 阶段是干嘛的 1. 为什么比2pc 好 2. 什么时候持久化</li>
-</ol> <a class="btn btn-info xsmall" href="/think/paxos.html">read more</a></div>
     </div>	
 				
 <div class="pagination">
