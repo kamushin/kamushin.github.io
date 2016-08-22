@@ -55,7 +55,7 @@
     <div class='article'>
         <div class="content-title">
             <h1>搭建一个jupyter站点做数据分析吧</h1>
-2016-07-28 20-21-40
+2016-08-22 22-34-10
 
 by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
  
@@ -71,21 +71,21 @@ by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
 <h3>Nginx</h3>
 <p>为了提供可靠的域名转发服务，我会用Nginx根据域名转发到docker上绑定的Port。<br />
 这里有个细节需要注意，因为<code>jupyter</code>用到了<code>websocket</code>技术，所以在nginx的配置上略有不同。</p>
-<div class="highlight"><pre>        <span class="nt">location</span> <span class="o">~*</span> <span class="o">/(</span><span class="nt">api</span><span class="o">/</span><span class="nt">kernels</span><span class="o">/</span><span class="cp">[</span><span class="p">^</span><span class="o">/</span><span class="cp">]</span><span class="o">+/(</span><span class="nt">channels</span><span class="o">|</span><span class="nt">iopub</span><span class="o">|</span><span class="nt">shell</span><span class="o">|</span><span class="nt">stdin</span><span class="o">)|</span><span class="nt">terminals</span><span class="o">/</span><span class="nt">websocket</span><span class="o">)/?</span> <span class="p">{</span>
-            <span class="n">proxy_pass</span> <span class="n">http</span><span class="o">://</span><span class="m">127</span><span class="o">.</span><span class="m">0</span><span class="o">.</span><span class="m">0</span><span class="o">.</span><span class="m">1</span><span class="o">:</span><span class="m">8003</span><span class="p">;</span>
+<div class="highlight"><pre>        <span class="k">location</span> <span class="p">~</span><span class="sr">*</span> <span class="s">/(api/kernels/[^/]+/(channels|iopub|shell|stdin)|terminals/websocket)/?</span> <span class="p">{</span>
+            <span class="kn">proxy_pass</span> <span class="s">http://127.0.0.1:8003</span><span class="p">;</span>
 
-            <span class="n">proxy_set_header</span> <span class="n">X</span><span class="o">-</span><span class="n">Real</span><span class="o">-</span><span class="n">IP</span> <span class="err">$</span><span class="n">remote_addr</span><span class="p">;</span>
-            <span class="n">proxy_set_header</span> <span class="n">Host</span> <span class="err">$</span><span class="n">host</span><span class="p">;</span>
-            <span class="n">proxy_set_header</span> <span class="n">X</span><span class="o">-</span><span class="n">Forwarded</span><span class="o">-</span><span class="n">For</span> <span class="err">$</span><span class="n">proxy_add_x_forwarded_for</span><span class="p">;</span>
-            <span class="err">#</span> <span class="n">WebSocket</span> <span class="n">support</span>
-            <span class="n">proxy_http_version</span> <span class="m">1</span><span class="o">.</span><span class="m">1</span><span class="p">;</span>
-            <span class="n">proxy_set_header</span> <span class="n">Upgrade</span> <span class="err">$</span><span class="n">http_upgrade</span><span class="p">;</span>
-            <span class="n">proxy_set_header</span> <span class="n">Connection</span> <span class="s2">&quot;upgrade&quot;</span><span class="p">;</span>
+            <span class="kn">proxy_set_header</span> <span class="s">X-Real-IP</span> <span class="nv">$remote_addr</span><span class="p">;</span>
+            <span class="kn">proxy_set_header</span> <span class="s">Host</span> <span class="nv">$host</span><span class="p">;</span>
+            <span class="kn">proxy_set_header</span> <span class="s">X-Forwarded-For</span> <span class="nv">$proxy_add_x_forwarded_for</span><span class="p">;</span>
+            <span class="c1"># WebSocket support</span>
+            <span class="kn">proxy_http_version</span> <span class="mi">1</span><span class="s">.1</span><span class="p">;</span>
+            <span class="kn">proxy_set_header</span> <span class="s">Upgrade</span> <span class="nv">$http_upgrade</span><span class="p">;</span>
+            <span class="kn">proxy_set_header</span> <span class="s">Connection</span> <span class="s">&quot;upgrade&quot;</span><span class="p">;</span>
 
         <span class="p">}</span>
 
-        <span class="err">#</span> <span class="err">对于满足以上格式的请求，是一个</span><span class="nt">ws</span><span class="err">请求，需要加上最后</span><span class="nt">3</span><span class="err">行。</span>
-        <span class="err">#</span> <span class="err">另外，至少需要</span> <span class="nt">nginx</span> <span class="nt">1</span><span class="nc">.1.4</span>
+        <span class="c1"># 对于满足以上格式的请求，是一个ws请求，需要加上最后3行。</span>
+        <span class="c1"># 另外，至少需要 nginx 1.1.4</span>
 </pre></div>
 
 
