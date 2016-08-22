@@ -60,7 +60,7 @@
     <div class='article'>
         <div class="content-title">
             <a href="/learning/docker_compose_scale_link.html"><h1>docker-compose: scale and link</h1></a>
-2016-08-22 22-17-03
+2016-08-22 22-32-24
 
 by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
  
@@ -72,68 +72,68 @@ by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
         <div><p>Month ago, I built my apps with docker and used Nginx outside the docker as a reverse proxy server. Now I have something better to make a change.<br />
 In docker's world, every component of a website should running as a container, include app, db, and Nginx as well.
 A docker compose YAML I found online as follows, from <a href="http://anandmanisankar.com/posts/docker-container-nginx-node-redis-example/">a blog</a>:</p>
-<div class="highlight"><pre><span class="n">nginx</span><span class="o">:</span>
-    <span class="n">build</span><span class="o">:</span> <span class="o">./</span><span class="n">nginx</span>
-    <span class="n">links</span><span class="o">:</span>
-        <span class="o">-</span> <span class="n">node1</span><span class="o">:</span><span class="n">node1</span>
-        <span class="o">-</span> <span class="n">node2</span><span class="o">:</span><span class="n">node2</span>
-        <span class="o">-</span> <span class="n">node3</span><span class="o">:</span><span class="n">node3</span>
-    <span class="n">ports</span><span class="o">:</span>
-        <span class="o">-</span> <span class="s2">&quot;80:80&quot;</span>
-<span class="n">node1</span><span class="o">:</span>
-    <span class="n">build</span><span class="o">:</span> <span class="o">./</span><span class="n">node</span>
-    <span class="n">links</span><span class="o">:</span>
-        <span class="o">-</span> <span class="n">redis</span>
-    <span class="n">ports</span><span class="o">:</span>
-        <span class="o">-</span> <span class="s2">&quot;8080&quot;</span>
-<span class="n">node2</span><span class="o">:</span>
-    <span class="n">build</span><span class="o">:</span> <span class="o">./</span><span class="n">node</span>
-    <span class="n">links</span><span class="o">:</span>
-        <span class="o">-</span> <span class="n">redis</span>
-    <span class="n">ports</span><span class="o">:</span>
-        <span class="o">-</span> <span class="s2">&quot;8080&quot;</span>
-<span class="n">node3</span><span class="o">:</span>
-    <span class="n">build</span><span class="o">:</span> <span class="o">./</span><span class="n">node</span>
-    <span class="n">links</span><span class="o">:</span>
-        <span class="o">-</span> <span class="n">redis</span>
-    <span class="n">ports</span><span class="o">:</span>
-        <span class="o">-</span> <span class="s2">&quot;8080&quot;</span>
-<span class="n">redis</span><span class="o">:</span>
-    <span class="n">image</span><span class="o">:</span> <span class="n">redis</span>
-    <span class="n">ports</span><span class="o">:</span>
-        <span class="o">-</span> <span class="s2">&quot;6379&quot;</span>
+<div class="highlight"><pre><span class="l-Scalar-Plain">nginx</span><span class="p-Indicator">:</span>
+    <span class="l-Scalar-Plain">build</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">./nginx</span>
+    <span class="l-Scalar-Plain">links</span><span class="p-Indicator">:</span>
+        <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">node1:node1</span>
+        <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">node2:node2</span>
+        <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">node3:node3</span>
+    <span class="l-Scalar-Plain">ports</span><span class="p-Indicator">:</span>
+        <span class="p-Indicator">-</span> <span class="s">&quot;80:80&quot;</span>
+<span class="l-Scalar-Plain">node1</span><span class="p-Indicator">:</span>
+    <span class="l-Scalar-Plain">build</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">./node</span>
+    <span class="l-Scalar-Plain">links</span><span class="p-Indicator">:</span>
+        <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">redis</span>
+    <span class="l-Scalar-Plain">ports</span><span class="p-Indicator">:</span>
+        <span class="p-Indicator">-</span> <span class="s">&quot;8080&quot;</span>
+<span class="l-Scalar-Plain">node2</span><span class="p-Indicator">:</span>
+    <span class="l-Scalar-Plain">build</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">./node</span>
+    <span class="l-Scalar-Plain">links</span><span class="p-Indicator">:</span>
+        <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">redis</span>
+    <span class="l-Scalar-Plain">ports</span><span class="p-Indicator">:</span>
+        <span class="p-Indicator">-</span> <span class="s">&quot;8080&quot;</span>
+<span class="l-Scalar-Plain">node3</span><span class="p-Indicator">:</span>
+    <span class="l-Scalar-Plain">build</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">./node</span>
+    <span class="l-Scalar-Plain">links</span><span class="p-Indicator">:</span>
+        <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">redis</span>
+    <span class="l-Scalar-Plain">ports</span><span class="p-Indicator">:</span>
+        <span class="p-Indicator">-</span> <span class="s">&quot;8080&quot;</span>
+<span class="l-Scalar-Plain">redis</span><span class="p-Indicator">:</span>
+    <span class="l-Scalar-Plain">image</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">redis</span>
+    <span class="l-Scalar-Plain">ports</span><span class="p-Indicator">:</span>
+        <span class="p-Indicator">-</span> <span class="s">&quot;6379&quot;</span>
 </pre></div>
 
 
 <p>The author made 3 app containers, 1 redis container and 1 nginx container. I find some ugly implement here that each node is hard coded in conf file, so if nodes need to be scaled up, we should add more and more nodes in the conf file.<br />
 <code>docker compose scale</code> is a useful command here to let us scale up our app containers elegantly. <code>docker compose scale node=3 nginx=1 redis=1</code> will automatically create 3 node containers for us.<br />
 But there is another dark cloud on the sky. In the previous version, nginx config file is simply as follows:</p>
-<div class="highlight"><pre><span class="nt">worker_processes</span> <span class="nt">4</span><span class="o">;</span>
+<div class="highlight"><pre><span class="k">worker_processes</span> <span class="mi">4</span><span class="p">;</span>
 
-<span class="nt">events</span> <span class="p">{</span> <span class="n">worker_connections</span> <span class="m">1024</span><span class="p">;</span> <span class="p">}</span>
+<span class="k">events</span> <span class="p">{</span> <span class="kn">worker_connections</span> <span class="mi">1024</span><span class="p">;</span> <span class="p">}</span>
 
-<span class="nt">http</span> <span class="p">{</span>
+<span class="k">http</span> <span class="p">{</span>
 
-        <span class="n">upstream</span> <span class="n">node</span><span class="o">-</span><span class="n">app</span> <span class="err">{</span>
-              <span class="n">least_conn</span><span class="p">;</span>
-              <span class="n">server</span> <span class="n">node1</span><span class="o">:</span><span class="m">8080</span> <span class="n">weight</span><span class="o">=</span><span class="m">10</span> <span class="n">max_fails</span><span class="o">=</span><span class="m">3</span> <span class="n">fail_timeout</span><span class="o">=</span><span class="m">30s</span><span class="p">;</span>
-              <span class="n">server</span> <span class="n">node2</span><span class="o">:</span><span class="m">8080</span> <span class="n">weight</span><span class="o">=</span><span class="m">10</span> <span class="n">max_fails</span><span class="o">=</span><span class="m">3</span> <span class="n">fail_timeout</span><span class="o">=</span><span class="m">30s</span><span class="p">;</span>
-              <span class="n">server</span> <span class="n">node3</span><span class="o">:</span><span class="m">8080</span> <span class="n">weight</span><span class="o">=</span><span class="m">10</span> <span class="n">max_fails</span><span class="o">=</span><span class="m">3</span> <span class="n">fail_timeout</span><span class="o">=</span><span class="m">30s</span><span class="p">;</span>
+        <span class="kn">upstream</span> <span class="s">node-app</span> <span class="p">{</span>
+              <span class="kn">least_conn</span><span class="p">;</span>
+              <span class="kn">server</span> <span class="n">node1</span><span class="p">:</span><span class="mi">8080</span> <span class="s">weight=10</span> <span class="s">max_fails=3</span> <span class="s">fail_timeout=30s</span><span class="p">;</span>
+              <span class="kn">server</span> <span class="n">node2</span><span class="p">:</span><span class="mi">8080</span> <span class="s">weight=10</span> <span class="s">max_fails=3</span> <span class="s">fail_timeout=30s</span><span class="p">;</span>
+              <span class="kn">server</span> <span class="n">node3</span><span class="p">:</span><span class="mi">8080</span> <span class="s">weight=10</span> <span class="s">max_fails=3</span> <span class="s">fail_timeout=30s</span><span class="p">;</span>
         <span class="p">}</span>
 
-        <span class="nt">server</span> <span class="p">{</span>
-              <span class="n">listen</span> <span class="m">80</span><span class="p">;</span>
+        <span class="kn">server</span> <span class="p">{</span>
+              <span class="kn">listen</span> <span class="mi">80</span><span class="p">;</span>
 
-              <span class="n">location</span> <span class="o">/</span> <span class="err">{</span>
-                <span class="n">proxy_pass</span> <span class="n">http</span><span class="o">://</span><span class="n">node</span><span class="o">-</span><span class="n">app</span><span class="p">;</span>
-                <span class="n">proxy_http_version</span> <span class="m">1</span><span class="o">.</span><span class="m">1</span><span class="p">;</span>
-                <span class="n">proxy_set_header</span> <span class="n">Upgrade</span> <span class="err">$</span><span class="n">http_upgrade</span><span class="p">;</span>
-                <span class="n">proxy_set_header</span> <span class="n">Connection</span> <span class="s1">&#39;upgrade&#39;</span><span class="p">;</span>
-                <span class="n">proxy_set_header</span> <span class="n">Host</span> <span class="err">$</span><span class="n">host</span><span class="p">;</span>
-                <span class="n">proxy_cache_bypass</span> <span class="err">$</span><span class="n">http_upgrade</span><span class="p">;</span>
+              <span class="kn">location</span> <span class="s">/</span> <span class="p">{</span>
+                <span class="kn">proxy_pass</span> <span class="s">http://node-app</span><span class="p">;</span>
+                <span class="kn">proxy_http_version</span> <span class="mi">1</span><span class="s">.1</span><span class="p">;</span>
+                <span class="kn">proxy_set_header</span> <span class="s">Upgrade</span> <span class="nv">$http_upgrade</span><span class="p">;</span>
+                <span class="kn">proxy_set_header</span> <span class="s">Connection</span> <span class="s">&#39;upgrade&#39;</span><span class="p">;</span>
+                <span class="kn">proxy_set_header</span> <span class="s">Host</span> <span class="nv">$host</span><span class="p">;</span>
+                <span class="kn">proxy_cache_bypass</span> <span class="nv">$http_upgrade</span><span class="p">;</span>
               <span class="p">}</span>
-        <span class="err">}</span>
-<span class="err">}</span>
+        <span class="p">}</span>
+<span class="p">}</span>
 </pre></div>
 
 
@@ -147,7 +147,15 @@ So if we have 3 node IP which has the same hostname, we can just rewrite conf to
 </pre></div>
 
 
-<p>Unfortunately, docker compose v1 seems not support group nodes into the same hostname.</p>
+<p>Unfortunately, docker compose v1 seems not support group nodes into the same hostname. <br />
+It will generate hosts as follows:</p>
+<div class="highlight"><pre>172.17.0.21 node 8a1297a5b3e4 compose_node_1
+172.17.0.21 node_1 8a1297a5b3e4 compose_node_1
+172.17.0.22 node_2 069dd46836aa compose_node_2
+</pre></div>
+
+
+<p>Only one container will get the name <code>node</code>. After searching in Github, I got some interesting facts:</p>
 <p>The interaction of scaling with networking (as with links) is unsatisfactory at the moment - you'll basically get a bunch of entries in /etc/hosts along these lines:</p>
 <div class="highlight"><pre>  172.16.0.1 myapp_php_1
   172.16.0.2 myapp_php_2
