@@ -1,34 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Kamushin's blog</title><link href="/" rel="alternate"></link><link href="/feeds/kamushin.atom.xml" rel="self"></link><id>/</id><updated>2016-08-22T22:34:10+08:00</updated><entry><title>搭建一个jupyter站点做数据分析吧</title><link href="/learning/jupyter.html" rel="alternate"></link><updated>2016-08-22T22:34:10+08:00</updated><author><name>Kamushin</name></author><id>tag:,2016-08-22:learning/jupyter.html</id><summary type="html">&lt;h3&gt;jupyter&lt;/h3&gt;
-&lt;p&gt;&lt;code&gt;jupyter&lt;/code&gt; 是一个非常适合做数据分析的工作台。为了可以使得&lt;code&gt;jupyter&lt;/code&gt;可以运行在服务器上访问生产环境的数据，今天我要在服务器上搭建一个&lt;code&gt;jupyter&lt;/code&gt;站点。&lt;/p&gt;
-&lt;h3&gt;容器&lt;/h3&gt;
-&lt;p&gt;为了不和线上的其他应用起冲突，我决定把它装在一个docker中。
-这里没有踩到什么坑。&lt;/p&gt;
-&lt;h3&gt;Nginx&lt;/h3&gt;
-&lt;p&gt;为了提供可靠的域名转发服务，我会用Nginx根据域名转发到docker上绑定的Port。&lt;br /&gt;
-这里有个细节需要注意，因为&lt;code&gt;jupyter&lt;/code&gt;用到了&lt;code&gt;websocket&lt;/code&gt;技术，所以在nginx的配置上略有不同。&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;        &lt;span class="k"&gt;location&lt;/span&gt; &lt;span class="p"&gt;~&lt;/span&gt;&lt;span class="sr"&gt;*&lt;/span&gt; &lt;span class="s"&gt;/(api/kernels/[^/]+/(channels|iopub|shell|stdin)|terminals/websocket)/?&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
-            &lt;span class="kn"&gt;proxy_pass&lt;/span&gt; &lt;span class="s"&gt;http://127.0.0.1:8003&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
-
-            &lt;span class="kn"&gt;proxy_set_header&lt;/span&gt; &lt;span class="s"&gt;X-Real-IP&lt;/span&gt; &lt;span class="nv"&gt;$remote_addr&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
-            &lt;span class="kn"&gt;proxy_set_header&lt;/span&gt; &lt;span class="s"&gt;Host&lt;/span&gt; &lt;span class="nv"&gt;$host&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
-            &lt;span class="kn"&gt;proxy_set_header&lt;/span&gt; &lt;span class="s"&gt;X-Forwarded-For&lt;/span&gt; &lt;span class="nv"&gt;$proxy_add_x_forwarded_for&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
-            &lt;span class="c1"&gt;# WebSocket support&lt;/span&gt;
-            &lt;span class="kn"&gt;proxy_http_version&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="s"&gt;.1&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
-            &lt;span class="kn"&gt;proxy_set_header&lt;/span&gt; &lt;span class="s"&gt;Upgrade&lt;/span&gt; &lt;span class="nv"&gt;$http_upgrade&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
-            &lt;span class="kn"&gt;proxy_set_header&lt;/span&gt; &lt;span class="s"&gt;Connection&lt;/span&gt; &lt;span class="s"&gt;&amp;quot;upgrade&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
-
-        &lt;span class="p"&gt;}&lt;/span&gt;
-
-        &lt;span class="c1"&gt;# 对于满足以上格式的请求，是一个ws请求，需要加上最后3行。&lt;/span&gt;
-        &lt;span class="c1"&gt;# 另外，至少需要 nginx 1.1.4&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;h3&gt;安全&lt;/h3&gt;
-&lt;p&gt;我们当然不能让谁都能访问我们的工作台啦，果断加上密码 参考http://jupyter-notebook.readthedocs.io/en/latest/public_server.html&lt;/p&gt;
-&lt;h3&gt;愉快的开始数据分析吧&lt;/h3&gt;
-&lt;p&gt;装上&lt;code&gt;pandas&lt;/code&gt;, &lt;code&gt;matplotlib&lt;/code&gt; 愉快的开始数据分析吧。&lt;/p&gt;</summary><category term="jupyter"></category></entry><entry><title>docker-compose: scale and link</title><link href="/learning/docker_compose_scale_link.html" rel="alternate"></link><updated>2016-08-22T22:32:24+08:00</updated><author><name>Kamushin</name></author><id>tag:,2016-08-22:learning/docker_compose_scale_link.html</id><summary type="html">&lt;p&gt;Month ago, I built my apps with docker and used Nginx outside the docker as a reverse proxy server. Now I have something better to make a change.&lt;br /&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Kamushin's blog</title><link href="/" rel="alternate"></link><link href="/feeds/kamushin.atom.xml" rel="self"></link><id>/</id><updated>2016-08-22T22:54:17+08:00</updated><entry><title>docker-compose: scale and link</title><link href="/learning/docker_compose_scale_link.html" rel="alternate"></link><updated>2016-08-22T22:54:17+08:00</updated><author><name>Kamushin</name></author><id>tag:,2016-08-22:learning/docker_compose_scale_link.html</id><summary type="html">&lt;p&gt;Month ago, I built my apps with docker and used Nginx outside the docker as a reverse proxy server. Now I have something better to make a change.&lt;br /&gt;
 In docker's world, every component of a website should running as a container, include app, db, and Nginx as well.
 A docker compose YAML I found online as follows, from &lt;a href="http://anandmanisankar.com/posts/docker-container-nginx-node-redis-example/"&gt;a blog&lt;/a&gt;:&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="l-Scalar-Plain"&gt;nginx&lt;/span&gt;&lt;span class="p-Indicator"&gt;:&lt;/span&gt;
@@ -132,7 +103,36 @@ It will generate hosts as follows:&lt;/p&gt;
 &lt;p&gt;This isn't a real solution either, of course - we're still working towards one - but in both cases, if you have a load balancer container that needs to keep up-to-date with what's currently on the network, for the time being it'll need to periodically read /etc/hosts and parse the entries to determine the IPs of the backends.   &lt;/p&gt;
 &lt;p&gt;@aanand one of the maintainer of docker compose said above in &lt;a href="https://github.com/docker/compose/issues/2472"&gt;2015-12-7&lt;/a&gt;.  &lt;/p&gt;
 &lt;p&gt;It may already be improved in v2 with docker 1.10, but I have not get the chance to use docker 1.10.  &lt;/p&gt;
-&lt;p&gt;I think this way is better since we can easily scale up and dont need to change the config.  DevOps should evolve in this way. &lt;/p&gt;</summary><category term="DevOps docker"></category></entry><entry><title>推荐一个更好的Python 环境和包管理工具 canda</title><link href="/tool/conda.html" rel="alternate"></link><updated>2016-08-01T09:47:40+08:00</updated><author><name>Kamushin</name></author><id>tag:,2016-08-01:tool/conda.html</id><summary type="html">&lt;p&gt;今天在吐槽&lt;code&gt;cx_Oracle&lt;/code&gt;包装起来麻烦，要先装oracle的客户端，然后配置环境变量。同事推荐了这个包管理工具给我。
+&lt;p&gt;I think this way is better since we can easily scale up and dont need to change the config.  DevOps should evolve in this scalable way.&lt;/p&gt;</summary><category term="DevOps docker"></category></entry><entry><title>搭建一个jupyter站点做数据分析吧</title><link href="/learning/jupyter.html" rel="alternate"></link><updated>2016-08-22T22:34:10+08:00</updated><author><name>Kamushin</name></author><id>tag:,2016-08-22:learning/jupyter.html</id><summary type="html">&lt;h3&gt;jupyter&lt;/h3&gt;
+&lt;p&gt;&lt;code&gt;jupyter&lt;/code&gt; 是一个非常适合做数据分析的工作台。为了可以使得&lt;code&gt;jupyter&lt;/code&gt;可以运行在服务器上访问生产环境的数据，今天我要在服务器上搭建一个&lt;code&gt;jupyter&lt;/code&gt;站点。&lt;/p&gt;
+&lt;h3&gt;容器&lt;/h3&gt;
+&lt;p&gt;为了不和线上的其他应用起冲突，我决定把它装在一个docker中。
+这里没有踩到什么坑。&lt;/p&gt;
+&lt;h3&gt;Nginx&lt;/h3&gt;
+&lt;p&gt;为了提供可靠的域名转发服务，我会用Nginx根据域名转发到docker上绑定的Port。&lt;br /&gt;
+这里有个细节需要注意，因为&lt;code&gt;jupyter&lt;/code&gt;用到了&lt;code&gt;websocket&lt;/code&gt;技术，所以在nginx的配置上略有不同。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;        &lt;span class="k"&gt;location&lt;/span&gt; &lt;span class="p"&gt;~&lt;/span&gt;&lt;span class="sr"&gt;*&lt;/span&gt; &lt;span class="s"&gt;/(api/kernels/[^/]+/(channels|iopub|shell|stdin)|terminals/websocket)/?&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+            &lt;span class="kn"&gt;proxy_pass&lt;/span&gt; &lt;span class="s"&gt;http://127.0.0.1:8003&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+
+            &lt;span class="kn"&gt;proxy_set_header&lt;/span&gt; &lt;span class="s"&gt;X-Real-IP&lt;/span&gt; &lt;span class="nv"&gt;$remote_addr&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+            &lt;span class="kn"&gt;proxy_set_header&lt;/span&gt; &lt;span class="s"&gt;Host&lt;/span&gt; &lt;span class="nv"&gt;$host&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+            &lt;span class="kn"&gt;proxy_set_header&lt;/span&gt; &lt;span class="s"&gt;X-Forwarded-For&lt;/span&gt; &lt;span class="nv"&gt;$proxy_add_x_forwarded_for&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+            &lt;span class="c1"&gt;# WebSocket support&lt;/span&gt;
+            &lt;span class="kn"&gt;proxy_http_version&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="s"&gt;.1&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+            &lt;span class="kn"&gt;proxy_set_header&lt;/span&gt; &lt;span class="s"&gt;Upgrade&lt;/span&gt; &lt;span class="nv"&gt;$http_upgrade&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+            &lt;span class="kn"&gt;proxy_set_header&lt;/span&gt; &lt;span class="s"&gt;Connection&lt;/span&gt; &lt;span class="s"&gt;&amp;quot;upgrade&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+
+        &lt;span class="p"&gt;}&lt;/span&gt;
+
+        &lt;span class="c1"&gt;# 对于满足以上格式的请求，是一个ws请求，需要加上最后3行。&lt;/span&gt;
+        &lt;span class="c1"&gt;# 另外，至少需要 nginx 1.1.4&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h3&gt;安全&lt;/h3&gt;
+&lt;p&gt;我们当然不能让谁都能访问我们的工作台啦，果断加上密码 参考http://jupyter-notebook.readthedocs.io/en/latest/public_server.html&lt;/p&gt;
+&lt;h3&gt;愉快的开始数据分析吧&lt;/h3&gt;
+&lt;p&gt;装上&lt;code&gt;pandas&lt;/code&gt;, &lt;code&gt;matplotlib&lt;/code&gt; 愉快的开始数据分析吧。&lt;/p&gt;</summary><category term="jupyter"></category></entry><entry><title>推荐一个更好的Python 环境和包管理工具 canda</title><link href="/tool/conda.html" rel="alternate"></link><updated>2016-08-01T09:47:40+08:00</updated><author><name>Kamushin</name></author><id>tag:,2016-08-01:tool/conda.html</id><summary type="html">&lt;p&gt;今天在吐槽&lt;code&gt;cx_Oracle&lt;/code&gt;包装起来麻烦，要先装oracle的客户端，然后配置环境变量。同事推荐了这个包管理工具给我。
 实测非常靠谱. 简直是比&lt;code&gt;npm&lt;/code&gt;还舒服的体验, 当然是随口一说的，不过至少在oracle的包的安装上，比&lt;code&gt;npm&lt;/code&gt;的要简单。 &lt;br /&gt;
 再用清华的源加个速，&lt;code&gt;https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/free/&lt;/code&gt;。 &lt;/p&gt;</summary><category term="conda"></category></entry><entry><title>记一次网络问题的排查</title><link href="/debug/dnat_debug.html" rel="alternate"></link><updated>2016-07-26T16:02:25+08:00</updated><author><name>Kamushin</name></author><id>tag:,2016-07-26:debug/dnat_debug.html</id><summary type="html">&lt;p&gt;昨天遇到了一个端口转发导致VIP失效的问题，今天记录下当时的排查思路。  &lt;/p&gt;
 &lt;p&gt;因为要做升级，所以我删除了dokcer老容器，并启动新容器。之后访问VIP, 也就是LVS中的VIP，发现原先可以访问的站点不能访问了。  &lt;/p&gt;

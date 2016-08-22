@@ -59,8 +59,8 @@
 
     <div class='article'>
         <div class="content-title">
-            <a href="/learning/jupyter.html"><h1>搭建一个jupyter站点做数据分析吧</h1></a>
-2016-08-22 22-34-10
+            <a href="/learning/docker_compose_scale_link.html"><h1>docker-compose: scale and link</h1></a>
+2016-08-22 22-54-17
 
 by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
  
@@ -69,36 +69,111 @@ by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
  
         </div>
         
-        <div><h3>jupyter</h3>
-<p><code>jupyter</code> 是一个非常适合做数据分析的工作台。为了可以使得<code>jupyter</code>可以运行在服务器上访问生产环境的数据，今天我要在服务器上搭建一个<code>jupyter</code>站点。</p>
-<h3>容器</h3>
-<p>为了不和线上的其他应用起冲突，我决定把它装在一个docker中。
-这里没有踩到什么坑。</p>
-<h3>Nginx</h3>
-<p>为了提供可靠的域名转发服务，我会用Nginx根据域名转发到docker上绑定的Port。<br />
-这里有个细节需要注意，因为<code>jupyter</code>用到了<code>websocket</code>技术，所以在nginx的配置上略有不同。</p>
-<div class="highlight"><pre>        <span class="k">location</span> <span class="p">~</span><span class="sr">*</span> <span class="s">/(api/kernels/[^/]+/(channels|iopub|shell|stdin)|terminals/websocket)/?</span> <span class="p">{</span>
-            <span class="kn">proxy_pass</span> <span class="s">http://127.0.0.1:8003</span><span class="p">;</span>
-
-            <span class="kn">proxy_set_header</span> <span class="s">X-Real-IP</span> <span class="nv">$remote_addr</span><span class="p">;</span>
-            <span class="kn">proxy_set_header</span> <span class="s">Host</span> <span class="nv">$host</span><span class="p">;</span>
-            <span class="kn">proxy_set_header</span> <span class="s">X-Forwarded-For</span> <span class="nv">$proxy_add_x_forwarded_for</span><span class="p">;</span>
-            <span class="c1"># WebSocket support</span>
-            <span class="kn">proxy_http_version</span> <span class="mi">1</span><span class="s">.1</span><span class="p">;</span>
-            <span class="kn">proxy_set_header</span> <span class="s">Upgrade</span> <span class="nv">$http_upgrade</span><span class="p">;</span>
-            <span class="kn">proxy_set_header</span> <span class="s">Connection</span> <span class="s">&quot;upgrade&quot;</span><span class="p">;</span>
-
-        <span class="p">}</span>
-
-        <span class="c1"># 对于满足以上格式的请求，是一个ws请求，需要加上最后3行。</span>
-        <span class="c1"># 另外，至少需要 nginx 1.1.4</span>
+        <div><p>Month ago, I built my apps with docker and used Nginx outside the docker as a reverse proxy server. Now I have something better to make a change.<br />
+In docker's world, every component of a website should running as a container, include app, db, and Nginx as well.
+A docker compose YAML I found online as follows, from <a href="http://anandmanisankar.com/posts/docker-container-nginx-node-redis-example/">a blog</a>:</p>
+<div class="highlight"><pre><span class="l-Scalar-Plain">nginx</span><span class="p-Indicator">:</span>
+    <span class="l-Scalar-Plain">build</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">./nginx</span>
+    <span class="l-Scalar-Plain">links</span><span class="p-Indicator">:</span>
+        <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">node1:node1</span>
+        <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">node2:node2</span>
+        <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">node3:node3</span>
+    <span class="l-Scalar-Plain">ports</span><span class="p-Indicator">:</span>
+        <span class="p-Indicator">-</span> <span class="s">&quot;80:80&quot;</span>
+<span class="l-Scalar-Plain">node1</span><span class="p-Indicator">:</span>
+    <span class="l-Scalar-Plain">build</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">./node</span>
+    <span class="l-Scalar-Plain">links</span><span class="p-Indicator">:</span>
+        <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">redis</span>
+    <span class="l-Scalar-Plain">ports</span><span class="p-Indicator">:</span>
+        <span class="p-Indicator">-</span> <span class="s">&quot;8080&quot;</span>
+<span class="l-Scalar-Plain">node2</span><span class="p-Indicator">:</span>
+    <span class="l-Scalar-Plain">build</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">./node</span>
+    <span class="l-Scalar-Plain">links</span><span class="p-Indicator">:</span>
+        <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">redis</span>
+    <span class="l-Scalar-Plain">ports</span><span class="p-Indicator">:</span>
+        <span class="p-Indicator">-</span> <span class="s">&quot;8080&quot;</span>
+<span class="l-Scalar-Plain">node3</span><span class="p-Indicator">:</span>
+    <span class="l-Scalar-Plain">build</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">./node</span>
+    <span class="l-Scalar-Plain">links</span><span class="p-Indicator">:</span>
+        <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">redis</span>
+    <span class="l-Scalar-Plain">ports</span><span class="p-Indicator">:</span>
+        <span class="p-Indicator">-</span> <span class="s">&quot;8080&quot;</span>
+<span class="l-Scalar-Plain">redis</span><span class="p-Indicator">:</span>
+    <span class="l-Scalar-Plain">image</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">redis</span>
+    <span class="l-Scalar-Plain">ports</span><span class="p-Indicator">:</span>
+        <span class="p-Indicator">-</span> <span class="s">&quot;6379&quot;</span>
 </pre></div>
 
 
-<h3>安全</h3>
-<p>我们当然不能让谁都能访问我们的工作台啦，果断加上密码 参考http://jupyter-notebook.readthedocs.io/en/latest/public_server.html</p>
-<h3>愉快的开始数据分析吧</h3>
-<p>装上<code>pandas</code>, <code>matplotlib</code> 愉快的开始数据分析吧。</p></div>
+<p>The author made 3 app containers, 1 redis container and 1 nginx container. I find some ugly implement here that each node is hard coded in conf file, so if nodes need to be scaled up, we should add more and more nodes in the conf file.<br />
+<code>docker compose scale</code> is a useful command here to let us scale up our app containers elegantly. <code>docker compose scale node=3 nginx=1 redis=1</code> will automatically create 3 node containers for us.<br />
+But there is another dark cloud on the sky. In the previous version, nginx config file is simply as follows:</p>
+<div class="highlight"><pre><span class="k">worker_processes</span> <span class="mi">4</span><span class="p">;</span>
+
+<span class="k">events</span> <span class="p">{</span> <span class="kn">worker_connections</span> <span class="mi">1024</span><span class="p">;</span> <span class="p">}</span>
+
+<span class="k">http</span> <span class="p">{</span>
+
+        <span class="kn">upstream</span> <span class="s">node-app</span> <span class="p">{</span>
+              <span class="kn">least_conn</span><span class="p">;</span>
+              <span class="kn">server</span> <span class="n">node1</span><span class="p">:</span><span class="mi">8080</span> <span class="s">weight=10</span> <span class="s">max_fails=3</span> <span class="s">fail_timeout=30s</span><span class="p">;</span>
+              <span class="kn">server</span> <span class="n">node2</span><span class="p">:</span><span class="mi">8080</span> <span class="s">weight=10</span> <span class="s">max_fails=3</span> <span class="s">fail_timeout=30s</span><span class="p">;</span>
+              <span class="kn">server</span> <span class="n">node3</span><span class="p">:</span><span class="mi">8080</span> <span class="s">weight=10</span> <span class="s">max_fails=3</span> <span class="s">fail_timeout=30s</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="kn">server</span> <span class="p">{</span>
+              <span class="kn">listen</span> <span class="mi">80</span><span class="p">;</span>
+
+              <span class="kn">location</span> <span class="s">/</span> <span class="p">{</span>
+                <span class="kn">proxy_pass</span> <span class="s">http://node-app</span><span class="p">;</span>
+                <span class="kn">proxy_http_version</span> <span class="mi">1</span><span class="s">.1</span><span class="p">;</span>
+                <span class="kn">proxy_set_header</span> <span class="s">Upgrade</span> <span class="nv">$http_upgrade</span><span class="p">;</span>
+                <span class="kn">proxy_set_header</span> <span class="s">Connection</span> <span class="s">&#39;upgrade&#39;</span><span class="p">;</span>
+                <span class="kn">proxy_set_header</span> <span class="s">Host</span> <span class="nv">$host</span><span class="p">;</span>
+                <span class="kn">proxy_cache_bypass</span> <span class="nv">$http_upgrade</span><span class="p">;</span>
+              <span class="p">}</span>
+        <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>Can we use <code>node</code> to replace <code>node1</code>,<code>node2</code>,<code>node3</code> here?<br />
+<code>node1</code> here is not some docker magic, it's just a hostname which docker generated in <code>/ets/hosts</code> of nginx container, since we linked <code>node1</code> to nginx.
+So if we have 3 node IP which has the same hostname, we can just rewrite conf to a single server: </p>
+<div class="highlight"><pre>        <span class="nt">upstream</span> <span class="nt">node-app</span> <span class="p">{</span>
+              <span class="n">least_conn</span><span class="p">;</span>
+              <span class="n">server</span> <span class="n">node</span><span class="o">:</span><span class="m">8080</span> <span class="n">max_fails</span><span class="o">=</span><span class="m">3</span> <span class="n">fail_timeout</span><span class="o">=</span><span class="m">30s</span><span class="p">;</span>
+        <span class="p">}</span>
+</pre></div>
+
+
+<p>Unfortunately, docker compose v1 seems not support group nodes into the same hostname. <br />
+It will generate hosts as follows:</p>
+<div class="highlight"><pre>172.17.0.21 node 8a1297a5b3e4 compose_node_1
+172.17.0.21 node_1 8a1297a5b3e4 compose_node_1
+172.17.0.22 node_2 069dd46836aa compose_node_2
+</pre></div>
+
+
+<p>Only one container will get the name <code>node</code>. After searching in Github, I got some interesting facts:</p>
+<p>The interaction of scaling with networking (as with links) is unsatisfactory at the moment - you'll basically get a bunch of entries in /etc/hosts along these lines:</p>
+<div class="highlight"><pre>  172.16.0.1 myapp_php_1
+  172.16.0.2 myapp_php_2
+  172.16.0.3 myapp_php_3
+</pre></div>
+
+
+<p>In a future version of Compose (enabled by changes to Engine), the name under which each container joins the network is going to change to just the service name, php. So you'll get multiple entries with the same name:</p>
+<div class="highlight"><pre>172.16.0.1 php
+172.16.0.2 php
+172.16.0.3 php
+</pre></div>
+
+
+<p>This isn't a real solution either, of course - we're still working towards one - but in both cases, if you have a load balancer container that needs to keep up-to-date with what's currently on the network, for the time being it'll need to periodically read /etc/hosts and parse the entries to determine the IPs of the backends.   </p>
+<p>@aanand one of the maintainer of docker compose said above in <a href="https://github.com/docker/compose/issues/2472">2015-12-7</a>.  </p>
+<p>It may already be improved in v2 with docker 1.10, but I have not get the chance to use docker 1.10.  </p>
+<p>I think this way is better since we can easily scale up and dont need to change the config.  DevOps should evolve in this scalable way.</p></div>
         <hr />
     </div>
 		
@@ -109,15 +184,15 @@ by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
  
 
     <div class='article'>
-        <a href="/learning/docker_compose_scale_link.html"><h2>docker-compose: scale and link</h2></a>
-        <div class= "well small"> 2016-08-22 22-32-24
+        <a href="/learning/jupyter.html"><h2>搭建一个jupyter站点做数据分析吧</h2></a>
+        <div class= "well small"> 2016-08-22 22-34-10
 
 by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
  
 
 
  </div>
-        <div class="summary"><p>Learned how to use docker compose to create a scalable web app with nginx.</p> <a class="btn btn-info xsmall" href="/learning/docker_compose_scale_link.html">read more</a></div>
+        <div class="summary"><p>关于一个在nginx后的jupyter站点的小日记.</p> <a class="btn btn-info xsmall" href="/learning/jupyter.html">read more</a></div>
     </div>	
 				
 
