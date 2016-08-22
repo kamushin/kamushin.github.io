@@ -59,8 +59,8 @@
 
     <div class='article'>
         <div class="content-title">
-            <a href="/tool/conda.html"><h1>推荐一个更好的Python 环境和包管理工具 canda</h1></a>
-2016-08-01 09-47-40
+            <a href="/learning/docker_compose_scale_link.html"><h1>docker-compose: scale and link</h1></a>
+2016-08-22 22-17-03
 
 by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
  
@@ -69,12 +69,124 @@ by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
  
         </div>
         
-        <div><p>今天在吐槽<code>cx_Oracle</code>包装起来麻烦，要先装oracle的客户端，然后配置环境变量。同事推荐了这个包管理工具给我。
-实测非常靠谱. 简直是比<code>npm</code>还舒服的体验, 当然是随口一说的，不过至少在oracle的包的安装上，比<code>npm</code>的要简单。 <br />
-再用清华的源加个速，<code>https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/free/</code>。 </p></div>
+        <div><p>Month ago, I built my apps with docker and used Nginx outside the docker as a reverse proxy server. Now I have something better to make a change.<br />
+In docker's world, every component of a website should running as a container, include app, db, and Nginx as well.
+A docker compose YAML I found online as follows, from <a href="http://anandmanisankar.com/posts/docker-container-nginx-node-redis-example/">a blog</a>:</p>
+<div class="highlight"><pre><span class="n">nginx</span><span class="o">:</span>
+    <span class="n">build</span><span class="o">:</span> <span class="o">./</span><span class="n">nginx</span>
+    <span class="n">links</span><span class="o">:</span>
+        <span class="o">-</span> <span class="n">node1</span><span class="o">:</span><span class="n">node1</span>
+        <span class="o">-</span> <span class="n">node2</span><span class="o">:</span><span class="n">node2</span>
+        <span class="o">-</span> <span class="n">node3</span><span class="o">:</span><span class="n">node3</span>
+    <span class="n">ports</span><span class="o">:</span>
+        <span class="o">-</span> <span class="s2">&quot;80:80&quot;</span>
+<span class="n">node1</span><span class="o">:</span>
+    <span class="n">build</span><span class="o">:</span> <span class="o">./</span><span class="n">node</span>
+    <span class="n">links</span><span class="o">:</span>
+        <span class="o">-</span> <span class="n">redis</span>
+    <span class="n">ports</span><span class="o">:</span>
+        <span class="o">-</span> <span class="s2">&quot;8080&quot;</span>
+<span class="n">node2</span><span class="o">:</span>
+    <span class="n">build</span><span class="o">:</span> <span class="o">./</span><span class="n">node</span>
+    <span class="n">links</span><span class="o">:</span>
+        <span class="o">-</span> <span class="n">redis</span>
+    <span class="n">ports</span><span class="o">:</span>
+        <span class="o">-</span> <span class="s2">&quot;8080&quot;</span>
+<span class="n">node3</span><span class="o">:</span>
+    <span class="n">build</span><span class="o">:</span> <span class="o">./</span><span class="n">node</span>
+    <span class="n">links</span><span class="o">:</span>
+        <span class="o">-</span> <span class="n">redis</span>
+    <span class="n">ports</span><span class="o">:</span>
+        <span class="o">-</span> <span class="s2">&quot;8080&quot;</span>
+<span class="n">redis</span><span class="o">:</span>
+    <span class="n">image</span><span class="o">:</span> <span class="n">redis</span>
+    <span class="n">ports</span><span class="o">:</span>
+        <span class="o">-</span> <span class="s2">&quot;6379&quot;</span>
+</pre></div>
+
+
+<p>The author made 3 app containers, 1 redis container and 1 nginx container. I find some ugly implement here that each node is hard coded in conf file, so if nodes need to be scaled up, we should add more and more nodes in the conf file.<br />
+<code>docker compose scale</code> is a useful command here to let us scale up our app containers elegantly. <code>docker compose scale node=3 nginx=1 redis=1</code> will automatically create 3 node containers for us.<br />
+But there is another dark cloud on the sky. In the previous version, nginx config file is simply as follows:</p>
+<div class="highlight"><pre><span class="nt">worker_processes</span> <span class="nt">4</span><span class="o">;</span>
+
+<span class="nt">events</span> <span class="p">{</span> <span class="n">worker_connections</span> <span class="m">1024</span><span class="p">;</span> <span class="p">}</span>
+
+<span class="nt">http</span> <span class="p">{</span>
+
+        <span class="n">upstream</span> <span class="n">node</span><span class="o">-</span><span class="n">app</span> <span class="err">{</span>
+              <span class="n">least_conn</span><span class="p">;</span>
+              <span class="n">server</span> <span class="n">node1</span><span class="o">:</span><span class="m">8080</span> <span class="n">weight</span><span class="o">=</span><span class="m">10</span> <span class="n">max_fails</span><span class="o">=</span><span class="m">3</span> <span class="n">fail_timeout</span><span class="o">=</span><span class="m">30s</span><span class="p">;</span>
+              <span class="n">server</span> <span class="n">node2</span><span class="o">:</span><span class="m">8080</span> <span class="n">weight</span><span class="o">=</span><span class="m">10</span> <span class="n">max_fails</span><span class="o">=</span><span class="m">3</span> <span class="n">fail_timeout</span><span class="o">=</span><span class="m">30s</span><span class="p">;</span>
+              <span class="n">server</span> <span class="n">node3</span><span class="o">:</span><span class="m">8080</span> <span class="n">weight</span><span class="o">=</span><span class="m">10</span> <span class="n">max_fails</span><span class="o">=</span><span class="m">3</span> <span class="n">fail_timeout</span><span class="o">=</span><span class="m">30s</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="nt">server</span> <span class="p">{</span>
+              <span class="n">listen</span> <span class="m">80</span><span class="p">;</span>
+
+              <span class="n">location</span> <span class="o">/</span> <span class="err">{</span>
+                <span class="n">proxy_pass</span> <span class="n">http</span><span class="o">://</span><span class="n">node</span><span class="o">-</span><span class="n">app</span><span class="p">;</span>
+                <span class="n">proxy_http_version</span> <span class="m">1</span><span class="o">.</span><span class="m">1</span><span class="p">;</span>
+                <span class="n">proxy_set_header</span> <span class="n">Upgrade</span> <span class="err">$</span><span class="n">http_upgrade</span><span class="p">;</span>
+                <span class="n">proxy_set_header</span> <span class="n">Connection</span> <span class="s1">&#39;upgrade&#39;</span><span class="p">;</span>
+                <span class="n">proxy_set_header</span> <span class="n">Host</span> <span class="err">$</span><span class="n">host</span><span class="p">;</span>
+                <span class="n">proxy_cache_bypass</span> <span class="err">$</span><span class="n">http_upgrade</span><span class="p">;</span>
+              <span class="p">}</span>
+        <span class="err">}</span>
+<span class="err">}</span>
+</pre></div>
+
+
+<p>Can we use <code>node</code> to replace <code>node1</code>,<code>node2</code>,<code>node3</code> here?<br />
+<code>node1</code> here is not some docker magic, it's just a hostname which docker generated in <code>/ets/hosts</code> of nginx container, since we linked <code>node1</code> to nginx.
+So if we have 3 node IP which has the same hostname, we can just rewrite conf to a single server: </p>
+<div class="highlight"><pre>        <span class="nt">upstream</span> <span class="nt">node-app</span> <span class="p">{</span>
+              <span class="n">least_conn</span><span class="p">;</span>
+              <span class="n">server</span> <span class="n">node</span><span class="o">:</span><span class="m">8080</span> <span class="n">max_fails</span><span class="o">=</span><span class="m">3</span> <span class="n">fail_timeout</span><span class="o">=</span><span class="m">30s</span><span class="p">;</span>
+        <span class="p">}</span>
+</pre></div>
+
+
+<p>Unfortunately, docker compose v1 seems not support group nodes into the same hostname.</p>
+<p>The interaction of scaling with networking (as with links) is unsatisfactory at the moment - you'll basically get a bunch of entries in /etc/hosts along these lines:</p>
+<div class="highlight"><pre>  172.16.0.1 myapp_php_1
+  172.16.0.2 myapp_php_2
+  172.16.0.3 myapp_php_3
+</pre></div>
+
+
+<p>In a future version of Compose (enabled by changes to Engine), the name under which each container joins the network is going to change to just the service name, php. So you'll get multiple entries with the same name:</p>
+<div class="highlight"><pre>172.16.0.1 php
+172.16.0.2 php
+172.16.0.3 php
+</pre></div>
+
+
+<p>This isn't a real solution either, of course - we're still working towards one - but in both cases, if you have a load balancer container that needs to keep up-to-date with what's currently on the network, for the time being it'll need to periodically read /etc/hosts and parse the entries to determine the IPs of the backends.   </p>
+<p>@aanand one of the maintainer of docker compose said above in <a href="https://github.com/docker/compose/issues/2472">2015-12-7</a>.  </p>
+<p>It may already be improved in v2 with docker 1.10, but I have not get the chance to use docker 1.10.  </p>
+<p>I think this way is better since we can easily scale up and dont need to change the config.  DevOps should evolve in this way. </p></div>
         <hr />
     </div>
 		
+
+ 
+        
+
+ 
+
+    <div class='article'>
+        <a href="/tool/conda.html"><h2>推荐一个更好的Python 环境和包管理工具 canda</h2></a>
+        <div class= "well small"> 2016-08-01 09-47-40
+
+by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
+ 
+
+
+ </div>
+        <div class="summary"><p>conda -- 一个更好的Python 环境和包管理工具</p> <a class="btn btn-info xsmall" href="/tool/conda.html">read more</a></div>
+    </div>	
+				
 
  
         
@@ -219,24 +331,6 @@ by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
 
  </div>
         <div class="summary"><p>Reflect on the past working year by some measure on quora.</p> <a class="btn btn-info xsmall" href="/think/What-do-the-top-1%-of-software-engineers-do-that-the-other-99%-do-not.html">read more</a></div>
-    </div>	
-				
-
- 
-        
-
- 
-
-    <div class='article'>
-        <a href="/learning/python-multiprocessing.html"><h2>Python multiprocessing WHY and HOW</h2></a>
-        <div class= "well small"> 2016-04-25 14-41-15
-
-by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
- 
-
-
- </div>
-        <div class="summary"><p>Some thinking and traps in refactor multithreading Python to multiprocessing.</p> <a class="btn btn-info xsmall" href="/learning/python-multiprocessing.html">read more</a></div>
     </div>	
 				
 <div class="pagination">

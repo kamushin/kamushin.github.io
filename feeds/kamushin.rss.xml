@@ -1,5 +1,101 @@
 <?xml version="1.0" encoding="utf-8"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Kamushin's blog</title><link>/</link><description></description><atom:link href="/feeds/kamushin.rss.xml" rel="self"></atom:link><lastBuildDate>Mon, 01 Aug 2016 09:47:40 +0800</lastBuildDate><item><title>推荐一个更好的Python 环境和包管理工具 canda</title><link>/tool/conda.html</link><description>&lt;p&gt;今天在吐槽&lt;code&gt;cx_Oracle&lt;/code&gt;包装起来麻烦，要先装oracle的客户端，然后配置环境变量。同事推荐了这个包管理工具给我。
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Kamushin's blog</title><link>/</link><description></description><atom:link href="/feeds/kamushin.rss.xml" rel="self"></atom:link><lastBuildDate>Mon, 22 Aug 2016 22:17:03 +0800</lastBuildDate><item><title>docker-compose: scale and link</title><link>/learning/docker_compose_scale_link.html</link><description>&lt;p&gt;Month ago, I built my apps with docker and used Nginx outside the docker as a reverse proxy server. Now I have something better to make a change.&lt;br /&gt;
+In docker's world, every component of a website should running as a container, include app, db, and Nginx as well.
+A docker compose YAML I found online as follows, from &lt;a href="http://anandmanisankar.com/posts/docker-container-nginx-node-redis-example/"&gt;a blog&lt;/a&gt;:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="n"&gt;nginx&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;
+    &lt;span class="n"&gt;build&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="o"&gt;./&lt;/span&gt;&lt;span class="n"&gt;nginx&lt;/span&gt;
+    &lt;span class="n"&gt;links&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;
+        &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="n"&gt;node1&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;&lt;span class="n"&gt;node1&lt;/span&gt;
+        &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="n"&gt;node2&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;&lt;span class="n"&gt;node2&lt;/span&gt;
+        &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="n"&gt;node3&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;&lt;span class="n"&gt;node3&lt;/span&gt;
+    &lt;span class="n"&gt;ports&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;
+        &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;80:80&amp;quot;&lt;/span&gt;
+&lt;span class="n"&gt;node1&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;
+    &lt;span class="n"&gt;build&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="o"&gt;./&lt;/span&gt;&lt;span class="n"&gt;node&lt;/span&gt;
+    &lt;span class="n"&gt;links&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;
+        &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="n"&gt;redis&lt;/span&gt;
+    &lt;span class="n"&gt;ports&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;
+        &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;8080&amp;quot;&lt;/span&gt;
+&lt;span class="n"&gt;node2&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;
+    &lt;span class="n"&gt;build&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="o"&gt;./&lt;/span&gt;&lt;span class="n"&gt;node&lt;/span&gt;
+    &lt;span class="n"&gt;links&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;
+        &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="n"&gt;redis&lt;/span&gt;
+    &lt;span class="n"&gt;ports&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;
+        &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;8080&amp;quot;&lt;/span&gt;
+&lt;span class="n"&gt;node3&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;
+    &lt;span class="n"&gt;build&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="o"&gt;./&lt;/span&gt;&lt;span class="n"&gt;node&lt;/span&gt;
+    &lt;span class="n"&gt;links&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;
+        &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="n"&gt;redis&lt;/span&gt;
+    &lt;span class="n"&gt;ports&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;
+        &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;8080&amp;quot;&lt;/span&gt;
+&lt;span class="n"&gt;redis&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;
+    &lt;span class="n"&gt;image&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="n"&gt;redis&lt;/span&gt;
+    &lt;span class="n"&gt;ports&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;
+        &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;6379&amp;quot;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;The author made 3 app containers, 1 redis container and 1 nginx container. I find some ugly implement here that each node is hard coded in conf file, so if nodes need to be scaled up, we should add more and more nodes in the conf file.&lt;br /&gt;
+&lt;code&gt;docker compose scale&lt;/code&gt; is a useful command here to let us scale up our app containers elegantly. &lt;code&gt;docker compose scale node=3 nginx=1 redis=1&lt;/code&gt; will automatically create 3 node containers for us.&lt;br /&gt;
+But there is another dark cloud on the sky. In the previous version, nginx config file is simply as follows:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="nt"&gt;worker_processes&lt;/span&gt; &lt;span class="nt"&gt;4&lt;/span&gt;&lt;span class="o"&gt;;&lt;/span&gt;
+
+&lt;span class="nt"&gt;events&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt; &lt;span class="n"&gt;worker_connections&lt;/span&gt; &lt;span class="m"&gt;1024&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+
+&lt;span class="nt"&gt;http&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+
+        &lt;span class="n"&gt;upstream&lt;/span&gt; &lt;span class="n"&gt;node&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;app&lt;/span&gt; &lt;span class="err"&gt;{&lt;/span&gt;
+              &lt;span class="n"&gt;least_conn&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+              &lt;span class="n"&gt;server&lt;/span&gt; &lt;span class="n"&gt;node1&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;&lt;span class="m"&gt;8080&lt;/span&gt; &lt;span class="n"&gt;weight&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;10&lt;/span&gt; &lt;span class="n"&gt;max_fails&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;3&lt;/span&gt; &lt;span class="n"&gt;fail_timeout&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;30s&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+              &lt;span class="n"&gt;server&lt;/span&gt; &lt;span class="n"&gt;node2&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;&lt;span class="m"&gt;8080&lt;/span&gt; &lt;span class="n"&gt;weight&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;10&lt;/span&gt; &lt;span class="n"&gt;max_fails&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;3&lt;/span&gt; &lt;span class="n"&gt;fail_timeout&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;30s&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+              &lt;span class="n"&gt;server&lt;/span&gt; &lt;span class="n"&gt;node3&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;&lt;span class="m"&gt;8080&lt;/span&gt; &lt;span class="n"&gt;weight&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;10&lt;/span&gt; &lt;span class="n"&gt;max_fails&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;3&lt;/span&gt; &lt;span class="n"&gt;fail_timeout&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;30s&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+        &lt;span class="p"&gt;}&lt;/span&gt;
+
+        &lt;span class="nt"&gt;server&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+              &lt;span class="n"&gt;listen&lt;/span&gt; &lt;span class="m"&gt;80&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+
+              &lt;span class="n"&gt;location&lt;/span&gt; &lt;span class="o"&gt;/&lt;/span&gt; &lt;span class="err"&gt;{&lt;/span&gt;
+                &lt;span class="n"&gt;proxy_pass&lt;/span&gt; &lt;span class="n"&gt;http&lt;/span&gt;&lt;span class="o"&gt;://&lt;/span&gt;&lt;span class="n"&gt;node&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;app&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+                &lt;span class="n"&gt;proxy_http_version&lt;/span&gt; &lt;span class="m"&gt;1&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+                &lt;span class="n"&gt;proxy_set_header&lt;/span&gt; &lt;span class="n"&gt;Upgrade&lt;/span&gt; &lt;span class="err"&gt;$&lt;/span&gt;&lt;span class="n"&gt;http_upgrade&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+                &lt;span class="n"&gt;proxy_set_header&lt;/span&gt; &lt;span class="n"&gt;Connection&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;upgrade&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+                &lt;span class="n"&gt;proxy_set_header&lt;/span&gt; &lt;span class="n"&gt;Host&lt;/span&gt; &lt;span class="err"&gt;$&lt;/span&gt;&lt;span class="n"&gt;host&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+                &lt;span class="n"&gt;proxy_cache_bypass&lt;/span&gt; &lt;span class="err"&gt;$&lt;/span&gt;&lt;span class="n"&gt;http_upgrade&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+              &lt;span class="p"&gt;}&lt;/span&gt;
+        &lt;span class="err"&gt;}&lt;/span&gt;
+&lt;span class="err"&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Can we use &lt;code&gt;node&lt;/code&gt; to replace &lt;code&gt;node1&lt;/code&gt;,&lt;code&gt;node2&lt;/code&gt;,&lt;code&gt;node3&lt;/code&gt; here?&lt;br /&gt;
+&lt;code&gt;node1&lt;/code&gt; here is not some docker magic, it's just a hostname which docker generated in &lt;code&gt;/ets/hosts&lt;/code&gt; of nginx container, since we linked &lt;code&gt;node1&lt;/code&gt; to nginx.
+So if we have 3 node IP which has the same hostname, we can just rewrite conf to a single server: &lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;        &lt;span class="nt"&gt;upstream&lt;/span&gt; &lt;span class="nt"&gt;node-app&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+              &lt;span class="n"&gt;least_conn&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+              &lt;span class="n"&gt;server&lt;/span&gt; &lt;span class="n"&gt;node&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;&lt;span class="m"&gt;8080&lt;/span&gt; &lt;span class="n"&gt;max_fails&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;3&lt;/span&gt; &lt;span class="n"&gt;fail_timeout&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;30s&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+        &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Unfortunately, docker compose v1 seems not support group nodes into the same hostname.&lt;/p&gt;
+&lt;p&gt;The interaction of scaling with networking (as with links) is unsatisfactory at the moment - you'll basically get a bunch of entries in /etc/hosts along these lines:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;  172.16.0.1 myapp_php_1
+  172.16.0.2 myapp_php_2
+  172.16.0.3 myapp_php_3
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;In a future version of Compose (enabled by changes to Engine), the name under which each container joins the network is going to change to just the service name, php. So you'll get multiple entries with the same name:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;172.16.0.1 php
+172.16.0.2 php
+172.16.0.3 php
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;This isn't a real solution either, of course - we're still working towards one - but in both cases, if you have a load balancer container that needs to keep up-to-date with what's currently on the network, for the time being it'll need to periodically read /etc/hosts and parse the entries to determine the IPs of the backends.   &lt;/p&gt;
+&lt;p&gt;@aanand one of the maintainer of docker compose said above in &lt;a href="https://github.com/docker/compose/issues/2472"&gt;2015-12-7&lt;/a&gt;.  &lt;/p&gt;
+&lt;p&gt;It may already be improved in v2 with docker 1.10, but I have not get the chance to use docker 1.10.  &lt;/p&gt;
+&lt;p&gt;I think this way is better since we can easily scale up and dont need to change the config.  DevOps should evolve in this way. &lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Kamushin</dc:creator><pubDate>Mon, 22 Aug 2016 22:17:03 +0800</pubDate><guid>tag:,2016-08-22:learning/docker_compose_scale_link.html</guid><category>DevOps docker</category></item><item><title>推荐一个更好的Python 环境和包管理工具 canda</title><link>/tool/conda.html</link><description>&lt;p&gt;今天在吐槽&lt;code&gt;cx_Oracle&lt;/code&gt;包装起来麻烦，要先装oracle的客户端，然后配置环境变量。同事推荐了这个包管理工具给我。
 实测非常靠谱. 简直是比&lt;code&gt;npm&lt;/code&gt;还舒服的体验, 当然是随口一说的，不过至少在oracle的包的安装上，比&lt;code&gt;npm&lt;/code&gt;的要简单。 &lt;br /&gt;
 再用清华的源加个速，&lt;code&gt;https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/free/&lt;/code&gt;。 &lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Kamushin</dc:creator><pubDate>Mon, 01 Aug 2016 09:47:40 +0800</pubDate><guid>tag:,2016-08-01:tool/conda.html</guid><category>conda</category></item><item><title>搭建一个jupyter站点做数据分析吧</title><link>/learning/jupyter.html</link><description>&lt;h3&gt;jupyter&lt;/h3&gt;
 &lt;p&gt;&lt;code&gt;jupyter&lt;/code&gt; 是一个非常适合做数据分析的工作台。为了可以使得&lt;code&gt;jupyter&lt;/code&gt;可以运行在服务器上访问生产环境的数据，今天我要在服务器上搭建一个&lt;code&gt;jupyter&lt;/code&gt;站点。&lt;/p&gt;
