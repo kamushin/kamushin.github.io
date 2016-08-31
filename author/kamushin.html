@@ -59,8 +59,8 @@
 
     <div class='article'>
         <div class="content-title">
-            <a href="/learning/docker_compose_scale_link.html"><h1>docker-compose: scale and link</h1></a>
-2016-08-22 22-54-17
+            <a href="/debug/wrap_a_react_route.html"><h1>Why shouldn't use component wrap a Route</h1></a>
+2016-08-31 11-18-29
 
 by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
  
@@ -69,114 +69,73 @@ by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
  
         </div>
         
-        <div><p>Month ago, I built my apps with docker and used Nginx outside the docker as a reverse proxy server. Now I have something better to make a change.<br />
-In docker's world, every component of a website should running as a container, include app, db, and Nginx as well.
-A docker compose YAML I found online as follows, from <a href="http://anandmanisankar.com/posts/docker-container-nginx-node-redis-example/">a blog</a>:</p>
-<div class="highlight"><pre><span class="l-Scalar-Plain">nginx</span><span class="p-Indicator">:</span>
-    <span class="l-Scalar-Plain">build</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">./nginx</span>
-    <span class="l-Scalar-Plain">links</span><span class="p-Indicator">:</span>
-        <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">node1:node1</span>
-        <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">node2:node2</span>
-        <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">node3:node3</span>
-    <span class="l-Scalar-Plain">ports</span><span class="p-Indicator">:</span>
-        <span class="p-Indicator">-</span> <span class="s">&quot;80:80&quot;</span>
-<span class="l-Scalar-Plain">node1</span><span class="p-Indicator">:</span>
-    <span class="l-Scalar-Plain">build</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">./node</span>
-    <span class="l-Scalar-Plain">links</span><span class="p-Indicator">:</span>
-        <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">redis</span>
-    <span class="l-Scalar-Plain">ports</span><span class="p-Indicator">:</span>
-        <span class="p-Indicator">-</span> <span class="s">&quot;8080&quot;</span>
-<span class="l-Scalar-Plain">node2</span><span class="p-Indicator">:</span>
-    <span class="l-Scalar-Plain">build</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">./node</span>
-    <span class="l-Scalar-Plain">links</span><span class="p-Indicator">:</span>
-        <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">redis</span>
-    <span class="l-Scalar-Plain">ports</span><span class="p-Indicator">:</span>
-        <span class="p-Indicator">-</span> <span class="s">&quot;8080&quot;</span>
-<span class="l-Scalar-Plain">node3</span><span class="p-Indicator">:</span>
-    <span class="l-Scalar-Plain">build</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">./node</span>
-    <span class="l-Scalar-Plain">links</span><span class="p-Indicator">:</span>
-        <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">redis</span>
-    <span class="l-Scalar-Plain">ports</span><span class="p-Indicator">:</span>
-        <span class="p-Indicator">-</span> <span class="s">&quot;8080&quot;</span>
-<span class="l-Scalar-Plain">redis</span><span class="p-Indicator">:</span>
-    <span class="l-Scalar-Plain">image</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">redis</span>
-    <span class="l-Scalar-Plain">ports</span><span class="p-Indicator">:</span>
-        <span class="p-Indicator">-</span> <span class="s">&quot;6379&quot;</span>
+        <div><h3>背景</h3>
+<p>由于我希望每个子项目管理自己的route，于是想维护一个<code>route</code>的component在各个子目录中，在index.js中import各个子项目的<code>route</code>.<br />
+以此简化index.js中的需要import的依赖数量。</p>
+<h3>react-route是如何配置规则的</h3>
+<p>举个例子：</p>
+<div class="highlight"><pre>  <span class="o">&lt;</span><span class="nx">Router</span> <span class="nx">history</span><span class="o">=</span><span class="p">{</span><span class="nx">browserHistory</span><span class="p">}</span><span class="o">&gt;</span>
+    <span class="o">&lt;</span><span class="nx">Route</span> <span class="nx">path</span><span class="o">=</span><span class="s1">&#39;/&#39;</span> <span class="nx">component</span><span class="o">=</span><span class="p">{</span><span class="nx">Layout</span><span class="p">}</span><span class="o">&gt;</span>
+      <span class="o">&lt;</span><span class="nx">Route</span> <span class="nx">path</span><span class="o">=</span><span class="s1">&#39;signup&#39;</span> <span class="nx">component</span><span class="o">=</span><span class="p">{</span><span class="nx">SignupPage</span><span class="p">}</span> <span class="o">/&gt;</span>
+    <span class="o">&lt;</span><span class="err">/Route&gt;</span>
+  <span class="o">&lt;</span><span class="err">/Router&gt;</span>
 </pre></div>
 
 
-<p>The author made 3 app containers, 1 redis container and 1 nginx container. I find some ugly implement here that each node is hard coded in conf file, so if nodes need to be scaled up, we should add more and more nodes in the conf file.<br />
-<code>docker compose scale</code> is a useful command here to let us scale up our app containers elegantly. <code>docker compose scale node=3 nginx=1 redis=1</code> will automatically create 3 node containers for us.<br />
-But there is another dark cloud on the sky. In the previous version, nginx config file is simply as follows:</p>
-<div class="highlight"><pre><span class="k">worker_processes</span> <span class="mi">4</span><span class="p">;</span>
+<p><code>Router</code>组件在<code>componentWillMount</code>时会尝试加载children中的<code>Route</code>配置, 通过遍历children，找到他们的props, 然后把props加入<code>route</code>数组中。
+也就是说<code>Route</code>组件实际上作为一个配置用的组件，会直接被<code>Router</code>读取，所以<code>Route</code>也没有实际意义上的render方法。</p>
+<p>ps.这提供给我一个思路，如何一个组件的配置太过于多和复杂，那么可以搞出个专门用来做配置用的子组件，在渲染前读取子组件的配置，加载成自己的配置。这样的好处是大大提高了可读性。让配置成为声明而不是运算。</p>
+<div class="highlight"><pre><span class="cm">/**</span>
+<span class="cm"> * Creates and returns a routes object from the given ReactChildren. JSX</span>
+<span class="cm"> * provides a convenient way to visualize how routes in the hierarchy are</span>
+<span class="cm"> * nested.</span>
+<span class="cm"> *</span>
+<span class="cm"> *   import { Route, createRoutesFromReactChildren } from &#39;react-router&#39;</span>
+<span class="cm"> *   </span>
+<span class="cm"> *   const routes = createRoutesFromReactChildren(</span>
+<span class="cm"> *     &lt;Route component={App}&gt;</span>
+<span class="cm"> *       &lt;Route path=&quot;home&quot; component={Dashboard}/&gt;</span>
+<span class="cm"> *       &lt;Route path=&quot;news&quot; component={NewsFeed}/&gt;</span>
+<span class="cm"> *     &lt;/Route&gt;</span>
+<span class="cm"> *   )</span>
+<span class="cm"> *</span>
+<span class="cm"> * Note: This method is automatically used when you provide &lt;Route&gt; children</span>
+<span class="cm"> * to a &lt;Router&gt; component.</span>
+<span class="cm"> */</span>
 
-<span class="k">events</span> <span class="p">{</span> <span class="kn">worker_connections</span> <span class="mi">1024</span><span class="p">;</span> <span class="p">}</span>
-
-<span class="k">http</span> <span class="p">{</span>
-
-        <span class="kn">upstream</span> <span class="s">node-app</span> <span class="p">{</span>
-              <span class="kn">least_conn</span><span class="p">;</span>
-              <span class="kn">server</span> <span class="n">node1</span><span class="p">:</span><span class="mi">8080</span> <span class="s">weight=10</span> <span class="s">max_fails=3</span> <span class="s">fail_timeout=30s</span><span class="p">;</span>
-              <span class="kn">server</span> <span class="n">node2</span><span class="p">:</span><span class="mi">8080</span> <span class="s">weight=10</span> <span class="s">max_fails=3</span> <span class="s">fail_timeout=30s</span><span class="p">;</span>
-              <span class="kn">server</span> <span class="n">node3</span><span class="p">:</span><span class="mi">8080</span> <span class="s">weight=10</span> <span class="s">max_fails=3</span> <span class="s">fail_timeout=30s</span><span class="p">;</span>
-        <span class="p">}</span>
-
-        <span class="kn">server</span> <span class="p">{</span>
-              <span class="kn">listen</span> <span class="mi">80</span><span class="p">;</span>
-
-              <span class="kn">location</span> <span class="s">/</span> <span class="p">{</span>
-                <span class="kn">proxy_pass</span> <span class="s">http://node-app</span><span class="p">;</span>
-                <span class="kn">proxy_http_version</span> <span class="mi">1</span><span class="s">.1</span><span class="p">;</span>
-                <span class="kn">proxy_set_header</span> <span class="s">Upgrade</span> <span class="nv">$http_upgrade</span><span class="p">;</span>
-                <span class="kn">proxy_set_header</span> <span class="s">Connection</span> <span class="s">&#39;upgrade&#39;</span><span class="p">;</span>
-                <span class="kn">proxy_set_header</span> <span class="s">Host</span> <span class="nv">$host</span><span class="p">;</span>
-                <span class="kn">proxy_cache_bypass</span> <span class="nv">$http_upgrade</span><span class="p">;</span>
-              <span class="p">}</span>
-        <span class="p">}</span>
-<span class="p">}</span>
+<span class="kd">function</span> <span class="nx">createRoutesFromReactChildren</span><span class="p">(</span><span class="nx">children</span><span class="p">,</span> <span class="nx">parentRoute</span><span class="p">){...}</span>
 </pre></div>
 
 
-<p>Can we use <code>node</code> to replace <code>node1</code>,<code>node2</code>,<code>node3</code> here?<br />
-<code>node1</code> here is not some docker magic, it's just a hostname which docker generated in <code>/ets/hosts</code> of nginx container, since we linked <code>node1</code> to nginx.
-So if we have 3 node IP which has the same hostname, we can just rewrite conf to a single server: </p>
-<div class="highlight"><pre>        <span class="nt">upstream</span> <span class="nt">node-app</span> <span class="p">{</span>
-              <span class="n">least_conn</span><span class="p">;</span>
-              <span class="n">server</span> <span class="n">node</span><span class="o">:</span><span class="m">8080</span> <span class="n">max_fails</span><span class="o">=</span><span class="m">3</span> <span class="n">fail_timeout</span><span class="o">=</span><span class="m">30s</span><span class="p">;</span>
-        <span class="p">}</span>
-</pre></div>
-
-
-<p>Unfortunately, docker compose v1 seems not support group nodes into the same hostname. <br />
-It will generate hosts as follows:</p>
-<div class="highlight"><pre>172.17.0.21 node 8a1297a5b3e4 compose_node_1
-172.17.0.21 node_1 8a1297a5b3e4 compose_node_1
-172.17.0.22 node_2 069dd46836aa compose_node_2
-</pre></div>
-
-
-<p>Only one container will get the name <code>node</code>. After searching in Github, I got some interesting facts:</p>
-<p>The interaction of scaling with networking (as with links) is unsatisfactory at the moment - you'll basically get a bunch of entries in /etc/hosts along these lines:</p>
-<div class="highlight"><pre>  172.16.0.1 myapp_php_1
-  172.16.0.2 myapp_php_2
-  172.16.0.3 myapp_php_3
-</pre></div>
-
-
-<p>In a future version of Compose (enabled by changes to Engine), the name under which each container joins the network is going to change to just the service name, php. So you'll get multiple entries with the same name:</p>
-<div class="highlight"><pre>172.16.0.1 php
-172.16.0.2 php
-172.16.0.3 php
-</pre></div>
-
-
-<p>This isn't a real solution either, of course - we're still working towards one - but in both cases, if you have a load balancer container that needs to keep up-to-date with what's currently on the network, for the time being it'll need to periodically read /etc/hosts and parse the entries to determine the IPs of the backends.   </p>
-<p>@aanand one of the maintainer of docker compose said above in <a href="https://github.com/docker/compose/issues/2472">2015-12-7</a>.  </p>
-<p>It may already be improved in v2 with docker 1.10, but I have not get the chance to use docker 1.10.  </p>
-<p>I think this way is better since we can easily scale up and dont need to change the config.  DevOps should evolve in this scalable way.</p></div>
+<h3>为什么不能用一个wrapper组件来隐藏子route的细节</h3>
+<p>有了上面的知识后，这个问题就显而易见了，因为配置是通过读取children的<code>props</code>来加载的。在children外包裹一层wrapper会导致读到wrapper的<code>props</code>。</p>
+<h3>怎么实现我想要的功能</h3>
+<p>最简单的方法就是写个函数来直接return route。这样既达到了分割的目的，也不会加入中间层。</p>
+<h3>为什么一开始会想用wrapper呢</h3>
+<p>一开始不够了解react-route的原理，以为只要能渲染出来，效果是一样的。</p>
+<h3>SO 相关问题链接</h3>
+<p>http://stackoverflow.com/questions/35048738/react-router-import-routes</p></div>
         <hr />
     </div>
 		
+
+ 
+        
+
+ 
+
+    <div class='article'>
+        <a href="/learning/docker_compose_scale_link.html"><h2>docker-compose: scale and link</h2></a>
+        <div class= "well small"> 2016-08-22 22-54-17
+
+by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
+ 
+
+
+ </div>
+        <div class="summary"><p>Learned how to use docker compose to create a scalable web app with nginx.</p> <a class="btn btn-info xsmall" href="/learning/docker_compose_scale_link.html">read more</a></div>
+    </div>	
+				
 
  
         
@@ -321,24 +280,6 @@ by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
 
  </div>
         <div class="summary"> <a class="btn btn-info xsmall" href="/misc/about.html">read more</a></div>
-    </div>	
-				
-
- 
-        
-
- 
-
-    <div class='article'>
-        <a href="/think/What-do-the-top-1%-of-software-engineers-do-that-the-other-99%-do-not.html"><h2>What do the top 1% of software engineers do that the other 99% do not</h2></a>
-        <div class= "well small"> 2016-04-27 00-50-28
-
-by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
- 
-
-
- </div>
-        <div class="summary"><p>Reflect on the past working year by some measure on quora.</p> <a class="btn btn-info xsmall" href="/think/What-do-the-top-1%-of-software-engineers-do-that-the-other-99%-do-not.html">read more</a></div>
     </div>	
 				
 <div class="pagination">

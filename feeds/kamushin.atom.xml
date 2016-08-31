@@ -1,5 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Kamushin's blog</title><link href="/" rel="alternate"></link><link href="/feeds/kamushin.atom.xml" rel="self"></link><id>/</id><updated>2016-08-22T22:54:17+08:00</updated><entry><title>docker-compose: scale and link</title><link href="/learning/docker_compose_scale_link.html" rel="alternate"></link><updated>2016-08-22T22:54:17+08:00</updated><author><name>Kamushin</name></author><id>tag:,2016-08-22:learning/docker_compose_scale_link.html</id><summary type="html">&lt;p&gt;Month ago, I built my apps with docker and used Nginx outside the docker as a reverse proxy server. Now I have something better to make a change.&lt;br /&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Kamushin's blog</title><link href="/" rel="alternate"></link><link href="/feeds/kamushin.atom.xml" rel="self"></link><id>/</id><updated>2016-08-31T11:18:29+08:00</updated><entry><title>Why shouldn't use component wrap a Route</title><link href="/debug/wrap_a_react_route.html" rel="alternate"></link><updated>2016-08-31T11:18:29+08:00</updated><author><name>Kamushin</name></author><id>tag:,2016-08-31:debug/wrap_a_react_route.html</id><summary type="html">&lt;h3&gt;背景&lt;/h3&gt;
+&lt;p&gt;由于我希望每个子项目管理自己的route，于是想维护一个&lt;code&gt;route&lt;/code&gt;的component在各个子目录中，在index.js中import各个子项目的&lt;code&gt;route&lt;/code&gt;.&lt;br /&gt;
+以此简化index.js中的需要import的依赖数量。&lt;/p&gt;
+&lt;h3&gt;react-route是如何配置规则的&lt;/h3&gt;
+&lt;p&gt;举个例子：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;  &lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nx"&gt;Router&lt;/span&gt; &lt;span class="nx"&gt;history&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="nx"&gt;browserHistory&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt;
+    &lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nx"&gt;Route&lt;/span&gt; &lt;span class="nx"&gt;path&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;/&amp;#39;&lt;/span&gt; &lt;span class="nx"&gt;component&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="nx"&gt;Layout&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt;
+      &lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nx"&gt;Route&lt;/span&gt; &lt;span class="nx"&gt;path&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;signup&amp;#39;&lt;/span&gt; &lt;span class="nx"&gt;component&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="nx"&gt;SignupPage&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt; &lt;span class="o"&gt;/&amp;gt;&lt;/span&gt;
+    &lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="err"&gt;/Route&amp;gt;&lt;/span&gt;
+  &lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="err"&gt;/Router&amp;gt;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;&lt;code&gt;Router&lt;/code&gt;组件在&lt;code&gt;componentWillMount&lt;/code&gt;时会尝试加载children中的&lt;code&gt;Route&lt;/code&gt;配置, 通过遍历children，找到他们的props, 然后把props加入&lt;code&gt;route&lt;/code&gt;数组中。
+也就是说&lt;code&gt;Route&lt;/code&gt;组件实际上作为一个配置用的组件，会直接被&lt;code&gt;Router&lt;/code&gt;读取，所以&lt;code&gt;Route&lt;/code&gt;也没有实际意义上的render方法。&lt;/p&gt;
+&lt;p&gt;ps.这提供给我一个思路，如何一个组件的配置太过于多和复杂，那么可以搞出个专门用来做配置用的子组件，在渲染前读取子组件的配置，加载成自己的配置。这样的好处是大大提高了可读性。让配置成为声明而不是运算。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="cm"&gt;/**&lt;/span&gt;
+&lt;span class="cm"&gt; * Creates and returns a routes object from the given ReactChildren. JSX&lt;/span&gt;
+&lt;span class="cm"&gt; * provides a convenient way to visualize how routes in the hierarchy are&lt;/span&gt;
+&lt;span class="cm"&gt; * nested.&lt;/span&gt;
+&lt;span class="cm"&gt; *&lt;/span&gt;
+&lt;span class="cm"&gt; *   import { Route, createRoutesFromReactChildren } from &amp;#39;react-router&amp;#39;&lt;/span&gt;
+&lt;span class="cm"&gt; *   &lt;/span&gt;
+&lt;span class="cm"&gt; *   const routes = createRoutesFromReactChildren(&lt;/span&gt;
+&lt;span class="cm"&gt; *     &amp;lt;Route component={App}&amp;gt;&lt;/span&gt;
+&lt;span class="cm"&gt; *       &amp;lt;Route path=&amp;quot;home&amp;quot; component={Dashboard}/&amp;gt;&lt;/span&gt;
+&lt;span class="cm"&gt; *       &amp;lt;Route path=&amp;quot;news&amp;quot; component={NewsFeed}/&amp;gt;&lt;/span&gt;
+&lt;span class="cm"&gt; *     &amp;lt;/Route&amp;gt;&lt;/span&gt;
+&lt;span class="cm"&gt; *   )&lt;/span&gt;
+&lt;span class="cm"&gt; *&lt;/span&gt;
+&lt;span class="cm"&gt; * Note: This method is automatically used when you provide &amp;lt;Route&amp;gt; children&lt;/span&gt;
+&lt;span class="cm"&gt; * to a &amp;lt;Router&amp;gt; component.&lt;/span&gt;
+&lt;span class="cm"&gt; */&lt;/span&gt;
+
+&lt;span class="kd"&gt;function&lt;/span&gt; &lt;span class="nx"&gt;createRoutesFromReactChildren&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;children&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;parentRoute&lt;/span&gt;&lt;span class="p"&gt;){...}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h3&gt;为什么不能用一个wrapper组件来隐藏子route的细节&lt;/h3&gt;
+&lt;p&gt;有了上面的知识后，这个问题就显而易见了，因为配置是通过读取children的&lt;code&gt;props&lt;/code&gt;来加载的。在children外包裹一层wrapper会导致读到wrapper的&lt;code&gt;props&lt;/code&gt;。&lt;/p&gt;
+&lt;h3&gt;怎么实现我想要的功能&lt;/h3&gt;
+&lt;p&gt;最简单的方法就是写个函数来直接return route。这样既达到了分割的目的，也不会加入中间层。&lt;/p&gt;
+&lt;h3&gt;为什么一开始会想用wrapper呢&lt;/h3&gt;
+&lt;p&gt;一开始不够了解react-route的原理，以为只要能渲染出来，效果是一样的。&lt;/p&gt;
+&lt;h3&gt;SO 相关问题链接&lt;/h3&gt;
+&lt;p&gt;http://stackoverflow.com/questions/35048738/react-router-import-routes&lt;/p&gt;</summary><category term="react-route"></category></entry><entry><title>docker-compose: scale and link</title><link href="/learning/docker_compose_scale_link.html" rel="alternate"></link><updated>2016-08-22T22:54:17+08:00</updated><author><name>Kamushin</name></author><id>tag:,2016-08-22:learning/docker_compose_scale_link.html</id><summary type="html">&lt;p&gt;Month ago, I built my apps with docker and used Nginx outside the docker as a reverse proxy server. Now I have something better to make a change.&lt;br /&gt;
 In docker's world, every component of a website should running as a container, include app, db, and Nginx as well.
 A docker compose YAML I found online as follows, from &lt;a href="http://anandmanisankar.com/posts/docker-container-nginx-node-redis-example/"&gt;a blog&lt;/a&gt;:&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="l-Scalar-Plain"&gt;nginx&lt;/span&gt;&lt;span class="p-Indicator"&gt;:&lt;/span&gt;
