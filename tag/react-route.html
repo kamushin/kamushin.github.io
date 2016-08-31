@@ -60,7 +60,7 @@
     <div class='article'>
         <div class="content-title">
             <a href="/debug/wrap_a_react_route.html"><h1>Why shouldn't use component wrap a Route</h1></a>
-2016-08-31 11-18-29
+2016-08-31 11-20-46
 
 by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
  
@@ -74,11 +74,11 @@ by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
 以此简化index.js中的需要import的依赖数量。</p>
 <h3>react-route是如何配置规则的</h3>
 <p>举个例子：</p>
-<div class="highlight"><pre>  <span class="o">&lt;</span><span class="nx">Router</span> <span class="nx">history</span><span class="o">=</span><span class="p">{</span><span class="nx">browserHistory</span><span class="p">}</span><span class="o">&gt;</span>
-    <span class="o">&lt;</span><span class="nx">Route</span> <span class="nx">path</span><span class="o">=</span><span class="s1">&#39;/&#39;</span> <span class="nx">component</span><span class="o">=</span><span class="p">{</span><span class="nx">Layout</span><span class="p">}</span><span class="o">&gt;</span>
-      <span class="o">&lt;</span><span class="nx">Route</span> <span class="nx">path</span><span class="o">=</span><span class="s1">&#39;signup&#39;</span> <span class="nx">component</span><span class="o">=</span><span class="p">{</span><span class="nx">SignupPage</span><span class="p">}</span> <span class="o">/&gt;</span>
-    <span class="o">&lt;</span><span class="err">/Route&gt;</span>
-  <span class="o">&lt;</span><span class="err">/Router&gt;</span>
+<div class="highlight"><pre>  <span class="nt">&lt;Router</span> <span class="na">history=</span><span class="s">{browserHistory}</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;Route</span> <span class="na">path=</span><span class="s">&#39;/&#39;</span> <span class="na">component=</span><span class="s">{Layout}</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;Route</span> <span class="na">path=</span><span class="s">&#39;signup&#39;</span> <span class="na">component=</span><span class="s">{SignupPage}</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;/Route&gt;</span>
+  <span class="nt">&lt;/Router&gt;</span>
 </pre></div>
 
 

@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Kamushin's blog</title><link href="/" rel="alternate"></link><link href="/feeds/kamushin.atom.xml" rel="self"></link><id>/</id><updated>2016-08-31T11:18:29+08:00</updated><entry><title>Why shouldn't use component wrap a Route</title><link href="/debug/wrap_a_react_route.html" rel="alternate"></link><updated>2016-08-31T11:18:29+08:00</updated><author><name>Kamushin</name></author><id>tag:,2016-08-31:debug/wrap_a_react_route.html</id><summary type="html">&lt;h3&gt;背景&lt;/h3&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Kamushin's blog</title><link href="/" rel="alternate"></link><link href="/feeds/kamushin.atom.xml" rel="self"></link><id>/</id><updated>2016-08-31T11:20:46+08:00</updated><entry><title>Why shouldn't use component wrap a Route</title><link href="/debug/wrap_a_react_route.html" rel="alternate"></link><updated>2016-08-31T11:20:46+08:00</updated><author><name>Kamushin</name></author><id>tag:,2016-08-31:debug/wrap_a_react_route.html</id><summary type="html">&lt;h3&gt;背景&lt;/h3&gt;
 &lt;p&gt;由于我希望每个子项目管理自己的route，于是想维护一个&lt;code&gt;route&lt;/code&gt;的component在各个子目录中，在index.js中import各个子项目的&lt;code&gt;route&lt;/code&gt;.&lt;br /&gt;
 以此简化index.js中的需要import的依赖数量。&lt;/p&gt;
 &lt;h3&gt;react-route是如何配置规则的&lt;/h3&gt;
 &lt;p&gt;举个例子：&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;  &lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nx"&gt;Router&lt;/span&gt; &lt;span class="nx"&gt;history&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="nx"&gt;browserHistory&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt;
-    &lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nx"&gt;Route&lt;/span&gt; &lt;span class="nx"&gt;path&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;/&amp;#39;&lt;/span&gt; &lt;span class="nx"&gt;component&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="nx"&gt;Layout&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt;
-      &lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nx"&gt;Route&lt;/span&gt; &lt;span class="nx"&gt;path&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;signup&amp;#39;&lt;/span&gt; &lt;span class="nx"&gt;component&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="nx"&gt;SignupPage&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt; &lt;span class="o"&gt;/&amp;gt;&lt;/span&gt;
-    &lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="err"&gt;/Route&amp;gt;&lt;/span&gt;
-  &lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="err"&gt;/Router&amp;gt;&lt;/span&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;  &lt;span class="nt"&gt;&amp;lt;Router&lt;/span&gt; &lt;span class="na"&gt;history=&lt;/span&gt;&lt;span class="s"&gt;{browserHistory}&lt;/span&gt;&lt;span class="nt"&gt;&amp;gt;&lt;/span&gt;
+    &lt;span class="nt"&gt;&amp;lt;Route&lt;/span&gt; &lt;span class="na"&gt;path=&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;/&amp;#39;&lt;/span&gt; &lt;span class="na"&gt;component=&lt;/span&gt;&lt;span class="s"&gt;{Layout}&lt;/span&gt;&lt;span class="nt"&gt;&amp;gt;&lt;/span&gt;
+      &lt;span class="nt"&gt;&amp;lt;Route&lt;/span&gt; &lt;span class="na"&gt;path=&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;signup&amp;#39;&lt;/span&gt; &lt;span class="na"&gt;component=&lt;/span&gt;&lt;span class="s"&gt;{SignupPage}&lt;/span&gt; &lt;span class="nt"&gt;/&amp;gt;&lt;/span&gt;
+    &lt;span class="nt"&gt;&amp;lt;/Route&amp;gt;&lt;/span&gt;
+  &lt;span class="nt"&gt;&amp;lt;/Router&amp;gt;&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
 
 
