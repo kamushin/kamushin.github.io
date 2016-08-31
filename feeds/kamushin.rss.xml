@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Kamushin's blog</title><link>/</link><description></description><atom:link href="/feeds/kamushin.rss.xml" rel="self"></atom:link><lastBuildDate>Wed, 31 Aug 2016 11:20:46 +0800</lastBuildDate><item><title>Why shouldn't use component wrap a Route</title><link>/debug/wrap_a_react_route.html</link><description>&lt;h3&gt;背景&lt;/h3&gt;
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Kamushin's blog</title><link>/</link><description></description><atom:link href="/feeds/kamushin.rss.xml" rel="self"></atom:link><lastBuildDate>Wed, 31 Aug 2016 11:22:52 +0800</lastBuildDate><item><title>Why shouldn't use component wrap a Route</title><link>/debug/wrap_a_react_route.html</link><description>&lt;h3&gt;背景&lt;/h3&gt;
 &lt;p&gt;由于我希望每个子项目管理自己的route，于是想维护一个&lt;code&gt;route&lt;/code&gt;的component在各个子目录中，在index.js中import各个子项目的&lt;code&gt;route&lt;/code&gt;.&lt;br /&gt;
 以此简化index.js中的需要import的依赖数量。&lt;/p&gt;
 &lt;h3&gt;react-route是如何配置规则的&lt;/h3&gt;
@@ -44,7 +44,7 @@
 &lt;h3&gt;为什么一开始会想用wrapper呢&lt;/h3&gt;
 &lt;p&gt;一开始不够了解react-route的原理，以为只要能渲染出来，效果是一样的。&lt;/p&gt;
 &lt;h3&gt;SO 相关问题链接&lt;/h3&gt;
-&lt;p&gt;http://stackoverflow.com/questions/35048738/react-router-import-routes&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Kamushin</dc:creator><pubDate>Wed, 31 Aug 2016 11:20:46 +0800</pubDate><guid>tag:,2016-08-31:debug/wrap_a_react_route.html</guid><category>react-route</category></item><item><title>docker-compose: scale and link</title><link>/learning/docker_compose_scale_link.html</link><description>&lt;p&gt;Month ago, I built my apps with docker and used Nginx outside the docker as a reverse proxy server. Now I have something better to make a change.&lt;br /&gt;
+&lt;p&gt;&lt;a href="http://stackoverflow.com/questions/35048738/react-router-import-routes"&gt;点我&lt;/a&gt;&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Kamushin</dc:creator><pubDate>Wed, 31 Aug 2016 11:22:52 +0800</pubDate><guid>tag:,2016-08-31:debug/wrap_a_react_route.html</guid><category>react-route</category></item><item><title>docker-compose: scale and link</title><link>/learning/docker_compose_scale_link.html</link><description>&lt;p&gt;Month ago, I built my apps with docker and used Nginx outside the docker as a reverse proxy server. Now I have something better to make a change.&lt;br /&gt;
 In docker's world, every component of a website should running as a container, include app, db, and Nginx as well.
 A docker compose YAML I found online as follows, from &lt;a href="http://anandmanisankar.com/posts/docker-container-nginx-node-redis-example/"&gt;a blog&lt;/a&gt;:&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="l-Scalar-Plain"&gt;nginx&lt;/span&gt;&lt;span class="p-Indicator"&gt;:&lt;/span&gt;
