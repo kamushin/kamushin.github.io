@@ -59,8 +59,8 @@
 
     <div class='article'>
         <div class="content-title">
-            <a href="/learning/docker_compose_scale_link.html"><h1>docker-compose: scale and link</h1></a>
-2016-08-22 22-54-17
+            <a href="/learning/nodejs.html"><h1>最近在做的事情</h1></a>
+2016-12-16 18-16-03
 
 by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
  
@@ -69,114 +69,63 @@ by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
  
         </div>
         
-        <div><p>Month ago, I built my apps with docker and used Nginx outside the docker as a reverse proxy server. Now I have something better to make a change.<br />
-In docker's world, every component of a website should running as a container, include app, db, and Nginx as well.
-A docker compose YAML I found online as follows, from <a href="http://anandmanisankar.com/posts/docker-container-nginx-node-redis-example/">a blog</a>:</p>
-<div class="highlight"><pre><span class="l-Scalar-Plain">nginx</span><span class="p-Indicator">:</span>
-    <span class="l-Scalar-Plain">build</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">./nginx</span>
-    <span class="l-Scalar-Plain">links</span><span class="p-Indicator">:</span>
-        <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">node1:node1</span>
-        <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">node2:node2</span>
-        <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">node3:node3</span>
-    <span class="l-Scalar-Plain">ports</span><span class="p-Indicator">:</span>
-        <span class="p-Indicator">-</span> <span class="s">&quot;80:80&quot;</span>
-<span class="l-Scalar-Plain">node1</span><span class="p-Indicator">:</span>
-    <span class="l-Scalar-Plain">build</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">./node</span>
-    <span class="l-Scalar-Plain">links</span><span class="p-Indicator">:</span>
-        <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">redis</span>
-    <span class="l-Scalar-Plain">ports</span><span class="p-Indicator">:</span>
-        <span class="p-Indicator">-</span> <span class="s">&quot;8080&quot;</span>
-<span class="l-Scalar-Plain">node2</span><span class="p-Indicator">:</span>
-    <span class="l-Scalar-Plain">build</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">./node</span>
-    <span class="l-Scalar-Plain">links</span><span class="p-Indicator">:</span>
-        <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">redis</span>
-    <span class="l-Scalar-Plain">ports</span><span class="p-Indicator">:</span>
-        <span class="p-Indicator">-</span> <span class="s">&quot;8080&quot;</span>
-<span class="l-Scalar-Plain">node3</span><span class="p-Indicator">:</span>
-    <span class="l-Scalar-Plain">build</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">./node</span>
-    <span class="l-Scalar-Plain">links</span><span class="p-Indicator">:</span>
-        <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">redis</span>
-    <span class="l-Scalar-Plain">ports</span><span class="p-Indicator">:</span>
-        <span class="p-Indicator">-</span> <span class="s">&quot;8080&quot;</span>
-<span class="l-Scalar-Plain">redis</span><span class="p-Indicator">:</span>
-    <span class="l-Scalar-Plain">image</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">redis</span>
-    <span class="l-Scalar-Plain">ports</span><span class="p-Indicator">:</span>
-        <span class="p-Indicator">-</span> <span class="s">&quot;6379&quot;</span>
-</pre></div>
-
-
-<p>The author made 3 app containers, 1 redis container and 1 nginx container. I find some ugly implement here that each node is hard coded in conf file, so if nodes need to be scaled up, we should add more and more nodes in the conf file.<br />
-<code>docker compose scale</code> is a useful command here to let us scale up our app containers elegantly. <code>docker compose scale node=3 nginx=1 redis=1</code> will automatically create 3 node containers for us.<br />
-But there is another dark cloud on the sky. In the previous version, nginx config file is simply as follows:</p>
-<div class="highlight"><pre><span class="k">worker_processes</span> <span class="mi">4</span><span class="p">;</span>
-
-<span class="k">events</span> <span class="p">{</span> <span class="kn">worker_connections</span> <span class="mi">1024</span><span class="p">;</span> <span class="p">}</span>
-
-<span class="k">http</span> <span class="p">{</span>
-
-        <span class="kn">upstream</span> <span class="s">node-app</span> <span class="p">{</span>
-              <span class="kn">least_conn</span><span class="p">;</span>
-              <span class="kn">server</span> <span class="n">node1</span><span class="p">:</span><span class="mi">8080</span> <span class="s">weight=10</span> <span class="s">max_fails=3</span> <span class="s">fail_timeout=30s</span><span class="p">;</span>
-              <span class="kn">server</span> <span class="n">node2</span><span class="p">:</span><span class="mi">8080</span> <span class="s">weight=10</span> <span class="s">max_fails=3</span> <span class="s">fail_timeout=30s</span><span class="p">;</span>
-              <span class="kn">server</span> <span class="n">node3</span><span class="p">:</span><span class="mi">8080</span> <span class="s">weight=10</span> <span class="s">max_fails=3</span> <span class="s">fail_timeout=30s</span><span class="p">;</span>
-        <span class="p">}</span>
-
-        <span class="kn">server</span> <span class="p">{</span>
-              <span class="kn">listen</span> <span class="mi">80</span><span class="p">;</span>
-
-              <span class="kn">location</span> <span class="s">/</span> <span class="p">{</span>
-                <span class="kn">proxy_pass</span> <span class="s">http://node-app</span><span class="p">;</span>
-                <span class="kn">proxy_http_version</span> <span class="mi">1</span><span class="s">.1</span><span class="p">;</span>
-                <span class="kn">proxy_set_header</span> <span class="s">Upgrade</span> <span class="nv">$http_upgrade</span><span class="p">;</span>
-                <span class="kn">proxy_set_header</span> <span class="s">Connection</span> <span class="s">&#39;upgrade&#39;</span><span class="p">;</span>
-                <span class="kn">proxy_set_header</span> <span class="s">Host</span> <span class="nv">$host</span><span class="p">;</span>
-                <span class="kn">proxy_cache_bypass</span> <span class="nv">$http_upgrade</span><span class="p">;</span>
-              <span class="p">}</span>
-        <span class="p">}</span>
-<span class="p">}</span>
-</pre></div>
-
-
-<p>Can we use <code>node</code> to replace <code>node1</code>,<code>node2</code>,<code>node3</code> here?<br />
-<code>node1</code> here is not some docker magic, it's just a hostname which docker generated in <code>/ets/hosts</code> of nginx container, since we linked <code>node1</code> to nginx.
-So if we have 3 node IP which has the same hostname, we can just rewrite conf to a single server: </p>
-<div class="highlight"><pre>        <span class="nt">upstream</span> <span class="nt">node-app</span> <span class="p">{</span>
-              <span class="n">least_conn</span><span class="p">;</span>
-              <span class="n">server</span> <span class="n">node</span><span class="o">:</span><span class="m">8080</span> <span class="n">max_fails</span><span class="o">=</span><span class="m">3</span> <span class="n">fail_timeout</span><span class="o">=</span><span class="m">30s</span><span class="p">;</span>
-        <span class="p">}</span>
-</pre></div>
-
-
-<p>Unfortunately, docker compose v1 seems not support group nodes into the same hostname. <br />
-It will generate hosts as follows:</p>
-<div class="highlight"><pre>172.17.0.21 node 8a1297a5b3e4 compose_node_1
-172.17.0.21 node_1 8a1297a5b3e4 compose_node_1
-172.17.0.22 node_2 069dd46836aa compose_node_2
-</pre></div>
-
-
-<p>Only one container will get the name <code>node</code>. After searching in Github, I got some interesting facts:</p>
-<p>The interaction of scaling with networking (as with links) is unsatisfactory at the moment - you'll basically get a bunch of entries in /etc/hosts along these lines:</p>
-<div class="highlight"><pre>  172.16.0.1 myapp_php_1
-  172.16.0.2 myapp_php_2
-  172.16.0.3 myapp_php_3
-</pre></div>
-
-
-<p>In a future version of Compose (enabled by changes to Engine), the name under which each container joins the network is going to change to just the service name, php. So you'll get multiple entries with the same name:</p>
-<div class="highlight"><pre>172.16.0.1 php
-172.16.0.2 php
-172.16.0.3 php
-</pre></div>
-
-
-<p>This isn't a real solution either, of course - we're still working towards one - but in both cases, if you have a load balancer container that needs to keep up-to-date with what's currently on the network, for the time being it'll need to periodically read /etc/hosts and parse the entries to determine the IPs of the backends.   </p>
-<p>@aanand one of the maintainer of docker compose said above in <a href="https://github.com/docker/compose/issues/2472">2015-12-7</a>.  </p>
-<p>It may already be improved in v2 with docker 1.10, but I have not get the chance to use docker 1.10.  </p>
-<p>I think this way is better since we can easily scale up and dont need to change the config.  DevOps should evolve in this scalable way.</p></div>
+        <div><p>最近几个月没有写博客, 一方面是觉得之前博客总是在分享单一的知识点,没能沉淀出什么精华,在反思该如何写博客. 另一方面是玩起了<code>nodejs</code>后, 发现挺好玩的,也就一直花时间在代码上.  </p>
+<p>一开始先是读了tj 大神的<code>co</code>库, 和 python 的实现对比后发现, 因为 node 自带事件驱动模型, 所以实现的非常简单.  之前写过两者的比较. 这个坑填了一半.得找时间填下.  </p>
+<p>后来就开始用<code>co</code>做一个后台项目, 当然不是 web 项目, 本来也是可以用 python 做的, 但是这次想玩玩 node, 现在感觉还不错.  </p>
+<p>先记录下一些我觉得还不错的库吧, 其他高深的暂时也没 get 到.</p>
+<ul>
+<li>dockernode-promise https://github.com/kamushin/dockerode-promise-es6 这个库是用 node 调用 docker 的..稍微有点 bug, 所以我给它提了个 pr, 所以先写在第一个. </li>
+<li>tracer 这个是我在一堆 log 库里挑出感觉还不错的</li>
+<li>
+<p>sequelize orm 库, 似乎大家都是用的这个.</p>
+</li>
+<li>
+<p>co-mocha 涉及到 co 的单测</p>
+</li>
+<li>power-assert 一用就爱上的 assertion, 再也不用写 should 了</li>
+<li>growl 下面这两个主要是配合 mocha 提升测试时的体验的, 比如 watch 文件,然后把测试 report 用 message 的形式显示在桌面等等.</li>
+<li>intelli-espower-loader</li>
+</ul>
+<p>用了一段时间 node, 感觉库比 python 丰富, 包管理也简单的多, 速度肯定是比 Python 快. 在es6语法的支持下, 语法糖也不算输 python 太多. 据说修饰器也快要有了.</p></div>
         <hr />
     </div>
 		
+
+ 
+        
+
+ 
+
+    <div class='article'>
+        <a href="/learning/container_manager.html"><h2>Docker容器管理</h2></a>
+        <div class= "well small"> 2016-09-28 11-38-53
+
+by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
+ 
+
+
+ </div>
+        <div class="summary"><p>这段时间会尝试多种容器管理方式。</p> <a class="btn btn-info xsmall" href="/learning/container_manager.html">read more</a></div>
+    </div>	
+				
+
+ 
+        
+
+ 
+
+    <div class='article'>
+        <a href="/learning/docker_compose_scale_link.html"><h2>docker-compose: scale and link</h2></a>
+        <div class= "well small"> 2016-08-22 22-54-17
+
+by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
+ 
+
+
+ </div>
+        <div class="summary"><p>Learned how to use docker compose to create a scalable web app with nginx.</p> <a class="btn btn-info xsmall" href="/learning/docker_compose_scale_link.html">read more</a></div>
+    </div>	
+				
 
  
         
@@ -301,42 +250,6 @@ by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
 
  </div>
         <div class="summary"><p>source code read</p> <a class="btn btn-info xsmall" href="/learning/coroutine_in_Python_and_Js.html">read more</a></div>
-    </div>	
-				
-
- 
-        
-
- 
-
-    <div class='article'>
-        <a href="/learning/python_pro_zh_cn.html"><h2>Python开发经验--从问题入手</h2></a>
-        <div class= "well small"> 2015-12-23 10-49-26
-
-by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
- 
-
-
- </div>
-        <div class="summary"><p>从一系列实际问题出发, 谈 Python 的一些使用知识</p> <a class="btn btn-info xsmall" href="/learning/python_pro_zh_cn.html">read more</a></div>
-    </div>	
-				
-
- 
-        
-
- 
-
-    <div class='article'>
-        <a href="/learning/compare_assert_exception.html"><h2>Compare assert exception in should(JavaScript) and unittest(Python)</h2></a>
-        <div class= "well small"> 2015-12-22 15-16-23
-
-by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
- 
-
-
- </div>
-        <div class="summary"><p>two different ways of assert exception.</p> <a class="btn btn-info xsmall" href="/learning/compare_assert_exception.html">read more</a></div>
     </div>	
 				
 <div class="pagination">

@@ -1,5 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Kamushin's blog</title><link>/</link><description></description><atom:link href="/feeds/kamushin.rss.xml" rel="self"></atom:link><lastBuildDate>Wed, 31 Aug 2016 11:22:52 +0800</lastBuildDate><item><title>Why shouldn't use component wrap a Route</title><link>/debug/wrap_a_react_route.html</link><description>&lt;h3&gt;背景&lt;/h3&gt;
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Kamushin's blog</title><link>/</link><description></description><atom:link href="/feeds/kamushin.rss.xml" rel="self"></atom:link><lastBuildDate>Fri, 16 Dec 2016 18:16:03 +0800</lastBuildDate><item><title>最近在做的事情</title><link>/learning/nodejs.html</link><description>&lt;p&gt;最近几个月没有写博客, 一方面是觉得之前博客总是在分享单一的知识点,没能沉淀出什么精华,在反思该如何写博客. 另一方面是玩起了&lt;code&gt;nodejs&lt;/code&gt;后, 发现挺好玩的,也就一直花时间在代码上.  &lt;/p&gt;
+&lt;p&gt;一开始先是读了tj 大神的&lt;code&gt;co&lt;/code&gt;库, 和 python 的实现对比后发现, 因为 node 自带事件驱动模型, 所以实现的非常简单.  之前写过两者的比较. 这个坑填了一半.得找时间填下.  &lt;/p&gt;
+&lt;p&gt;后来就开始用&lt;code&gt;co&lt;/code&gt;做一个后台项目, 当然不是 web 项目, 本来也是可以用 python 做的, 但是这次想玩玩 node, 现在感觉还不错.  &lt;/p&gt;
+&lt;p&gt;先记录下一些我觉得还不错的库吧, 其他高深的暂时也没 get 到.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;dockernode-promise https://github.com/kamushin/dockerode-promise-es6 这个库是用 node 调用 docker 的..稍微有点 bug, 所以我给它提了个 pr, 所以先写在第一个. &lt;/li&gt;
+&lt;li&gt;tracer 这个是我在一堆 log 库里挑出感觉还不错的&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;sequelize orm 库, 似乎大家都是用的这个.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;co-mocha 涉及到 co 的单测&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;power-assert 一用就爱上的 assertion, 再也不用写 should 了&lt;/li&gt;
+&lt;li&gt;growl 下面这两个主要是配合 mocha 提升测试时的体验的, 比如 watch 文件,然后把测试 report 用 message 的形式显示在桌面等等.&lt;/li&gt;
+&lt;li&gt;intelli-espower-loader&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;用了一段时间 node, 感觉库比 python 丰富, 包管理也简单的多, 速度肯定是比 Python 快. 在es6语法的支持下, 语法糖也不算输 python 太多. 据说修饰器也快要有了.&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Kamushin</dc:creator><pubDate>Fri, 16 Dec 2016 18:16:03 +0800</pubDate><guid>tag:,2016-12-16:learning/nodejs.html</guid><category>nodejs</category></item><item><title>Docker容器管理</title><link>/learning/container_manager.html</link><description>&lt;p&gt;在去年10月开始使用了一阵docker后，我逐渐开始了解docker的管理工具。目前了解到的docker管理工具，从简单到复杂，分别是&lt;code&gt;docker-compose&lt;/code&gt;,&lt;code&gt;swarm&lt;/code&gt;,&lt;code&gt;k8s&lt;/code&gt;.&lt;br /&gt;
+其中最简单的，我在今年的四月份开始使用了，因为我目前并没有集群管理的需求，只是想要加速开发部署节奏，构建我的微服务应用, 所以&lt;code&gt;docker-compose&lt;/code&gt;满足了我的需求。
+目前我把一些web应用，数据分析，数据抓取程序以及nginx，一起放在了&lt;code&gt;docker-compose&lt;/code&gt;配置里，当我希望整套服务换一个物理机器的时候，只需要重新执行&lt;code&gt;docker-compose&lt;/code&gt;的命令，虽然还是比较原始的
+容器使用方式，但是既满足了我的需求，也做到了&lt;strong&gt;按docker的方式做事&lt;/strong&gt;, 呃 , 我是说把nginx放在docker里这件事情。&lt;br /&gt;
+最近我又希望往前走一小步，使用下&lt;code&gt;swarm&lt;/code&gt;，我选择了一个简单的Python构建的Web-UI, &lt;code&gt;shipyard&lt;/code&gt;.  它会和主机的8080端口做映射，然后提供一个web服务。由于我的nginx已经被&lt;code&gt;docker-compose&lt;/code&gt;管理了，所以我
+只能暂时让nginx把&lt;code&gt;shipyard&lt;/code&gt;指向&lt;code&gt;192.168.5.1&lt;/code&gt;的宿主机地址。TODO&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Kamushin</dc:creator><pubDate>Wed, 28 Sep 2016 11:38:53 +0800</pubDate><guid>tag:,2016-09-28:learning/container_manager.html</guid><category>docker</category></item><item><title>Why shouldn't use component wrap a Route</title><link>/debug/wrap_a_react_route.html</link><description>&lt;h3&gt;背景&lt;/h3&gt;
 &lt;p&gt;由于我希望每个子项目管理自己的route，于是想维护一个&lt;code&gt;route&lt;/code&gt;的component在各个子目录中，在index.js中import各个子项目的&lt;code&gt;route&lt;/code&gt;.&lt;br /&gt;
 以此简化index.js中的需要import的依赖数量。&lt;/p&gt;
 &lt;h3&gt;react-route是如何配置规则的&lt;/h3&gt;

@@ -52,36 +52,40 @@
     <div class="row">
 
         <div class="span9">
-<ul>
-    <li><a href="/tag/.html"></a></li>
-    <li><a href="/tag/ag.html">Ag</a></li>
-    <li><a href="/tag/alipay.html">alipay</a></li>
-    <li><a href="/tag/aop-java.html">aop java</a></li>
-    <li><a href="/tag/conda.html">conda</a></li>
-    <li><a href="/tag/coroutine.html">coroutine</a></li>
-    <li><a href="/tag/devops-docker.html">DevOps docker</a></li>
-    <li><a href="/tag/docker.html">docker</a></li>
-    <li><a href="/tag/exception.html">exception</a></li>
-    <li><a href="/tag/front-end.html">front-end</a></li>
-    <li><a href="/tag/java.html">Java</a></li>
-    <li><a href="/tag/jupyter.html">jupyter</a></li>
-    <li><a href="/tag/linux.html">Linux</a></li>
-    <li><a href="/tag/mysql.html">MySQL</a></li>
-    <li><a href="/tag/network.html">network</a></li>
-    <li><a href="/tag/nodejs.html">nodejs</a></li>
-    <li><a href="/tag/oracle.html">Oracle</a></li>
-    <li><a href="/tag/paxos.html">Paxos</a></li>
-    <li><a href="/tag/pelican.html">Pelican</a></li>
-    <li><a href="/tag/python.html">Python</a></li>
-    <li><a href="/tag/react.html">react</a></li>
-    <li><a href="/tag/react-route.html">react-route</a></li>
-    <li><a href="/tag/reading.html">reading</a></li>
-    <li><a href="/tag/talk.html">talk</a></li>
-    <li><a href="/tag/thinking.html">thinking</a></li>
-    <li><a href="/tag/unittest.html">unittest</a></li>
-    <li><a href="/tag/wang-luo-bian-cheng.html">网络编程</a></li>
-    <li><a href="/tag/za-shi.html">杂事</a></li>
-</ul>
+    <div class='article'>
+        <div class="content-title">
+            <h1>Docker容器管理</h1>
+2016-09-28 11-38-53
+
+by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
+ 
+
+
+        </div>
+	
+        <div><p>在去年10月开始使用了一阵docker后，我逐渐开始了解docker的管理工具。目前了解到的docker管理工具，从简单到复杂，分别是<code>docker-compose</code>,<code>swarm</code>,<code>k8s</code>.<br />
+其中最简单的，我在今年的四月份开始使用了，因为我目前并没有集群管理的需求，只是想要加速开发部署节奏，构建我的微服务应用, 所以<code>docker-compose</code>满足了我的需求。
+目前我把一些web应用，数据分析，数据抓取程序以及nginx，一起放在了<code>docker-compose</code>配置里，当我希望整套服务换一个物理机器的时候，只需要重新执行<code>docker-compose</code>的命令，虽然还是比较原始的
+容器使用方式，但是既满足了我的需求，也做到了<strong>按docker的方式做事</strong>, 呃 , 我是说把nginx放在docker里这件事情。<br />
+最近我又希望往前走一小步，使用下<code>swarm</code>，我选择了一个简单的Python构建的Web-UI, <code>shipyard</code>.  它会和主机的8080端口做映射，然后提供一个web服务。由于我的nginx已经被<code>docker-compose</code>管理了，所以我
+只能暂时让nginx把<code>shipyard</code>指向<code>192.168.5.1</code>的宿主机地址。TODO</p></div>
+	
+        <hr>
+
+        <h2>Comments</h2>
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'kamushin'; 
+    var disqus_title = 'Docker容器管理';
+
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    </div>
         </div>
         
         <div class="span3">

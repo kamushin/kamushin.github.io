@@ -59,8 +59,8 @@
 
     <div class='article'>
         <div class="content-title">
-            <a href="/debug/wrap_a_react_route.html"><h1>Why shouldn't use component wrap a Route</h1></a>
-2016-08-31 11-22-52
+            <a href="/learning/nodejs.html"><h1>最近在做的事情</h1></a>
+2016-12-16 18-16-03
 
 by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
  
@@ -69,55 +69,63 @@ by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
  
         </div>
         
-        <div><h3>背景</h3>
-<p>由于我希望每个子项目管理自己的route，于是想维护一个<code>route</code>的component在各个子目录中，在index.js中import各个子项目的<code>route</code>.<br />
-以此简化index.js中的需要import的依赖数量。</p>
-<h3>react-route是如何配置规则的</h3>
-<p>举个例子：</p>
-<div class="highlight"><pre>  <span class="nt">&lt;Router</span> <span class="na">history=</span><span class="s">{browserHistory}</span><span class="nt">&gt;</span>
-    <span class="nt">&lt;Route</span> <span class="na">path=</span><span class="s">&#39;/&#39;</span> <span class="na">component=</span><span class="s">{Layout}</span><span class="nt">&gt;</span>
-      <span class="nt">&lt;Route</span> <span class="na">path=</span><span class="s">&#39;signup&#39;</span> <span class="na">component=</span><span class="s">{SignupPage}</span> <span class="nt">/&gt;</span>
-    <span class="nt">&lt;/Route&gt;</span>
-  <span class="nt">&lt;/Router&gt;</span>
-</pre></div>
-
-
-<p><code>Router</code>组件在<code>componentWillMount</code>时会尝试加载children中的<code>Route</code>配置, 通过遍历children，找到他们的props, 然后把props加入<code>route</code>数组中。
-也就是说<code>Route</code>组件实际上作为一个配置用的组件，会直接被<code>Router</code>读取，所以<code>Route</code>也没有实际意义上的render方法。</p>
-<p>ps.这提供给我一个思路，如何一个组件的配置太过于多和复杂，那么可以搞出个专门用来做配置用的子组件，在渲染前读取子组件的配置，加载成自己的配置。这样的好处是大大提高了可读性。让配置成为声明而不是运算。</p>
-<div class="highlight"><pre><span class="cm">/**</span>
-<span class="cm"> * Creates and returns a routes object from the given ReactChildren. JSX</span>
-<span class="cm"> * provides a convenient way to visualize how routes in the hierarchy are</span>
-<span class="cm"> * nested.</span>
-<span class="cm"> *</span>
-<span class="cm"> *   import { Route, createRoutesFromReactChildren } from &#39;react-router&#39;</span>
-<span class="cm"> *   </span>
-<span class="cm"> *   const routes = createRoutesFromReactChildren(</span>
-<span class="cm"> *     &lt;Route component={App}&gt;</span>
-<span class="cm"> *       &lt;Route path=&quot;home&quot; component={Dashboard}/&gt;</span>
-<span class="cm"> *       &lt;Route path=&quot;news&quot; component={NewsFeed}/&gt;</span>
-<span class="cm"> *     &lt;/Route&gt;</span>
-<span class="cm"> *   )</span>
-<span class="cm"> *</span>
-<span class="cm"> * Note: This method is automatically used when you provide &lt;Route&gt; children</span>
-<span class="cm"> * to a &lt;Router&gt; component.</span>
-<span class="cm"> */</span>
-
-<span class="kd">function</span> <span class="nx">createRoutesFromReactChildren</span><span class="p">(</span><span class="nx">children</span><span class="p">,</span> <span class="nx">parentRoute</span><span class="p">){...}</span>
-</pre></div>
-
-
-<h3>为什么不能用一个wrapper组件来隐藏子route的细节</h3>
-<p>有了上面的知识后，这个问题就显而易见了，因为配置是通过读取children的<code>props</code>来加载的。在children外包裹一层wrapper会导致读到wrapper的<code>props</code>。</p>
-<h3>怎么实现我想要的功能</h3>
-<p>最简单的方法就是写个函数来直接return route。这样既达到了分割的目的，也不会加入中间层。</p>
-<h3>为什么一开始会想用wrapper呢</h3>
-<p>一开始不够了解react-route的原理，以为只要能渲染出来，效果是一样的。</p>
-<h3>SO 相关问题链接</h3>
-<p><a href="http://stackoverflow.com/questions/35048738/react-router-import-routes">点我</a></p></div>
+        <div><p>最近几个月没有写博客, 一方面是觉得之前博客总是在分享单一的知识点,没能沉淀出什么精华,在反思该如何写博客. 另一方面是玩起了<code>nodejs</code>后, 发现挺好玩的,也就一直花时间在代码上.  </p>
+<p>一开始先是读了tj 大神的<code>co</code>库, 和 python 的实现对比后发现, 因为 node 自带事件驱动模型, 所以实现的非常简单.  之前写过两者的比较. 这个坑填了一半.得找时间填下.  </p>
+<p>后来就开始用<code>co</code>做一个后台项目, 当然不是 web 项目, 本来也是可以用 python 做的, 但是这次想玩玩 node, 现在感觉还不错.  </p>
+<p>先记录下一些我觉得还不错的库吧, 其他高深的暂时也没 get 到.</p>
+<ul>
+<li>dockernode-promise https://github.com/kamushin/dockerode-promise-es6 这个库是用 node 调用 docker 的..稍微有点 bug, 所以我给它提了个 pr, 所以先写在第一个. </li>
+<li>tracer 这个是我在一堆 log 库里挑出感觉还不错的</li>
+<li>
+<p>sequelize orm 库, 似乎大家都是用的这个.</p>
+</li>
+<li>
+<p>co-mocha 涉及到 co 的单测</p>
+</li>
+<li>power-assert 一用就爱上的 assertion, 再也不用写 should 了</li>
+<li>growl 下面这两个主要是配合 mocha 提升测试时的体验的, 比如 watch 文件,然后把测试 report 用 message 的形式显示在桌面等等.</li>
+<li>intelli-espower-loader</li>
+</ul>
+<p>用了一段时间 node, 感觉库比 python 丰富, 包管理也简单的多, 速度肯定是比 Python 快. 在es6语法的支持下, 语法糖也不算输 python 太多. 据说修饰器也快要有了.</p></div>
         <hr />
     </div>
 		
+
+ 
+        
+
+ 
+
+    <div class='article'>
+        <a href="/learning/container_manager.html"><h2>Docker容器管理</h2></a>
+        <div class= "well small"> 2016-09-28 11-38-53
+
+by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
+ 
+
+
+ </div>
+        <div class="summary"><p>这段时间会尝试多种容器管理方式。</p> <a class="btn btn-info xsmall" href="/learning/container_manager.html">read more</a></div>
+    </div>	
+				
+
+ 
+        
+
+ 
+
+    <div class='article'>
+        <a href="/debug/wrap_a_react_route.html"><h2>Why shouldn't use component wrap a Route</h2></a>
+        <div class= "well small"> 2016-08-31 11-22-52
+
+by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
+ 
+
+
+ </div>
+        <div class="summary"><p>研究下react-route的源码找到如何正确分离route配置的方法</p> <a class="btn btn-info xsmall" href="/debug/wrap_a_react_route.html">read more</a></div>
+    </div>	
+				
 
  
         
@@ -244,44 +252,6 @@ by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
         <div class="summary"><p>在解决一个线上程序 hang 住的过程中, 研究了几种 Python 调试方法, 总结下各自的优缺点.</p> <a class="btn btn-info xsmall" href="/debug/python.html">read more</a></div>
     </div>	
 				
-
- 
-        
-
- 
-
-    <div class='article'>
-        <a href="/debug/logger_in_python.html"><h2>Loggers in Python</h2></a>
-        <div class= "well small"> 2016-05-21 15-14-04
-
-by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
- 
-
-
- </div>
-        <div class="summary"><ol>
-<li>Loggers will be stored in manager in Python. Handlers will cause resource leak if not removed.</li>
-</ol> <a class="btn btn-info xsmall" href="/debug/logger_in_python.html">read more</a></div>
-    </div>	
-				
-
- 
-        
-
- 
-
-    <div class='article'>
-        <a href="/misc/about.html"><h2>About Me</h2></a>
-        <div class= "well small"> 2016-05-13 00-15-33
-
-by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
- 
-
-
- </div>
-        <div class="summary"> <a class="btn btn-info xsmall" href="/misc/about.html">read more</a></div>
-    </div>	
-				
 <div class="pagination">
 <ul>
     <li class="prev disabled"><a href="#">&larr; Previous</a></li>
@@ -290,6 +260,7 @@ by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
     <li class=""><a href="/author/kamushin2.html">2</a></li>
     <li class=""><a href="/author/kamushin3.html">3</a></li>
     <li class=""><a href="/author/kamushin4.html">4</a></li>
+    <li class=""><a href="/author/kamushin5.html">5</a></li>
 
     <li class="next"><a href="/author/kamushin2.html">Next &rarr;</a></li>
 
