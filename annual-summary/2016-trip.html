@@ -54,8 +54,8 @@
         <div class="span9">
     <div class='article'>
         <div class="content-title">
-            <h1>Why shouldn't use component wrap a Route</h1>
-2016-08-31 11-22-52
+            <h1>2016年度总结旅游篇</h1>
+2016-12-18 11-51-39
 
 by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
  
@@ -63,52 +63,24 @@ by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
 
         </div>
 	
-        <div><h3>背景</h3>
-<p>由于我希望每个子项目管理自己的route，于是想维护一个<code>route</code>的component在各个子目录中，在index.js中import各个子项目的<code>route</code>.<br />
-以此简化index.js中的需要import的依赖数量。</p>
-<h3>react-route是如何配置规则的</h3>
-<p>举个例子：</p>
-<div class="highlight"><pre>  <span class="nt">&lt;Router</span> <span class="na">history=</span><span class="s">{browserHistory}</span><span class="nt">&gt;</span>
-    <span class="nt">&lt;Route</span> <span class="na">path=</span><span class="s">&#39;/&#39;</span> <span class="na">component=</span><span class="s">{Layout}</span><span class="nt">&gt;</span>
-      <span class="nt">&lt;Route</span> <span class="na">path=</span><span class="s">&#39;signup&#39;</span> <span class="na">component=</span><span class="s">{SignupPage}</span> <span class="nt">/&gt;</span>
-    <span class="nt">&lt;/Route&gt;</span>
-  <span class="nt">&lt;/Router&gt;</span>
-</pre></div>
-
-
-<p><code>Router</code>组件在<code>componentWillMount</code>时会尝试加载children中的<code>Route</code>配置, 通过遍历children，找到他们的props, 然后把props加入<code>route</code>数组中。
-也就是说<code>Route</code>组件实际上作为一个配置用的组件，会直接被<code>Router</code>读取，所以<code>Route</code>也没有实际意义上的render方法。</p>
-<p>ps.这提供给我一个思路，如何一个组件的配置太过于多和复杂，那么可以搞出个专门用来做配置用的子组件，在渲染前读取子组件的配置，加载成自己的配置。这样的好处是大大提高了可读性。让配置成为声明而不是运算。</p>
-<div class="highlight"><pre><span class="cm">/**</span>
-<span class="cm"> * Creates and returns a routes object from the given ReactChildren. JSX</span>
-<span class="cm"> * provides a convenient way to visualize how routes in the hierarchy are</span>
-<span class="cm"> * nested.</span>
-<span class="cm"> *</span>
-<span class="cm"> *   import { Route, createRoutesFromReactChildren } from &#39;react-router&#39;</span>
-<span class="cm"> *   </span>
-<span class="cm"> *   const routes = createRoutesFromReactChildren(</span>
-<span class="cm"> *     &lt;Route component={App}&gt;</span>
-<span class="cm"> *       &lt;Route path=&quot;home&quot; component={Dashboard}/&gt;</span>
-<span class="cm"> *       &lt;Route path=&quot;news&quot; component={NewsFeed}/&gt;</span>
-<span class="cm"> *     &lt;/Route&gt;</span>
-<span class="cm"> *   )</span>
-<span class="cm"> *</span>
-<span class="cm"> * Note: This method is automatically used when you provide &lt;Route&gt; children</span>
-<span class="cm"> * to a &lt;Router&gt; component.</span>
-<span class="cm"> */</span>
-
-<span class="kd">function</span> <span class="nx">createRoutesFromReactChildren</span><span class="p">(</span><span class="nx">children</span><span class="p">,</span> <span class="nx">parentRoute</span><span class="p">){...}</span>
-</pre></div>
-
-
-<h3>为什么不能用一个wrapper组件来隐藏子route的细节</h3>
-<p>有了上面的知识后，这个问题就显而易见了，因为配置是通过读取children的<code>props</code>来加载的。在children外包裹一层wrapper会导致读到wrapper的<code>props</code>。</p>
-<h3>怎么实现我想要的功能</h3>
-<p>最简单的方法就是写个函数来直接return route。这样既达到了分割的目的，也不会加入中间层。</p>
-<h3>为什么一开始会想用wrapper呢</h3>
-<p>一开始不够了解react-route的原理，以为只要能渲染出来，效果是一样的。</p>
-<h3>SO 相关问题链接</h3>
-<p><a href="http://stackoverflow.com/questions/35048738/react-router-import-routes">点我</a></p></div>
+        <div><p>去年只去了新西兰旅游,今年则是挖空心思的出去玩,看到了很多美景,也提升了自己旅游方面的一些能力.</p>
+<h3>南浔</h3>
+<p>南浔是个古镇. 和无锡一样是江南古镇, 所以光看我分享照片的基友, 都以为我回家了呢.</p>
+<h3>仙台</h3>
+<p>仙台真的很仙, 听说夏季有杨梅节, 不过我们去的时候是春季. 爬了那边的山, 山上可玩可爱的还挺多的.</p>
+<h3>岘港</h3>
+<p>和同事一起 outing, 这是一次海滩度假游. 我终于试着在海里游泳了,感觉很不错,因为是酒店包场的海滩,所以人很少.不过越南的物价并不便宜,我们呆的地方<br />
+估计都是来旅游的,所以物价蛮贵</p>
+<h3>东极岛</h3>
+<p>怀着对韩寒作品的朝圣心态来的, 但是这里的环境还是挺可怕的, 到处是海蟑螂, 怕虫子的话海边基本不敢去. 岛上很多黑心店家, 以后再去的话, 会选择自己带帐篷,带食物.</p>
+<h3>西北大环线</h3>
+<p>茶卡盐湖, 青海湖, 柴达木, 德令哈..好多神秘的名字, 西北之旅对我的视觉冲击是最大的, 作为一个几乎没离开过沿海沿湖的人, 第一次看到沙漠, 在沙漠中露营, 感受沙漠中的月色.</p>
+<h3>清迈</h3>
+<p>清迈是个小清新的城市, 飞机抵达后, 睡上一觉, 第二天起来喝杯冰饮料, 做个马杀鸡, 度过炎热的中午, 下午就逛逛它的街道, 买买水果, 非常悠哉.</p>
+<h3>收获</h3>
+<p>今年对我来说, 除了旅行时需要的技能增长, 也增长了使用信用卡的技能, 比如最后去清迈的旅游, 我的白金卡为我省下了2000多的花费. 也在同时积累酒店和飞行相关的知识.  </p>
+<h3>明年</h3>
+<p>今年可以做到无压力去支持英语的国家, 希望明年有个小突破, 去一个不说英语的国家.</p></div>
 	
         <hr>
 
@@ -116,7 +88,7 @@ by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
 <div id="disqus_thread"></div>
 <script type="text/javascript">
     var disqus_shortname = 'kamushin'; 
-    var disqus_title = 'Why shouldn't use component wrap a Route';
+    var disqus_title = '2016年度总结旅游篇';
 
     (function() {
         var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
