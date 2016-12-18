@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Kamushin's blog</title><link>/</link><description></description><atom:link href="/feeds/kamushin.rss.xml" rel="self"></atom:link><lastBuildDate>Sun, 18 Dec 2016 11:51:39 +0800</lastBuildDate><item><title>2016年度总结旅游篇</title><link>/annual-summary/2016-trip.html</link><description>&lt;p&gt;去年只去了新西兰旅游,今年则是挖空心思的出去玩,看到了很多美景,也提升了自己旅游方面的一些能力.&lt;/p&gt;
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Kamushin's blog</title><link>/</link><description></description><atom:link href="/feeds/kamushin.rss.xml" rel="self"></atom:link><lastBuildDate>Sun, 18 Dec 2016 11:57:14 +0800</lastBuildDate><item><title>2016年度总结旅游篇</title><link>/annual-summary/2016-trip.html</link><description>&lt;p&gt;去年只去了新西兰旅游,今年则是挖空心思的出去玩,看到了很多美景,也提升了自己旅游方面的一些能力.&lt;/p&gt;
 &lt;h3&gt;南浔&lt;/h3&gt;
 &lt;p&gt;南浔是个古镇. 和无锡一样是江南古镇, 所以光看我分享照片的基友, 都以为我回家了呢.&lt;/p&gt;
-&lt;h3&gt;仙台&lt;/h3&gt;
-&lt;p&gt;仙台真的很仙, 听说夏季有杨梅节, 不过我们去的时候是春季. 爬了那边的山, 山上可玩可爱的还挺多的.&lt;/p&gt;
+&lt;h3&gt;仙居&lt;/h3&gt;
+&lt;p&gt;仙居真的很仙, 听说夏季有杨梅节, 不过我们去的时候是春季. 爬了那边的山, 山上可玩可爱的还挺多的.&lt;/p&gt;
 &lt;h3&gt;岘港&lt;/h3&gt;
 &lt;p&gt;和同事一起 outing, 这是一次海滩度假游. 我终于试着在海里游泳了,感觉很不错,因为是酒店包场的海滩,所以人很少.不过越南的物价并不便宜,我们呆的地方&lt;br /&gt;
 估计都是来旅游的,所以物价蛮贵&lt;/p&gt;
@@ -16,7 +16,7 @@
 &lt;h3&gt;收获&lt;/h3&gt;
 &lt;p&gt;今年对我来说, 除了旅行时需要的技能增长, 也增长了使用信用卡的技能, 比如最后去清迈的旅游, 我的白金卡为我省下了2000多的花费. 也在同时积累酒店和飞行相关的知识.  &lt;/p&gt;
 &lt;h3&gt;明年&lt;/h3&gt;
-&lt;p&gt;今年可以做到无压力去支持英语的国家, 希望明年有个小突破, 去一个不说英语的国家.&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Kamushin</dc:creator><pubDate>Sun, 18 Dec 2016 11:51:39 +0800</pubDate><guid>tag:,2016-12-18:annual-summary/2016-trip.html</guid><category>annual-summary</category></item><item><title>最近在做的事情</title><link>/learning/nodejs.html</link><description>&lt;p&gt;最近几个月没有写博客, 一方面是觉得之前博客总是在分享单一的知识点,没能沉淀出什么精华,在反思该如何写博客. 另一方面是玩起了&lt;code&gt;nodejs&lt;/code&gt;后, 发现挺好玩的,也就一直花时间在代码上.  &lt;/p&gt;
+&lt;p&gt;今年可以做到无压力去支持英语的国家, 希望明年有个小突破, 去一个不说英语的国家.&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Kamushin</dc:creator><pubDate>Sun, 18 Dec 2016 11:57:14 +0800</pubDate><guid>tag:,2016-12-18:annual-summary/2016-trip.html</guid><category>annual-summary</category></item><item><title>最近在做的事情</title><link>/learning/nodejs.html</link><description>&lt;p&gt;最近几个月没有写博客, 一方面是觉得之前博客总是在分享单一的知识点,没能沉淀出什么精华,在反思该如何写博客. 另一方面是玩起了&lt;code&gt;nodejs&lt;/code&gt;后, 发现挺好玩的,也就一直花时间在代码上.  &lt;/p&gt;
 &lt;p&gt;一开始先是读了tj 大神的&lt;code&gt;co&lt;/code&gt;库, 和 python 的实现对比后发现, 因为 node 自带事件驱动模型, 所以实现的非常简单.  之前写过两者的比较. 这个坑填了一半.得找时间填下.  &lt;/p&gt;
 &lt;p&gt;后来就开始用&lt;code&gt;co&lt;/code&gt;做一个后台项目, 当然不是 web 项目, 本来也是可以用 python 做的, 但是这次想玩玩 node, 现在感觉还不错.  &lt;/p&gt;
 &lt;p&gt;先记录下一些我觉得还不错的库吧, 其他高深的暂时也没 get 到.&lt;/p&gt;
