@@ -1,5 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Kamushin's blog</title><link>/</link><description></description><atom:link href="/feeds/kamushin.rss.xml" rel="self"></atom:link><lastBuildDate>Wed, 04 Jan 2017 23:41:55 +0800</lastBuildDate><item><title>2017做点啥</title><link>/annual-summary/2017-todo.html</link><description>&lt;h3&gt;去旅游&lt;/h3&gt;
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Kamushin's blog</title><link>/</link><description></description><atom:link href="/feeds/kamushin.rss.xml" rel="self"></atom:link><lastBuildDate>Thu, 05 Jan 2017 13:40:12 +0800</lastBuildDate><item><title>No space left on device</title><link>/debug/No-space-left-on-device.html</link><description>&lt;p&gt;今天当我试着在服务器上创建新文件的时候, 服务器给出了, "No space left on device" 的提示.&lt;br /&gt;
+查看&lt;code&gt;df&lt;/code&gt;后, 发现空间还是挺充裕的, 自然怀疑到 inode 上来. inode 存储了 Linux 系统中的文件元信息, 比如权限, 修改日期等等.inode 的最大数量在分配磁盘的时候被设置好.  &lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;The inode is a data structure in a Unix-style file system which describes a filesystem object such as a file or a directory. Each inode stores the attributes and disk block location(s) of the object's data.[1] Filesystem object attributes may include metadata (times of last change,[2] access, modification), as well as owner and permission data.[3]])&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;虽然我没有遇到过 inode 被用光的情况, 但是我依然用 &lt;code&gt;df -i&lt;/code&gt; 查看了下, 果然看到 home 目录 inode 被用光了. &lt;br /&gt;
+接下来我通过逐步探测的方式, 找出是哪个目录占用了大量的 inode  &lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;code&gt;for i in /home/*; do echo $i; sudo find $i |wc -l; done&lt;/code&gt;&lt;br /&gt;
+&lt;code&gt;for i in /home/docker/*; do echo $i;sudo find $i |wc -l; done&lt;/code&gt;    &lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;最后问题锁定在docker上. docker 的 overlays 占用大量 inode, 所以需要把 docker 放在一个 inode 最大值比较大的磁盘上.&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Kamushin</dc:creator><pubDate>Thu, 05 Jan 2017 13:40:12 +0800</pubDate><guid>tag:,2017-01-05:debug/No-space-left-on-device.html</guid><category>debug</category></item><item><title>2017做点啥</title><link>/annual-summary/2017-todo.html</link><description>&lt;h3&gt;去旅游&lt;/h3&gt;
 &lt;p&gt;今年清明会去趟悉尼, 国庆会去趟丽江. 今年的变化是, 我早在1月份就定好了这两次旅行的机票. 提早规划的好处是更廉价的机票, 更充足的攻略, 当然坏处也是有的就是时间上增加了不确定性.  &lt;/p&gt;
 &lt;p&gt;当然今年应该不止这两次旅行, 年末应该也会计划一次, 会去一个东南亚国家学潜水.&lt;/p&gt;
 &lt;h3&gt;读点书&lt;/h3&gt;

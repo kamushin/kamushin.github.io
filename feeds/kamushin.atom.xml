@@ -1,5 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Kamushin's blog</title><link href="/" rel="alternate"></link><link href="/feeds/kamushin.atom.xml" rel="self"></link><id>/</id><updated>2017-01-04T23:41:55+08:00</updated><entry><title>2017做点啥</title><link href="/annual-summary/2017-todo.html" rel="alternate"></link><updated>2017-01-04T23:41:55+08:00</updated><author><name>Kamushin</name></author><id>tag:,2017-01-04:annual-summary/2017-todo.html</id><summary type="html">&lt;h3&gt;去旅游&lt;/h3&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Kamushin's blog</title><link href="/" rel="alternate"></link><link href="/feeds/kamushin.atom.xml" rel="self"></link><id>/</id><updated>2017-01-05T13:40:12+08:00</updated><entry><title>No space left on device</title><link href="/debug/No-space-left-on-device.html" rel="alternate"></link><updated>2017-01-05T13:40:12+08:00</updated><author><name>Kamushin</name></author><id>tag:,2017-01-05:debug/No-space-left-on-device.html</id><summary type="html">&lt;p&gt;今天当我试着在服务器上创建新文件的时候, 服务器给出了, "No space left on device" 的提示.&lt;br /&gt;
+查看&lt;code&gt;df&lt;/code&gt;后, 发现空间还是挺充裕的, 自然怀疑到 inode 上来. inode 存储了 Linux 系统中的文件元信息, 比如权限, 修改日期等等.inode 的最大数量在分配磁盘的时候被设置好.  &lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;The inode is a data structure in a Unix-style file system which describes a filesystem object such as a file or a directory. Each inode stores the attributes and disk block location(s) of the object's data.[1] Filesystem object attributes may include metadata (times of last change,[2] access, modification), as well as owner and permission data.[3]])&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;虽然我没有遇到过 inode 被用光的情况, 但是我依然用 &lt;code&gt;df -i&lt;/code&gt; 查看了下, 果然看到 home 目录 inode 被用光了. &lt;br /&gt;
+接下来我通过逐步探测的方式, 找出是哪个目录占用了大量的 inode  &lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;code&gt;for i in /home/*; do echo $i; sudo find $i |wc -l; done&lt;/code&gt;&lt;br /&gt;
+&lt;code&gt;for i in /home/docker/*; do echo $i;sudo find $i |wc -l; done&lt;/code&gt;    &lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;最后问题锁定在docker上. docker 的 overlays 占用大量 inode, 所以需要把 docker 放在一个 inode 最大值比较大的磁盘上.&lt;/p&gt;</summary><category term="debug"></category></entry><entry><title>2017做点啥</title><link href="/annual-summary/2017-todo.html" rel="alternate"></link><updated>2017-01-04T23:41:55+08:00</updated><author><name>Kamushin</name></author><id>tag:,2017-01-04:annual-summary/2017-todo.html</id><summary type="html">&lt;h3&gt;去旅游&lt;/h3&gt;
 &lt;p&gt;今年清明会去趟悉尼, 国庆会去趟丽江. 今年的变化是, 我早在1月份就定好了这两次旅行的机票. 提早规划的好处是更廉价的机票, 更充足的攻略, 当然坏处也是有的就是时间上增加了不确定性.  &lt;/p&gt;
 &lt;p&gt;当然今年应该不止这两次旅行, 年末应该也会计划一次, 会去一个东南亚国家学潜水.&lt;/p&gt;
 &lt;h3&gt;读点书&lt;/h3&gt;

@@ -59,8 +59,8 @@
 
     <div class='article'>
         <div class="content-title">
-            <a href="/annual-summary/2017-todo.html"><h1>2017做点啥</h1></a>
-2017-01-04 23-41-55
+            <a href="/debug/No-space-left-on-device.html"><h1>No space left on device</h1></a>
+2017-01-05 13-40-12
 
 by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
  
@@ -69,18 +69,39 @@ by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
  
         </div>
         
-        <div><h3>去旅游</h3>
-<p>今年清明会去趟悉尼, 国庆会去趟丽江. 今年的变化是, 我早在1月份就定好了这两次旅行的机票. 提早规划的好处是更廉价的机票, 更充足的攻略, 当然坏处也是有的就是时间上增加了不确定性.  </p>
-<p>当然今年应该不止这两次旅行, 年末应该也会计划一次, 会去一个东南亚国家学潜水.</p>
-<h3>读点书</h3>
-<p>去年也算是去图书馆比较多了, 虽然没看完多少书, 但是以月来说, 总不至于完全抛下书本. 今年想多看点美国近代小说, 从去年没看完的&lt;&lt;天使望故乡&gt;&gt;开始吧.</p>
-<h3>学拍照</h3>
-<p>多次在朋友圈被人吐槽小伙子图都不 p 就传上来了. 也算是蛮尴尬的一件事情, 学下拍照和 p 图, 至少让旅行的回忆更加美好吧.</p>
-<h3>其他</h3>
-<p>想了下, 可能工作之余能做到这几样已经不错了吧. 人生路漫漫, 还是不要定下太多目标了~2017年,希望一切平淡.</p></div>
+        <div><p>今天当我试着在服务器上创建新文件的时候, 服务器给出了, "No space left on device" 的提示.<br />
+查看<code>df</code>后, 发现空间还是挺充裕的, 自然怀疑到 inode 上来. inode 存储了 Linux 系统中的文件元信息, 比如权限, 修改日期等等.inode 的最大数量在分配磁盘的时候被设置好.  </p>
+<blockquote>
+<p>The inode is a data structure in a Unix-style file system which describes a filesystem object such as a file or a directory. Each inode stores the attributes and disk block location(s) of the object's data.[1] Filesystem object attributes may include metadata (times of last change,[2] access, modification), as well as owner and permission data.[3]])</p>
+</blockquote>
+<p>虽然我没有遇到过 inode 被用光的情况, 但是我依然用 <code>df -i</code> 查看了下, 果然看到 home 目录 inode 被用光了. <br />
+接下来我通过逐步探测的方式, 找出是哪个目录占用了大量的 inode  </p>
+<blockquote>
+<p><code>for i in /home/*; do echo $i; sudo find $i |wc -l; done</code><br />
+<code>for i in /home/docker/*; do echo $i;sudo find $i |wc -l; done</code>    </p>
+</blockquote>
+<p>最后问题锁定在docker上. docker 的 overlays 占用大量 inode, 所以需要把 docker 放在一个 inode 最大值比较大的磁盘上.</p></div>
         <hr />
     </div>
 		
+
+ 
+        
+
+ 
+
+    <div class='article'>
+        <a href="/annual-summary/2017-todo.html"><h2>2017做点啥</h2></a>
+        <div class= "well small"> 2017-01-04 23-41-55
+
+by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
+ 
+
+
+ </div>
+        <div class="summary"><p>done is better than perfect.</p> <a class="btn btn-info xsmall" href="/annual-summary/2017-todo.html">read more</a></div>
+    </div>	
+				
 
  
         
@@ -223,24 +244,6 @@ by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
 
  </div>
         <div class="summary"><p>理一下排查网络问题时的思路</p> <a class="btn btn-info xsmall" href="/debug/dnat_debug.html">read more</a></div>
-    </div>	
-				
-
- 
-        
-
- 
-
-    <div class='article'>
-        <a href="/debug/subprocess_pipe.html"><h2>Python subprocess包中的父子进程沟通</h2></a>
-        <div class= "well small"> 2016-06-02 01-19-24
-
-by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
- 
-
-
- </div>
-        <div class="summary"><p>Python subprocess包中父子进程如何沟通， 使用不当又会有什么后果。</p> <a class="btn btn-info xsmall" href="/debug/subprocess_pipe.html">read more</a></div>
     </div>	
 				
 <div class="pagination">
