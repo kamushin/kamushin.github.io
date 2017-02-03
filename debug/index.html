@@ -59,8 +59,8 @@
 
     <div class='article'>
         <div class="content-title">
-            <a href="/debug/No-space-left-on-device.html"><h1>No space left on device</h1></a>
-2017-01-05 13-40-12
+            <a href="/debug/jupyter-docker.html"><h1>KernelRestarter: restart failed in Jupyter</h1></a>
+2017-02-03 17-43-26
 
 by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
  
@@ -69,21 +69,54 @@ by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
  
         </div>
         
-        <div><p>今天当我试着在服务器上创建新文件的时候, 服务器给出了, "No space left on device" 的提示.<br />
-查看<code>df</code>后, 发现空间还是挺充裕的, 自然怀疑到 inode 上来. inode 存储了 Linux 系统中的文件元信息, 比如权限, 修改日期等等.inode 的最大数量在分配磁盘的时候被设置好.  </p>
-<blockquote>
-<p>The inode is a data structure in a Unix-style file system which describes a filesystem object such as a file or a directory. Each inode stores the attributes and disk block location(s) of the object's data.[1] Filesystem object attributes may include metadata (times of last change,[2] access, modification), as well as owner and permission data.[3]])</p>
-</blockquote>
-<p>虽然我没有遇到过 inode 被用光的情况, 但是我依然用 <code>df -i</code> 查看了下, 果然看到 home 目录 inode 被用光了. <br />
-接下来我通过逐步探测的方式, 找出是哪个目录占用了大量的 inode  </p>
-<blockquote>
-<p><code>for i in /home/*; do echo $i; sudo find $i |wc -l; done</code><br />
-<code>for i in /home/docker/*; do echo $i;sudo find $i |wc -l; done</code>    </p>
-</blockquote>
-<p>最后问题锁定在docker上. docker 的 overlays 占用大量 inode, 所以需要把 docker 放在一个 inode 最大值比较大的磁盘上.</p></div>
+        <div><p>If run <code>jupyter notebook</code> as Docker entrypoint, then <code>jupyter</code> will be the root process with pid 1.<br />
+For some reason, this doesn't play well with IPython, and the Kernel won't be started successfully.<br />
+Errors may occur like below:</p>
+<div class="highlight"><pre>[I 08:49:49.637 NotebookApp] KernelRestarter: restarting kernel (1/5)
+[D 08:49:49.638 NotebookApp] Starting kernel: [&#39;/usr/bin/python&#39;, &#39;-m&#39;, &#39;ipykernel&#39;, &#39;-f&#39;, u&#39;/root/.local/share/jupyter/runtime/kernel-5a23f4ca-734b-422f-9c1c-e0ad126f6552.json&#39;]
+[D 08:49:49.643 NotebookApp] Connecting to: tcp://127.0.0.1:54341
+[I 08:49:52.646 NotebookApp] KernelRestarter: restarting kernel (2/5)
+[D 08:49:52.647 NotebookApp] Starting kernel: [&#39;/usr/bin/python&#39;, &#39;-m&#39;, &#39;ipykernel&#39;, &#39;-f&#39;, u&#39;/root/.local/share/jupyter/runtime/kernel-5a23f4ca-734b-422f-9c1c-e0ad126f6552.json&#39;]
+[D 08:49:52.652 NotebookApp] Connecting to: tcp://127.0.0.1:54341
+[I 08:49:55.655 NotebookApp] KernelRestarter: restarting kernel (3/5)
+[D 08:49:55.656 NotebookApp] Starting kernel: [&#39;/usr/bin/python&#39;, &#39;-m&#39;, &#39;ipykernel&#39;, &#39;-f&#39;, u&#39;/root/.local/share/jupyter/runtime/kernel-5a23f4ca-734b-422f-9c1c-e0ad126f6552.json&#39;]
+[D 08:49:55.662 NotebookApp] Connecting to: tcp://127.0.0.1:54341
+[W 08:49:56.713 NotebookApp] Timeout waiting for kernel_info reply from 5a23f4ca-734b-422f-9c1c-e0ad126f6552
+[D 08:49:56.715 NotebookApp] Opening websocket /api/kernels/5a23f4ca-734b-422f-9c1c-e0ad126f6552/channels
+[D 08:49:56.715 NotebookApp] Connecting to: tcp://127.0.0.1:42528
+[D 08:49:56.715 NotebookApp] Connecting to: tcp://127.0.0.1:58272
+[D 08:49:56.716 NotebookApp] Connecting to: tcp://127.0.0.1:52503
+[I 08:49:58.664 NotebookApp] KernelRestarter: restarting kernel (4/5)
+WARNING:root:kernel 5a23f4ca-734b-422f-9c1c-e0ad126f6552 restarted
+[D 08:49:58.665 NotebookApp] Starting kernel: [&#39;/usr/bin/python&#39;, &#39;-m&#39;, &#39;ipykernel&#39;, &#39;-f&#39;, u&#39;/root/.local/share/jupyter/runtime/kernel-5a23f4ca-734b-422f-9c1c-e0ad126f6552.json&#39;]
+[D 08:49:58.670 NotebookApp] Connecting to: tcp://127.0.0.1:54341
+[W 08:50:01.672 NotebookApp] KernelRestarter: restart failed
+</pre></div>
+
+
+<p>Then I try to use <code>sh -c 'jupyter notebook'</code> as the entrypoint, it maybe works for someone else, but for my specfic docker version, <code>jupyter</code> still run as root process. <br />
+The final solution is using a <code>start.sh</code> to wrapp <code>sh -c 'jupyter notebook'</code>. That works for me.</p></div>
         <hr />
     </div>
 		
+
+ 
+        
+
+ 
+
+    <div class='article'>
+        <a href="/debug/No-space-left-on-device.html"><h2>No space left on device</h2></a>
+        <div class= "well small"> 2017-01-05 13-40-12
+
+by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
+ 
+
+
+ </div>
+        <div class="summary"><p>No space left on device</p> <a class="btn btn-info xsmall" href="/debug/No-space-left-on-device.html">read more</a></div>
+    </div>	
+				
 
  
         
@@ -230,31 +263,14 @@ by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
         <div class="summary"><p>What is and How to use SSCursor in MySQL</p> <a class="btn btn-info xsmall" href="/debug/sscursor_in_mysql.html">read more</a></div>
     </div>	
 				
-
- 
-        
-
- 
-
-    <div class='article'>
-        <a href="/debug/Do-not-use-lob.html"><h2>Do not use LOB in Oracle(OLTP) -- record an optimization experience</h2></a>
-        <div class= "well small"> 2015-12-08 01-52-18
-
-by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
- 
-
-
- </div>
-        <div class="summary"><p>LOB in Oracle and cx_Oracle</p> <a class="btn btn-info xsmall" href="/debug/Do-not-use-lob.html">read more</a></div>
-    </div>	
-				
 <div class="pagination">
 <ul>
     <li class="prev disabled"><a href="#">&larr; Previous</a></li>
 
     <li class="active"><a href="/debug/index.html">1</a></li>
+    <li class=""><a href="/debug/index2.html">2</a></li>
 
-    <li class="next disabled"><a href="#">&rarr; Next</a></li>
+    <li class="next"><a href="/debug/index2.html">Next &rarr;</a></li>
 
 </ul>
 </div>

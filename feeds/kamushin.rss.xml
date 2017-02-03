@@ -1,5 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Kamushin's blog</title><link>/</link><description></description><atom:link href="/feeds/kamushin.rss.xml" rel="self"></atom:link><lastBuildDate>Thu, 05 Jan 2017 13:40:12 +0800</lastBuildDate><item><title>No space left on device</title><link>/debug/No-space-left-on-device.html</link><description>&lt;p&gt;今天当我试着在服务器上创建新文件的时候, 服务器给出了, "No space left on device" 的提示.&lt;br /&gt;
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Kamushin's blog</title><link>/</link><description></description><atom:link href="/feeds/kamushin.rss.xml" rel="self"></atom:link><lastBuildDate>Fri, 03 Feb 2017 17:43:26 +0800</lastBuildDate><item><title>KernelRestarter: restart failed in Jupyter</title><link>/debug/jupyter-docker.html</link><description>&lt;p&gt;If run &lt;code&gt;jupyter notebook&lt;/code&gt; as Docker entrypoint, then &lt;code&gt;jupyter&lt;/code&gt; will be the root process with pid 1.&lt;br /&gt;
+For some reason, this doesn't play well with IPython, and the Kernel won't be started successfully.&lt;br /&gt;
+Errors may occur like below:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;[I 08:49:49.637 NotebookApp] KernelRestarter: restarting kernel (1/5)
+[D 08:49:49.638 NotebookApp] Starting kernel: [&amp;#39;/usr/bin/python&amp;#39;, &amp;#39;-m&amp;#39;, &amp;#39;ipykernel&amp;#39;, &amp;#39;-f&amp;#39;, u&amp;#39;/root/.local/share/jupyter/runtime/kernel-5a23f4ca-734b-422f-9c1c-e0ad126f6552.json&amp;#39;]
+[D 08:49:49.643 NotebookApp] Connecting to: tcp://127.0.0.1:54341
+[I 08:49:52.646 NotebookApp] KernelRestarter: restarting kernel (2/5)
+[D 08:49:52.647 NotebookApp] Starting kernel: [&amp;#39;/usr/bin/python&amp;#39;, &amp;#39;-m&amp;#39;, &amp;#39;ipykernel&amp;#39;, &amp;#39;-f&amp;#39;, u&amp;#39;/root/.local/share/jupyter/runtime/kernel-5a23f4ca-734b-422f-9c1c-e0ad126f6552.json&amp;#39;]
+[D 08:49:52.652 NotebookApp] Connecting to: tcp://127.0.0.1:54341
+[I 08:49:55.655 NotebookApp] KernelRestarter: restarting kernel (3/5)
+[D 08:49:55.656 NotebookApp] Starting kernel: [&amp;#39;/usr/bin/python&amp;#39;, &amp;#39;-m&amp;#39;, &amp;#39;ipykernel&amp;#39;, &amp;#39;-f&amp;#39;, u&amp;#39;/root/.local/share/jupyter/runtime/kernel-5a23f4ca-734b-422f-9c1c-e0ad126f6552.json&amp;#39;]
+[D 08:49:55.662 NotebookApp] Connecting to: tcp://127.0.0.1:54341
+[W 08:49:56.713 NotebookApp] Timeout waiting for kernel_info reply from 5a23f4ca-734b-422f-9c1c-e0ad126f6552
+[D 08:49:56.715 NotebookApp] Opening websocket /api/kernels/5a23f4ca-734b-422f-9c1c-e0ad126f6552/channels
+[D 08:49:56.715 NotebookApp] Connecting to: tcp://127.0.0.1:42528
+[D 08:49:56.715 NotebookApp] Connecting to: tcp://127.0.0.1:58272
+[D 08:49:56.716 NotebookApp] Connecting to: tcp://127.0.0.1:52503
+[I 08:49:58.664 NotebookApp] KernelRestarter: restarting kernel (4/5)
+WARNING:root:kernel 5a23f4ca-734b-422f-9c1c-e0ad126f6552 restarted
+[D 08:49:58.665 NotebookApp] Starting kernel: [&amp;#39;/usr/bin/python&amp;#39;, &amp;#39;-m&amp;#39;, &amp;#39;ipykernel&amp;#39;, &amp;#39;-f&amp;#39;, u&amp;#39;/root/.local/share/jupyter/runtime/kernel-5a23f4ca-734b-422f-9c1c-e0ad126f6552.json&amp;#39;]
+[D 08:49:58.670 NotebookApp] Connecting to: tcp://127.0.0.1:54341
+[W 08:50:01.672 NotebookApp] KernelRestarter: restart failed
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Then I try to use &lt;code&gt;sh -c 'jupyter notebook'&lt;/code&gt; as the entrypoint, it maybe works for someone else, but for my specfic docker version, &lt;code&gt;jupyter&lt;/code&gt; still run as root process. &lt;br /&gt;
+The final solution is using a &lt;code&gt;start.sh&lt;/code&gt; to wrapp &lt;code&gt;sh -c 'jupyter notebook'&lt;/code&gt;. That works for me.&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Kamushin</dc:creator><pubDate>Fri, 03 Feb 2017 17:43:26 +0800</pubDate><guid>tag:,2017-02-03:debug/jupyter-docker.html</guid><category>Jupyter Docker</category></item><item><title></title><link>/tool/mem.html</link><description>&lt;table class="highlighttable"&gt;&lt;tr&gt;&lt;td class="linenos"&gt;&lt;div class="linenodiv"&gt;&lt;pre&gt;1
+2
+3
+4
+5
+6
+7&lt;/pre&gt;&lt;/div&gt;&lt;/td&gt;&lt;td class="code"&gt;&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="c"&gt;#!/bin/bash&lt;/span&gt;
+mem &lt;span class="o"&gt;(){&lt;/span&gt;
+&lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;********************&amp;quot;&lt;/span&gt;
+    date
+    &lt;span class="nv"&gt;COLUMNS&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;9999&lt;/span&gt; top -n1 -c -b &lt;span class="p"&gt;|&lt;/span&gt; head -n7 &lt;span class="p"&gt;|&lt;/span&gt; sed &lt;span class="s1"&gt;&amp;#39;1,6d&amp;#39;&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class="nv"&gt;COLUMNS&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;9999&lt;/span&gt; top -n1 -c -b &lt;span class="p"&gt;|&lt;/span&gt; sed &lt;span class="s1"&gt;&amp;#39;1,6d&amp;#39;&lt;/span&gt; &lt;span class="p"&gt;|&lt;/span&gt; grep &lt;span class="nv"&gt;$1&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+    ps aux &lt;span class="p"&gt;|&lt;/span&gt; grep &lt;span class="nv"&gt;$1&lt;/span&gt; &lt;span class="p"&gt;|&lt;/span&gt; grep -v grep &lt;span class="p"&gt;|&lt;/span&gt; awk -F &lt;span class="s2"&gt;&amp;quot; &amp;quot;&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;{ sum += $6 } END { printf &amp;quot;Total Memory Usage: %.1f MB\n&amp;quot;, sum/1024 }&amp;#39;&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Kamushin</dc:creator><pubDate>Mon, 16 Jan 2017 15:42:57 +0800</pubDate><guid>tag:,2017-01-16:tool/mem.html</guid><category></category></item><item><title></title><link>/learning/docker_logs.html</link><description>&lt;p&gt;docker compose 老容器日志&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Kamushin</dc:creator><pubDate>Wed, 11 Jan 2017 11:10:52 +0800</pubDate><guid>tag:,2017-01-11:learning/docker_logs.html</guid><category></category></item><item><title>No space left on device</title><link>/debug/No-space-left-on-device.html</link><description>&lt;p&gt;今天当我试着在服务器上创建新文件的时候, 服务器给出了, "No space left on device" 的提示.&lt;br /&gt;
 查看&lt;code&gt;df&lt;/code&gt;后, 发现空间还是挺充裕的, 自然怀疑到 inode 上来. inode 存储了 Linux 系统中的文件元信息, 比如权限, 修改日期等等.inode 的最大数量在分配磁盘的时候被设置好.  &lt;/p&gt;
 &lt;blockquote&gt;
 &lt;p&gt;The inode is a data structure in a Unix-style file system which describes a filesystem object such as a file or a directory. Each inode stores the attributes and disk block location(s) of the object's data.[1] Filesystem object attributes may include metadata (times of last change,[2] access, modification), as well as owner and permission data.[3]])&lt;/p&gt;

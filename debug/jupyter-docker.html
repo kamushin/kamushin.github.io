@@ -52,10 +52,61 @@
     <div class="row">
 
         <div class="span9">
-    <h1>Authors on Kamushin's blog</h1>
+    <div class='article'>
+        <div class="content-title">
+            <h1>KernelRestarter: restart failed in Jupyter</h1>
+2017-02-03 17-43-26
 
-    <ul>        <li><a href="/author/kamushin.html">Kamushin</a> (47)</li>
-    </ul>
+by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
+ 
+
+
+        </div>
+	
+        <div><p>If run <code>jupyter notebook</code> as Docker entrypoint, then <code>jupyter</code> will be the root process with pid 1.<br />
+For some reason, this doesn't play well with IPython, and the Kernel won't be started successfully.<br />
+Errors may occur like below:</p>
+<div class="highlight"><pre>[I 08:49:49.637 NotebookApp] KernelRestarter: restarting kernel (1/5)
+[D 08:49:49.638 NotebookApp] Starting kernel: [&#39;/usr/bin/python&#39;, &#39;-m&#39;, &#39;ipykernel&#39;, &#39;-f&#39;, u&#39;/root/.local/share/jupyter/runtime/kernel-5a23f4ca-734b-422f-9c1c-e0ad126f6552.json&#39;]
+[D 08:49:49.643 NotebookApp] Connecting to: tcp://127.0.0.1:54341
+[I 08:49:52.646 NotebookApp] KernelRestarter: restarting kernel (2/5)
+[D 08:49:52.647 NotebookApp] Starting kernel: [&#39;/usr/bin/python&#39;, &#39;-m&#39;, &#39;ipykernel&#39;, &#39;-f&#39;, u&#39;/root/.local/share/jupyter/runtime/kernel-5a23f4ca-734b-422f-9c1c-e0ad126f6552.json&#39;]
+[D 08:49:52.652 NotebookApp] Connecting to: tcp://127.0.0.1:54341
+[I 08:49:55.655 NotebookApp] KernelRestarter: restarting kernel (3/5)
+[D 08:49:55.656 NotebookApp] Starting kernel: [&#39;/usr/bin/python&#39;, &#39;-m&#39;, &#39;ipykernel&#39;, &#39;-f&#39;, u&#39;/root/.local/share/jupyter/runtime/kernel-5a23f4ca-734b-422f-9c1c-e0ad126f6552.json&#39;]
+[D 08:49:55.662 NotebookApp] Connecting to: tcp://127.0.0.1:54341
+[W 08:49:56.713 NotebookApp] Timeout waiting for kernel_info reply from 5a23f4ca-734b-422f-9c1c-e0ad126f6552
+[D 08:49:56.715 NotebookApp] Opening websocket /api/kernels/5a23f4ca-734b-422f-9c1c-e0ad126f6552/channels
+[D 08:49:56.715 NotebookApp] Connecting to: tcp://127.0.0.1:42528
+[D 08:49:56.715 NotebookApp] Connecting to: tcp://127.0.0.1:58272
+[D 08:49:56.716 NotebookApp] Connecting to: tcp://127.0.0.1:52503
+[I 08:49:58.664 NotebookApp] KernelRestarter: restarting kernel (4/5)
+WARNING:root:kernel 5a23f4ca-734b-422f-9c1c-e0ad126f6552 restarted
+[D 08:49:58.665 NotebookApp] Starting kernel: [&#39;/usr/bin/python&#39;, &#39;-m&#39;, &#39;ipykernel&#39;, &#39;-f&#39;, u&#39;/root/.local/share/jupyter/runtime/kernel-5a23f4ca-734b-422f-9c1c-e0ad126f6552.json&#39;]
+[D 08:49:58.670 NotebookApp] Connecting to: tcp://127.0.0.1:54341
+[W 08:50:01.672 NotebookApp] KernelRestarter: restart failed
+</pre></div>
+
+
+<p>Then I try to use <code>sh -c 'jupyter notebook'</code> as the entrypoint, it maybe works for someone else, but for my specfic docker version, <code>jupyter</code> still run as root process. <br />
+The final solution is using a <code>start.sh</code> to wrapp <code>sh -c 'jupyter notebook'</code>. That works for me.</p></div>
+	
+        <hr>
+
+        <h2>Comments</h2>
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'kamushin'; 
+    var disqus_title = 'KernelRestarter: restart failed in Jupyter';
+
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    </div>
         </div>
         
         <div class="span3">
