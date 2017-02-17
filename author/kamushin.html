@@ -59,8 +59,8 @@
 
     <div class='article'>
         <div class="content-title">
-            <a href="/debug/jupyter-docker.html"><h1>KernelRestarter: restart failed in Jupyter</h1></a>
-2017-02-03 17-43-26
+            <a href="/debug/python-gc.html"><h1>从一次失效的文件锁看看 Python 的垃圾回收机制</h1></a>
+2017-02-17 17-54-39
 
 by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
  
@@ -69,36 +69,149 @@ by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
  
         </div>
         
-        <div><p>If run <code>jupyter notebook</code> as Docker entrypoint, then <code>jupyter</code> will be the root process with pid 1.<br />
-For some reason, this doesn't play well with IPython, and the Kernel won't be started successfully.<br />
-Errors may occur like below:</p>
-<div class="highlight"><pre>[I 08:49:49.637 NotebookApp] KernelRestarter: restarting kernel (1/5)
-[D 08:49:49.638 NotebookApp] Starting kernel: [&#39;/usr/bin/python&#39;, &#39;-m&#39;, &#39;ipykernel&#39;, &#39;-f&#39;, u&#39;/root/.local/share/jupyter/runtime/kernel-5a23f4ca-734b-422f-9c1c-e0ad126f6552.json&#39;]
-[D 08:49:49.643 NotebookApp] Connecting to: tcp://127.0.0.1:54341
-[I 08:49:52.646 NotebookApp] KernelRestarter: restarting kernel (2/5)
-[D 08:49:52.647 NotebookApp] Starting kernel: [&#39;/usr/bin/python&#39;, &#39;-m&#39;, &#39;ipykernel&#39;, &#39;-f&#39;, u&#39;/root/.local/share/jupyter/runtime/kernel-5a23f4ca-734b-422f-9c1c-e0ad126f6552.json&#39;]
-[D 08:49:52.652 NotebookApp] Connecting to: tcp://127.0.0.1:54341
-[I 08:49:55.655 NotebookApp] KernelRestarter: restarting kernel (3/5)
-[D 08:49:55.656 NotebookApp] Starting kernel: [&#39;/usr/bin/python&#39;, &#39;-m&#39;, &#39;ipykernel&#39;, &#39;-f&#39;, u&#39;/root/.local/share/jupyter/runtime/kernel-5a23f4ca-734b-422f-9c1c-e0ad126f6552.json&#39;]
-[D 08:49:55.662 NotebookApp] Connecting to: tcp://127.0.0.1:54341
-[W 08:49:56.713 NotebookApp] Timeout waiting for kernel_info reply from 5a23f4ca-734b-422f-9c1c-e0ad126f6552
-[D 08:49:56.715 NotebookApp] Opening websocket /api/kernels/5a23f4ca-734b-422f-9c1c-e0ad126f6552/channels
-[D 08:49:56.715 NotebookApp] Connecting to: tcp://127.0.0.1:42528
-[D 08:49:56.715 NotebookApp] Connecting to: tcp://127.0.0.1:58272
-[D 08:49:56.716 NotebookApp] Connecting to: tcp://127.0.0.1:52503
-[I 08:49:58.664 NotebookApp] KernelRestarter: restarting kernel (4/5)
-WARNING:root:kernel 5a23f4ca-734b-422f-9c1c-e0ad126f6552 restarted
-[D 08:49:58.665 NotebookApp] Starting kernel: [&#39;/usr/bin/python&#39;, &#39;-m&#39;, &#39;ipykernel&#39;, &#39;-f&#39;, u&#39;/root/.local/share/jupyter/runtime/kernel-5a23f4ca-734b-422f-9c1c-e0ad126f6552.json&#39;]
-[D 08:49:58.670 NotebookApp] Connecting to: tcp://127.0.0.1:54341
-[W 08:50:01.672 NotebookApp] KernelRestarter: restart failed
+        <div><h3>引</h3>
+<p>有同事发现 Python 在函数中进行文件锁, 退出函数后, 文件锁就失效了. 我简单想下, 应该是函数中锁文件后, 退出函数, 文件句柄变量被 GC, 导致文件锁也失效了.<br />
+写了段代码验证这个情况.</p>
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26</pre></div></td><td class="code"><div class="highlight"><pre><span class="c">#!/usr/bin/env python</span>
+<span class="c"># -*- coding: utf-8 -*-</span>
+<span class="kn">import</span> <span class="nn">fcntl</span>
+<span class="kn">import</span> <span class="nn">time</span>
+
+
+<span class="k">def</span> <span class="nf">inline</span><span class="p">():</span>
+    <span class="n">fcntl</span><span class="o">.</span><span class="n">flock</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="s">&#39;/tmp/locktest&#39;</span><span class="p">,</span> <span class="s">&#39;w&#39;</span><span class="p">),</span> <span class="n">fcntl</span><span class="o">.</span><span class="n">LOCK_EX</span> <span class="o">|</span> <span class="n">fcntl</span><span class="o">.</span><span class="n">LOCK_NB</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">twoLines</span><span class="p">():</span>
+    <span class="n">fd</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s">&#39;/tmp/locktest&#39;</span><span class="p">,</span> <span class="s">&#39;w&#39;</span><span class="p">)</span>
+    <span class="n">fcntl</span><span class="o">.</span><span class="n">flock</span><span class="p">(</span><span class="n">fd</span><span class="p">,</span> <span class="n">fcntl</span><span class="o">.</span><span class="n">LOCK_EX</span> <span class="o">|</span> <span class="n">fcntl</span><span class="o">.</span><span class="n">LOCK_NB</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">fd</span>
+
+
+<span class="n">lockFile</span> <span class="o">=</span> <span class="n">inline</span> <span class="c"># will print No error</span>
+<span class="c"># lockFile = twoLines  # will print blocking </span>
+<span class="n">fd</span> <span class="o">=</span> <span class="bp">None</span>
+
+<span class="n">fd</span> <span class="o">=</span> <span class="n">lockFile</span><span class="p">()</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">fd</span> <span class="o">=</span> <span class="n">lockFile</span><span class="p">()</span>
+<span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
+    <span class="k">print</span><span class="p">(</span><span class="s">&quot;can&#39;t immediately write-lock the file ($!), blocking ...&quot;</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="k">print</span><span class="p">(</span><span class="s">&quot;No error&quot;</span><span class="p">)</span>
+</pre></div>
+</td></tr></table>
+
+<h3>Python 中实现的 GC</h3>
+<h4>引用计数</h4>
+<blockquote>
+<p>最早期的垃圾回收实现方法，通过对数据存储的物理空间附加多一个计数器空间，当有其他数据与其相关时则加一，反之相关解除时减一，定期检查各储存对象的计数器，为零的话则认为已经被抛弃而将其所占物理空间回收。是最简单的实现，但存在无法回收循环引用的存储对象的缺陷。</p>
+</blockquote>
+<div class="highlight"><pre>// object.h
+struct _object {
+    Py_ssize_t ob_refcnt;
+    struct PyTypeObject *ob_type;
+} PyObject;
 </pre></div>
 
 
-<p>Then I try to use <code>sh -c 'jupyter notebook'</code> as the entrypoint, it maybe works for someone else, but for my specfic docker version, <code>jupyter</code> still run as root process. <br />
-The final solution is using a <code>start.sh</code> to wrapp <code>sh -c 'jupyter notebook'</code>. That works for me.</p></div>
+<p>在 Python 源码中, 类的结构体都具有一个<code>ob_refcnt</code>的部分, 用来做引用计数.</p>
+<p>引用计数的优点是高效,不需要停顿,易于实现, 缺点是无法解决循环引用, 计数次数和引用赋值成正比, 而 mark and sweep则只和对象数量成正比.</p>
+<h4>标记清除</h4>
+<blockquote>
+<p>近现代的垃圾回收实现方法，通过定期对若干根储存对象开始遍历，对整个程序所拥有的储存空间查找与之相关的存储对象和没相关的存储对象进行标记，然后将没相关的存储对象所占物理空间回收。</p>
+</blockquote>
+<div class="highlight"><pre>// objimpl.h
+typedef union _gc_head {
+    struct {
+        union _gc_head *gc_next;
+        union _gc_head *gc_prev;
+        Py_ssize_t gc_refs;
+    } gc;
+    long double dummy;  /* force worst-case alignment */
+} PyGC_Head;
+</pre></div>
+
+
+<p>在申请内存时，所有容器对象的头部又加上了<code>PyGC_Head</code>来实现"标记-清除"机制.垃圾标记时，先将集合中对象的引用计数复制一份副本(以免在操作过程中破坏真实的引用计数值), 然后操作这个副本，遍历对象集合，将被引用对象的引用计数副本值减1, 
+然后根据引用计数副本值是否为0将集合内的对象分成两类，reachable和unreachable，其中unreachable是可以被回收的对象. 这是一个比较基础的标记清除的过程.</p>
+<h4>分代回收</h4>
+<blockquote>
+<p>由于“复制”算法对于存活时间长，大容量的储存对象需要耗费更多的移动时间，和存在储存对象的存活时间的差异。需要程序将所拥有的内存空间分成若干分区，并标记为年轻代空间和年老代空间。程序运行所需的存储对象会先存放在年轻代分区，年轻代分区会较为频密进行较为激进垃圾回收行为，每次回收完成幸存的存储对象内的寿命计数器加一。当年轻代分区存储对象的寿命计数器达到一定阈值或存储对象的占用空间超过一定阈值时，则被移动到年老代空间，年老代空间会较少运行垃圾回收行为。一般情况下，还有永久代的空间，用于涉及程序整个运行生命周期的对象存储，例如运行代码、数据常量等，该空间通常不进行垃圾回收的操作。
+通过分代，存活在局限域，小容量，寿命短的存储对象会被快速回收；存活在全局域，大容量，寿命长的存储对象就较少被回收行为处理干扰。</p>
+</blockquote>
+<div class="highlight"><pre>// gcmodule.c
+struct gc_generation {
+    PyGC_Head head;
+    int threshold; /* collection threshold */
+    int count; /* count of allocations or collections of younger
+              generations */
+};
+</pre></div>
+
+
+<p>Python默认定义了三代对象集合，索引数越大，对象存活时间越长。</p>
+<div class="highlight"><pre><span class="x">#define NUM_GENERATIONS 3</span>
+<span class="x">#define GEN_HEAD(n) (&amp;generations[n].head)</span>
+
+<span class="x">/* linked lists of container objects */</span>
+<span class="x">static struct gc_generation generations[NUM_GENERATIONS] = {</span>
+<span class="x">    /* PyGC_Head,               threshold,  count */</span>
+<span class="x">    </span><span class="cp">{{</span><span class="o">{</span><span class="nv">GEN_HEAD</span><span class="o">(</span><span class="m">0</span><span class="o">),</span> <span class="nv">GEN_HEAD</span><span class="o">(</span><span class="m">0</span><span class="o">),</span> <span class="m">0</span><span class="cp">}}</span><span class="x">,   700,        0},</span>
+<span class="x">    </span><span class="cp">{{</span><span class="o">{</span><span class="nv">GEN_HEAD</span><span class="o">(</span><span class="m">1</span><span class="o">),</span> <span class="nv">GEN_HEAD</span><span class="o">(</span><span class="m">1</span><span class="o">),</span> <span class="m">0</span><span class="cp">}}</span><span class="x">,   10,     0},</span>
+<span class="x">    </span><span class="cp">{{</span><span class="o">{</span><span class="nv">GEN_HEAD</span><span class="o">(</span><span class="m">2</span><span class="o">),</span> <span class="nv">GEN_HEAD</span><span class="o">(</span><span class="m">2</span><span class="o">),</span> <span class="m">0</span><span class="cp">}}</span><span class="x">,   10,     0},</span>
+<span class="x">};</span>
+</pre></div>
+
+
+<p>新生成的对象会被加入第0代, 每新生成一个对象都会检查第0代有没有满，如果满了就开始着手进行垃圾回收.</p>
+<h3>flock的失效</h3>
+<p>上面简单复习了下 Python 的 GC 机制. 可以知道因为没有其他对象持有文件句柄的引用, 所以在离开函数作用域后就被回收, 那么持有的文件锁也就被释放了.</p></div>
         <hr />
     </div>
 		
+
+ 
+        
+
+ 
+
+    <div class='article'>
+        <a href="/debug/jupyter-docker.html"><h2>KernelRestarter: restart failed in Jupyter</h2></a>
+        <div class= "well small"> 2017-02-03 17-43-26
+
+by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
+ 
+
+
+ </div>
+        <div class="summary"><p>Kernel start failed in case of running Jupyter as pid 1.</p> <a class="btn btn-info xsmall" href="/debug/jupyter-docker.html">read more</a></div>
+    </div>	
+				
 
  
         
@@ -241,24 +354,6 @@ by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
 
  </div>
         <div class="summary"><p>研究下react-route的源码找到如何正确分离route配置的方法</p> <a class="btn btn-info xsmall" href="/debug/wrap_a_react_route.html">read more</a></div>
-    </div>	
-				
-
- 
-        
-
- 
-
-    <div class='article'>
-        <a href="/learning/docker_compose_scale_link.html"><h2>docker-compose: scale and link</h2></a>
-        <div class= "well small"> 2016-08-22 22-54-17
-
-by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
- 
-
-
- </div>
-        <div class="summary"><p>Learned how to use docker compose to create a scalable web app with nginx.</p> <a class="btn btn-info xsmall" href="/learning/docker_compose_scale_link.html">read more</a></div>
     </div>	
 				
 <div class="pagination">

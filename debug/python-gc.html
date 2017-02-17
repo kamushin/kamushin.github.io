@@ -52,23 +52,17 @@
     <div class="row">
 
         <div class="span9">
-        
-
-        
-
-
     <div class='article'>
         <div class="content-title">
-            <a href="/debug/python-gc.html"><h1>从一次失效的文件锁看看 Python 的垃圾回收机制</h1></a>
+            <h1>从一次失效的文件锁看看 Python 的垃圾回收机制</h1>
 2017-02-17 17-54-39
 
 by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
  
 
 
- 
         </div>
-        
+	
         <div><h3>引</h3>
 <p>有同事发现 Python 在函数中进行文件锁, 退出函数后, 文件锁就失效了. 我简单想下, 应该是函数中锁文件后, 退出函数, 文件句柄变量被 GC, 导致文件锁也失效了.<br />
 写了段代码验证这个情况.</p>
@@ -191,187 +185,23 @@ struct gc_generation {
 <p>新生成的对象会被加入第0代, 每新生成一个对象都会检查第0代有没有满，如果满了就开始着手进行垃圾回收.</p>
 <h3>flock的失效</h3>
 <p>上面简单复习了下 Python 的 GC 机制. 可以知道因为没有其他对象持有文件句柄的引用, 所以在离开函数作用域后就被回收, 那么持有的文件锁也就被释放了.</p></div>
-        <hr />
+	
+        <hr>
+
+        <h2>Comments</h2>
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'kamushin'; 
+    var disqus_title = '从一次失效的文件锁看看 Python 的垃圾回收机制';
+
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
     </div>
-		
-
- 
-        
-
- 
-
-    <div class='article'>
-        <a href="/debug/jupyter-docker.html"><h2>KernelRestarter: restart failed in Jupyter</h2></a>
-        <div class= "well small"> 2017-02-03 17-43-26
-
-by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
- 
-
-
- </div>
-        <div class="summary"><p>Kernel start failed in case of running Jupyter as pid 1.</p> <a class="btn btn-info xsmall" href="/debug/jupyter-docker.html">read more</a></div>
-    </div>	
-				
-
- 
-        
-
- 
-
-    <div class='article'>
-        <a href="/tool/mem.html"><h2></h2></a>
-        <div class= "well small"> 2017-01-16 15-42-57
-
-by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
- 
-
-
- </div>
-        <div class="summary"> <a class="btn btn-info xsmall" href="/tool/mem.html">read more</a></div>
-    </div>	
-				
-
- 
-        
-
- 
-
-    <div class='article'>
-        <a href="/learning/docker_logs.html"><h2></h2></a>
-        <div class= "well small"> 2017-01-11 11-10-52
-
-by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
- 
-
-
- </div>
-        <div class="summary"> <a class="btn btn-info xsmall" href="/learning/docker_logs.html">read more</a></div>
-    </div>	
-				
-
- 
-        
-
- 
-
-    <div class='article'>
-        <a href="/debug/No-space-left-on-device.html"><h2>No space left on device</h2></a>
-        <div class= "well small"> 2017-01-05 13-40-12
-
-by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
- 
-
-
- </div>
-        <div class="summary"><p>No space left on device</p> <a class="btn btn-info xsmall" href="/debug/No-space-left-on-device.html">read more</a></div>
-    </div>	
-				
-
- 
-        
-
- 
-
-    <div class='article'>
-        <a href="/annual-summary/2017-todo.html"><h2>2017做点啥</h2></a>
-        <div class= "well small"> 2017-01-04 23-41-55
-
-by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
- 
-
-
- </div>
-        <div class="summary"><p>done is better than perfect.</p> <a class="btn btn-info xsmall" href="/annual-summary/2017-todo.html">read more</a></div>
-    </div>	
-				
-
- 
-        
-
- 
-
-    <div class='article'>
-        <a href="/annual-summary/2016-trip.html"><h2>2016年度总结旅游篇</h2></a>
-        <div class= "well small"> 2016-12-18 11-57-14
-
-by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
- 
-
-
- </div>
-        <div class="summary"><p>浙江南浔-浙江仙居-越南岘港-浙江东极岛-西北青海大环线-泰国清迈-?</p> <a class="btn btn-info xsmall" href="/annual-summary/2016-trip.html">read more</a></div>
-    </div>	
-				
-
- 
-        
-
- 
-
-    <div class='article'>
-        <a href="/learning/nodejs.html"><h2>最近在做的事情</h2></a>
-        <div class= "well small"> 2016-12-16 18-16-03
-
-by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
- 
-
-
- </div>
-        <div class="summary"><p>几个月没写博客了, 总结下最近做的事情</p> <a class="btn btn-info xsmall" href="/learning/nodejs.html">read more</a></div>
-    </div>	
-				
-
- 
-        
-
- 
-
-    <div class='article'>
-        <a href="/learning/container_manager.html"><h2>Docker容器管理</h2></a>
-        <div class= "well small"> 2016-09-28 11-38-53
-
-by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
- 
-
-
- </div>
-        <div class="summary"><p>这段时间会尝试多种容器管理方式。</p> <a class="btn btn-info xsmall" href="/learning/container_manager.html">read more</a></div>
-    </div>	
-				
-
- 
-        
-
- 
-
-    <div class='article'>
-        <a href="/debug/wrap_a_react_route.html"><h2>Why shouldn't use component wrap a Route</h2></a>
-        <div class= "well small"> 2016-08-31 11-22-52
-
-by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
- 
-
-
- </div>
-        <div class="summary"><p>研究下react-route的源码找到如何正确分离route配置的方法</p> <a class="btn btn-info xsmall" href="/debug/wrap_a_react_route.html">read more</a></div>
-    </div>	
-				
-<div class="pagination">
-<ul>
-    <li class="prev disabled"><a href="#">&larr; Previous</a></li>
-
-    <li class="active"><a href="/index.html">1</a></li>
-    <li class=""><a href="/index2.html">2</a></li>
-    <li class=""><a href="/index3.html">3</a></li>
-    <li class=""><a href="/index4.html">4</a></li>
-    <li class=""><a href="/index5.html">5</a></li>
-
-    <li class="next"><a href="/index2.html">Next &rarr;</a></li>
-
-</ul>
-</div>
- 
-  
         </div>
         
         <div class="span3">
