@@ -52,73 +52,42 @@
     <div class="row">
 
         <div class="span9">
-        
-
-        
-
- 
-
     <div class='article'>
-        <a href="/debug/member_function_in_python.html"><h2>Member functions in Python</h2></a>
-        <div class= "well small"> 2016-02-03 14-51-01
+        <div class="content-title">
+            <h1>Python subprocess 线程不安全的解决方案</h1>
+2017-03-02 18-02-57
 
 by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
  
 
 
- </div>
-        <div class="summary"><p>Pass a self.func as an argument is passing a function and a self object.</p> <a class="btn btn-info xsmall" href="/debug/member_function_in_python.html">read more</a></div>
-    </div>	
-				
+        </div>
+	
+        <div><p>Python subprocess 不是线程安全的. 虽然文档上没有说明subprocess 是线程安全的, 我们应该把它看做线程不安全来使用. 但是在实际使用中, 我们并不知道 subprocess 的具体哪个方法
+是线程不安全的, 于是很难对它加锁, 在这里我认为 subprocess 没有设计成线程安全这件事, 是 Python2.7的一个缺陷.<br />
+所幸依然有三个方法来解决这个问题</p>
+<ol>
+<li>升级至 Python3.2  </li>
+<li>使用多进程替代多线程  </li>
+<li>在 Python2.7 下使用 subprocess32 包</li>
+</ol></div>
+	
+        <hr>
 
- 
-        
+        <h2>Comments</h2>
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'kamushin'; 
+    var disqus_title = 'Python subprocess 线程不安全的解决方案';
 
- 
-
-    <div class='article'>
-        <a href="/debug/sscursor_in_mysql.html"><h2>SSCursor in MySQL</h2></a>
-        <div class= "well small"> 2016-01-19 14-55-49
-
-by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
- 
-
-
- </div>
-        <div class="summary"><p>What is and How to use SSCursor in MySQL</p> <a class="btn btn-info xsmall" href="/debug/sscursor_in_mysql.html">read more</a></div>
-    </div>	
-				
-
- 
-        
-
- 
-
-    <div class='article'>
-        <a href="/debug/Do-not-use-lob.html"><h2>Do not use LOB in Oracle(OLTP) -- record an optimization experience</h2></a>
-        <div class= "well small"> 2015-12-08 01-52-18
-
-by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
- 
-
-
- </div>
-        <div class="summary"><p>LOB in Oracle and cx_Oracle</p> <a class="btn btn-info xsmall" href="/debug/Do-not-use-lob.html">read more</a></div>
-    </div>	
-				
-<div class="pagination">
-<ul>
-    <li class="prev"><a href="/debug/index.html">&larr; Previous</a></li>
-
-    <li class=""><a href="/debug/index.html">1</a></li>
-    <li class="active"><a href="/debug/index2.html">2</a></li>
-
-    <li class="next disabled"><a href="#">&rarr; Next</a></li>
-
-</ul>
-</div>
- 
-  
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    </div>
         </div>
         
         <div class="span3">
