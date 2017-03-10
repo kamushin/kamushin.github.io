@@ -59,8 +59,8 @@
 
     <div class='article'>
         <div class="content-title">
-            <a href="/debug/python-subprocess32.html"><h1>Python subprocess 线程不安全的解决方案</h1></a>
-2017-03-02 18-02-57
+            <a href="/debug/nodejs_get_cpu.html"><h1>Nodejs os.cpu return not allowed cpu</h1></a>
+2017-03-10 15-24-55
 
 by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
  
@@ -69,17 +69,31 @@ by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
  
         </div>
         
-        <div><p>Python subprocess 不是线程安全的. 虽然文档上没有说明subprocess 是线程安全的, 我们应该把它看做线程不安全来使用. 但是在实际使用中, 我们并不知道 subprocess 的具体哪个方法
-是线程不安全的, 于是很难对它加锁, 在这里我认为 subprocess 没有设计成线程安全这件事, 是 Python2.7的一个缺陷.<br />
-所幸依然有三个方法来解决这个问题</p>
-<ol>
-<li>升级至 Python3.2  </li>
-<li>使用多进程替代多线程  </li>
-<li>在 Python2.7 下使用 subprocess32 包</li>
-</ol></div>
+        <div><p>The <code>os.cpus()</code> API added in Nodejs v0.3.3 shows all processors in <code>/proc/cpuinfo</code>. 
+This API is often used to give a suggestion of how many worker processes created by cluster. However, in a docker/lxc environment, some<br />
+of the cpus are not allowed to be used by a container.<br />
+For more accurate information, we should cat <code>/proc/self/status</code>. This file will show the specific allowed cpus. Or use the command <code>nproc</code>.</p></div>
         <hr />
     </div>
 		
+
+ 
+        
+
+ 
+
+    <div class='article'>
+        <a href="/debug/python-subprocess32.html"><h2>Python subprocess 线程不安全的解决方案</h2></a>
+        <div class= "well small"> 2017-03-02 18-02-57
+
+by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
+ 
+
+
+ </div>
+        <div class="summary"><p>1.升级至 Python3.2  2.使用多进程替代多线程 3.在 Python2.7 下使用 subprocess32 包</p> <a class="btn btn-info xsmall" href="/debug/python-subprocess32.html">read more</a></div>
+    </div>	
+				
 
  
         
@@ -224,24 +238,6 @@ by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
         <div class="summary"><ol>
 <li>Loggers will be stored in manager in Python. Handlers will cause resource leak if not removed.</li>
 </ol> <a class="btn btn-info xsmall" href="/debug/logger_in_python.html">read more</a></div>
-    </div>	
-				
-
- 
-        
-
- 
-
-    <div class='article'>
-        <a href="/debug/aop_proxy.html"><h2>Alter dataSource in Spring By AOP And Annotation</h2></a>
-        <div class= "well small"> 2016-04-06 20-42-11
-
-by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
- 
-
-
- </div>
-        <div class="summary"><p>About how to use AOP to alter dataSource. And something interesting about proxy in Spring framework.</p> <a class="btn btn-info xsmall" href="/debug/aop_proxy.html">read more</a></div>
     </div>	
 				
 <div class="pagination">

@@ -52,208 +52,38 @@
     <div class="row">
 
         <div class="span9">
-        
-
-        
-
-
     <div class='article'>
         <div class="content-title">
-            <a href="/debug/nodejs_get_cpu.html"><h1>Nodejs os.cpu return not allowed cpu</h1></a>
+            <h1>Nodejs os.cpu return not allowed cpu</h1>
 2017-03-10 15-24-55
 
 by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
  
 
 
- 
         </div>
-        
+	
         <div><p>The <code>os.cpus()</code> API added in Nodejs v0.3.3 shows all processors in <code>/proc/cpuinfo</code>. 
 This API is often used to give a suggestion of how many worker processes created by cluster. However, in a docker/lxc environment, some<br />
 of the cpus are not allowed to be used by a container.<br />
 For more accurate information, we should cat <code>/proc/self/status</code>. This file will show the specific allowed cpus. Or use the command <code>nproc</code>.</p></div>
-        <hr />
+	
+        <hr>
+
+        <h2>Comments</h2>
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'kamushin'; 
+    var disqus_title = 'Nodejs os.cpu return not allowed cpu';
+
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
     </div>
-		
-
- 
-        
-
- 
-
-    <div class='article'>
-        <a href="/debug/python-subprocess32.html"><h2>Python subprocess 线程不安全的解决方案</h2></a>
-        <div class= "well small"> 2017-03-02 18-02-57
-
-by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
- 
-
-
- </div>
-        <div class="summary"><p>1.升级至 Python3.2  2.使用多进程替代多线程 3.在 Python2.7 下使用 subprocess32 包</p> <a class="btn btn-info xsmall" href="/debug/python-subprocess32.html">read more</a></div>
-    </div>	
-				
-
- 
-        
-
- 
-
-    <div class='article'>
-        <a href="/debug/python-gc.html"><h2>从一次失效的文件锁看看 Python 的垃圾回收机制</h2></a>
-        <div class= "well small"> 2017-02-17 17-54-39
-
-by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
- 
-
-
- </div>
-        <div class="summary"><p>不同的调用方式导致了文件锁的成功与失效, 原因是触发了 Python 的垃圾回收机制. Python的垃圾回收机制还是比较原始的, 基本上就是引用计数, 标记清除和分代.没有什么黑魔法.</p> <a class="btn btn-info xsmall" href="/debug/python-gc.html">read more</a></div>
-    </div>	
-				
-
- 
-        
-
- 
-
-    <div class='article'>
-        <a href="/debug/jupyter-docker.html"><h2>KernelRestarter: restart failed in Jupyter</h2></a>
-        <div class= "well small"> 2017-02-03 17-43-26
-
-by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
- 
-
-
- </div>
-        <div class="summary"><p>Kernel start failed in case of running Jupyter as pid 1.</p> <a class="btn btn-info xsmall" href="/debug/jupyter-docker.html">read more</a></div>
-    </div>	
-				
-
- 
-        
-
- 
-
-    <div class='article'>
-        <a href="/tool/mem.html"><h2></h2></a>
-        <div class= "well small"> 2017-01-16 15-42-57
-
-by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
- 
-
-
- </div>
-        <div class="summary"> <a class="btn btn-info xsmall" href="/tool/mem.html">read more</a></div>
-    </div>	
-				
-
- 
-        
-
- 
-
-    <div class='article'>
-        <a href="/learning/docker_logs.html"><h2></h2></a>
-        <div class= "well small"> 2017-01-11 11-10-52
-
-by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
- 
-
-
- </div>
-        <div class="summary"> <a class="btn btn-info xsmall" href="/learning/docker_logs.html">read more</a></div>
-    </div>	
-				
-
- 
-        
-
- 
-
-    <div class='article'>
-        <a href="/debug/No-space-left-on-device.html"><h2>No space left on device</h2></a>
-        <div class= "well small"> 2017-01-05 13-40-12
-
-by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
- 
-
-
- </div>
-        <div class="summary"><p>No space left on device</p> <a class="btn btn-info xsmall" href="/debug/No-space-left-on-device.html">read more</a></div>
-    </div>	
-				
-
- 
-        
-
- 
-
-    <div class='article'>
-        <a href="/annual-summary/2017-todo.html"><h2>2017做点啥</h2></a>
-        <div class= "well small"> 2017-01-04 23-41-55
-
-by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
- 
-
-
- </div>
-        <div class="summary"><p>done is better than perfect.</p> <a class="btn btn-info xsmall" href="/annual-summary/2017-todo.html">read more</a></div>
-    </div>	
-				
-
- 
-        
-
- 
-
-    <div class='article'>
-        <a href="/annual-summary/2016-trip.html"><h2>2016年度总结旅游篇</h2></a>
-        <div class= "well small"> 2016-12-18 11-57-14
-
-by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
- 
-
-
- </div>
-        <div class="summary"><p>浙江南浔-浙江仙居-越南岘港-浙江东极岛-西北青海大环线-泰国清迈-?</p> <a class="btn btn-info xsmall" href="/annual-summary/2016-trip.html">read more</a></div>
-    </div>	
-				
-
- 
-        
-
- 
-
-    <div class='article'>
-        <a href="/learning/nodejs.html"><h2>最近在做的事情</h2></a>
-        <div class= "well small"> 2016-12-16 18-16-03
-
-by <a class="url fn" href="/author/kamushin.html">Kamushin</a>
- 
-
-
- </div>
-        <div class="summary"><p>几个月没写博客了, 总结下最近做的事情</p> <a class="btn btn-info xsmall" href="/learning/nodejs.html">read more</a></div>
-    </div>	
-				
-<div class="pagination">
-<ul>
-    <li class="prev disabled"><a href="#">&larr; Previous</a></li>
-
-    <li class="active"><a href="/index.html">1</a></li>
-    <li class=""><a href="/index2.html">2</a></li>
-    <li class=""><a href="/index3.html">3</a></li>
-    <li class=""><a href="/index4.html">4</a></li>
-    <li class=""><a href="/index5.html">5</a></li>
-
-    <li class="next"><a href="/index2.html">Next &rarr;</a></li>
-
-</ul>
-</div>
- 
-  
         </div>
         
         <div class="span3">
